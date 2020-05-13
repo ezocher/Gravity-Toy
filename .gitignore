@@ -1,0 +1,6 @@
+## In addition to this .gitignore,
+## also include the appropriate one inside each project folder (e.g. either Unity or Visual Studio)
+
+# Ignore Windows symlinks
+*.lnk
+
