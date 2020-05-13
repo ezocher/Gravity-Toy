@@ -1,0 +1,41 @@
+Investigating Application Types of four old versions
+None of the old .csproj's can be opened in Visual Studio 2017 or 2019
+
+Not sure if I ever got all of these running. Original WPF version definately ran on Vista and Win8 but eventually had issues.
+
+GS: (Original WPF version targeting Windows Vista)
+    <OutputType>AppContainerExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Gravity_Sandbox</RootNamespace>
+    <AssemblyName>Gravity sandbox</AssemblyName>
+	
+GS81: (WPF for Windows 8.1)
+    <OutputType>AppContainerExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Gravity_Sandbox</RootNamespace>
+    <AssemblyName>Gravity Sandbox</AssemblyName>
+    <DefaultLanguage>en-US</DefaultLanguage>
+    <TargetPlatformVersion>8.1</TargetPlatformVersion>
+    <MinimumVisualStudioVersion>12</MinimumVisualStudioVersion>
+	
+GS-Mercury (Combined Win8.1/Win Phone 8.1):
+Apps for Windows Phone 8.1 can now be created using the same application model as Windows Store apps for Windows 8.1, based on the Windows Runtime, and the file extension for WP apps is now ".appx" (which is used for Windows Store apps), instead of Windows Phone's traditional ".xap" file format.
+    <OutputType>AppContainerExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Gravity_Sandbox</RootNamespace>
+    <AssemblyName>Gravity sandbox</AssemblyName>
+	
+GS10: (UWP for Windows 10)
+    <OutputType>AppContainerExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>GravitySandbox10</RootNamespace>
+    <AssemblyName>GravitySandbox10</AssemblyName>
+    <DefaultLanguage>en-US</DefaultLanguage>
+    <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
+    <TargetPlatformVersion>10.0.17763.0</TargetPlatformVersion>
+    <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
+    <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
+
+
+
+
