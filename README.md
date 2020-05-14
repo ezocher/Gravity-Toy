@@ -12,4 +12,5 @@ Potential ports:
 * (Low priority) Xamarin on Android Phone or iPad
 
 General TBDs:
+* Get the simulation running again. Figure out the animation problem that started ~2016. 
 * Run gravity calculations on multiple threads
