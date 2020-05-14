@@ -1,0 +1,36 @@
+﻿<Page
+    x:Class="Gravity_Sandbox.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Gravity_Sandbox"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid Background="{StaticResource ApplicationPageBackgroundThemeBrush}" x:Name="backgroundGrid" SizeChanged="backgroundGrid_SizeChanged">
+        <!-- TBD: ManipulationDelta="backgroundGrid_ManipulationDelta" ManipulationStarting="backgroundGrid_ManipulationStarting" ManipulationCompleted="backgroundGrid_ManipulationCompleted" -->
+        <Canvas x:Name="backgroundCanvas" >
+        </Canvas>
+        <Grid x:Name="overlayGrid" >
+            <Grid.RowDefinitions>
+                <RowDefinition Height="88"/>
+                <RowDefinition/>
+                <RowDefinition Height="68" />
+            </Grid.RowDefinitions>
+			<StackPanel Grid.Row="0" Width="500" Orientation="Vertical" HorizontalAlignment="Left">
+				<TextBlock x:Name="velocityTextBlock" TextWrapping="Wrap" Text="-----" Width="500" Margin="10,5"/>
+                <TextBlock x:Name="positionTextBlock" TextWrapping="Wrap" Text="-----" Width="500" Margin="10,5"/>
+                <TextBlock x:Name="timeTextBlock" TextWrapping="Wrap" Text="-----" Width="500" Margin="10,5"/>
+            </StackPanel>
+            <StackPanel Grid.Row="2" Height="48" Width="900" Orientation="Horizontal" HorizontalAlignment="Left">
+                <Button Content="Scenario 1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="140" Margin="10,0" Click="Button_Click_Scenario1" />
+                <Button Content="Scenario 2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="140" Margin="10,0" Click="Button_Click_Scenario2" />
+                <Button Content="Scenario 3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="140" Margin="10,0" Click="Button_Click_Scenario3" />
+                <Button x:Name="runPauseButton" Content="Run" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="140" Margin="10,0" Click="runPauseButton_Click" />
+                <Button x:Name="stepButton" Content="Step" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="140" Margin="10,0" Click="stepButton_Click"/>
+            </StackPanel>
+
+        </Grid>
+
+    </Grid>
+</Page>

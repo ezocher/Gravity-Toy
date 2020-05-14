@@ -1,0 +1,38 @@
+﻿<Application
+    x:Class="GravitySandbox10.App"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:GravitySandbox10"
+    RequestedTheme="Dark">
+
+    <Application.Resources>
+        <ResourceDictionary>
+            <!-- Not required for Windows 10?? **TBD**
+            <ResourceDictionary.MergedDictionaries>
+
+                --><!-- 
+                    Styles that define common aspects of the platform look and feel
+                    Required by Visual Studio project and item templates
+                    --><!--
+            <ResourceDictionary Source="Common/StandardStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>-->
+
+            <SolidColorBrush x:Key="bodyColorDirt" Color="#FFB2A87B" />
+            <SolidColorBrush x:Key="monitoredBodyColor" Color="White" />
+
+            <SolidColorBrush x:Key="bodyColor1" Color="#FFFFA0C7" />
+            <SolidColorBrush x:Key="bodyColor2" Color="#FFA0FFA4" />
+            <SolidColorBrush x:Key="bodyColor3" Color="#FFA0EEFF" />
+            <SolidColorBrush x:Key="bodyColor4" Color="#FFE1A0FF" />
+            <SolidColorBrush x:Key="bodyColor5" Color="#FFF6FFA0" />
+            <SolidColorBrush x:Key="bodyColor6" Color="#FFFFD8A0" />
+            <SolidColorBrush x:Key="bodyColor7" Color="#FFA0A4FF" />
+            <SolidColorBrush x:Key="bodyColor8" Color="#FFFFA0A0" />
+            <SolidColorBrush x:Key="bodyColor9" Color="#FF646464" />
+            <SolidColorBrush x:Key="bodyColor10" Color="#FFA0A0A0" />
+            <SolidColorBrush x:Key="bodyColor11" Color="#FFD8D8D8" />
+
+        </ResourceDictionary>
+    </Application.Resources>
+
+</Application>
