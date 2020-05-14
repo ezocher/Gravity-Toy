@@ -1,1 +1,0 @@
-C:\Users\ezoch\Repos\Gravity-Sandbox\GravitySandboxUWP\GravitySandboxUWP\GravitySandboxUWP.csproj;x86
