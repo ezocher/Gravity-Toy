@@ -16,6 +16,7 @@ using Windows.Graphics.Display;
 using Windows.System.Threading;
 using Windows.UI.Core;
 using Windows.UI.Xaml.Shapes;
+using System.Threading.Tasks;
 
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
@@ -46,6 +47,8 @@ namespace GravitySandboxUWP
             simRunning = false;
             SetRunPauseButton(!simRunning);
             firstRun = true;
+
+            // The inital Scenario is loaded by BackgroundGrid_SizeChanged(), which is fired when the app's window size is set initially 
         }
 
         /// <summary>
@@ -96,7 +99,7 @@ namespace GravitySandboxUWP
         }
 
 
-        private void backgroundGrid_SizeChanged(object sender, SizeChangedEventArgs e)
+        private void BackgroundGrid_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             // Pause the running simulation
             if (simRunning)
@@ -104,7 +107,8 @@ namespace GravitySandboxUWP
 
             sim.renderer.SetSimulationTransform(backgroundCanvas.ActualWidth, backgroundCanvas.ActualHeight);
             // var res = DisplayProperties.ResolutionScale;  // don't need this (yet)
-            sim.TransformChanged();
+            if (!firstRun)
+                sim.TransformChanged();
 
             // TBD: restart the running simulation
             if (simRunning)
@@ -116,8 +120,41 @@ namespace GravitySandboxUWP
             {
                 firstRun = false;
                 ScenarioChanging();
-                BuiltInScenarios.LoadNineBodiesScenario(sim);
+                // BuiltInScenarios.LoadTwoBodiesScenario(sim);
+
+                var ellipse1 = new Ellipse();
+                ellipse1.Fill = new SolidColorBrush(Windows.UI.Colors.Yellow);
+                ellipse1.Width = 150;
+                ellipse1.Height = 150;
+                backgroundCanvas.Children.Add(ellipse1);
+
+
+                var rect1 = new Rectangle();
+                rect1.Fill = new SolidColorBrush(Windows.UI.Colors.BlueViolet);
+                rect1.Width = 222;
+                rect1.Height = 111;
+                backgroundCanvas.Children.Add(rect1);
+
+                setpositions();
             }
+        }
+
+        int translateFactor = 0;
+
+        private void setpositions()
+        {
+            var tt = new TranslateTransform();
+            tt.X = translateFactor * 40.0;
+            tt.Y = translateFactor * 75.0;
+
+            var uu = new TranslateTransform();
+            uu.X = 1000.0 - (translateFactor * 33.33);
+            uu.Y = 600.0 - (translateFactor * 10.0);
+
+            translateFactor++;
+
+            backgroundCanvas.Children[0].RenderTransform = tt;
+            backgroundCanvas.Children[1].RenderTransform = uu;
         }
 
         private void ScenarioChanging()
@@ -155,7 +192,8 @@ namespace GravitySandboxUWP
 
         private void stepButton_Click(object sender, RoutedEventArgs e)
         {
-            sim.Step(defaultStepInterval);
+            setpositions();
+            // sim.Step(defaultStepInterval);
         }
 
         private void SetRunPauseButton(bool setToRun)

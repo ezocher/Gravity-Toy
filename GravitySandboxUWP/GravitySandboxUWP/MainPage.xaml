@@ -19,10 +19,9 @@
         </ResourceDictionary>
     </Page.Resources>
     
-    <Grid x:Name="backgroundGrid" SizeChanged="backgroundGrid_SizeChanged" Background="{StaticResource appBackground}">
+    <Grid x:Name="backgroundGrid" SizeChanged="BackgroundGrid_SizeChanged" Background="{StaticResource appBackground}">
         <!-- TBD: ManipulationDelta="backgroundGrid_ManipulationDelta" ManipulationStarting="backgroundGrid_ManipulationStarting" ManipulationCompleted="backgroundGrid_ManipulationCompleted" -->
-        <Canvas x:Name="backgroundCanvas" >
-        </Canvas>
+        <Canvas x:Name="backgroundCanvas" />
         <Grid x:Name="overlayGrid" >
             <Grid.RowDefinitions>
                 <RowDefinition Height="88"/>
@@ -42,5 +41,6 @@
                 <Button x:Name="stepButton" Content="Step" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="140" Margin="10,0" Click="stepButton_Click" Background="{ThemeResource ButtonBackgroundThemeBrush}" BorderBrush="{ThemeResource ButtonBorderThemeBrush}" />
             </StackPanel>
         </Grid>
+
     </Grid>
 </Page>
