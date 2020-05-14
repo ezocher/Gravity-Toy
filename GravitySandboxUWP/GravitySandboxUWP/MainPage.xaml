@@ -8,6 +8,7 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
+    <!-- Made some hacky fixes to colors of background, overlay text and buttons. All built-in UI elements changed colors from what I had in the original version, seemingly because of a new Light theme (?) -->
     <Page.Resources>
         <ResourceDictionary>
             <ResourceDictionary.ThemeDictionaries>

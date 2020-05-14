@@ -1,5 +1,6 @@
 # Gravity-Sandbox
 Very old XAML/UWP app. Porting to various platforms to test and learn.
+![Screenshot of UWP app](Images/UWP-Screenshot.png)
 
 Potential ports:
 * Latest UWP
