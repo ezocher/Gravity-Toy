@@ -8,7 +8,38 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <Grid>
-
+    <Page.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.ThemeDictionaries>
+                <ResourceDictionary x:Key="Light">
+                    <SolidColorBrush x:Key="ButtonBackgroundPointerOver" Color="White"/>
+                </ResourceDictionary>
+            </ResourceDictionary.ThemeDictionaries>
+        </ResourceDictionary>
+    </Page.Resources>
+    
+    <Grid x:Name="backgroundGrid" SizeChanged="backgroundGrid_SizeChanged" Background="{StaticResource appBackground}">
+        <!-- TBD: ManipulationDelta="backgroundGrid_ManipulationDelta" ManipulationStarting="backgroundGrid_ManipulationStarting" ManipulationCompleted="backgroundGrid_ManipulationCompleted" -->
+        <Canvas x:Name="backgroundCanvas" >
+        </Canvas>
+        <Grid x:Name="overlayGrid" >
+            <Grid.RowDefinitions>
+                <RowDefinition Height="88"/>
+                <RowDefinition/>
+                <RowDefinition Height="68" />
+            </Grid.RowDefinitions>
+            <StackPanel Grid.Row="0" Width="500" Orientation="Vertical" HorizontalAlignment="Left">
+                <TextBlock x:Name="velocityTextBlock" TextWrapping="Wrap" Text="-----" Width="500" Margin="10,5" Foreground="{StaticResource overlayTextColor}" />
+                <TextBlock x:Name="positionTextBlock" TextWrapping="Wrap" Text="-----" Width="500" Margin="10,5" Foreground="{StaticResource overlayTextColor}" />
+                <TextBlock x:Name="timeTextBlock" TextWrapping="Wrap" Text="-----" Width="500" Margin="10,5" Foreground="{StaticResource overlayTextColor}" />
+            </StackPanel>
+            <StackPanel Grid.Row="2" Height="48" Width="900" Orientation="Horizontal" HorizontalAlignment="Left">
+                <Button Content="Scenario 1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="140" Margin="10,0" Click="Button_Click_Scenario1" Background="{ThemeResource ButtonBackgroundThemeBrush}" BorderBrush="{ThemeResource ButtonBorderThemeBrush}" />
+                <Button Content="Scenario 2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="140" Margin="10,0" Click="Button_Click_Scenario2" Background="{ThemeResource ButtonBackgroundThemeBrush}" BorderBrush="{ThemeResource ButtonBorderThemeBrush}" />
+                <Button Content="Scenario 3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="140" Margin="10,0" Click="Button_Click_Scenario3" Background="{ThemeResource ButtonBackgroundThemeBrush}" BorderBrush="{ThemeResource ButtonBorderThemeBrush}" />
+                <Button x:Name="runPauseButton" Content="Run" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="140" Margin="10,0" Click="runPauseButton_Click" Background="{ThemeResource ButtonBackgroundThemeBrush}" BorderBrush="{ThemeResource ButtonBorderThemeBrush}" />
+                <Button x:Name="stepButton" Content="Step" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="140" Margin="10,0" Click="stepButton_Click" Background="{ThemeResource ButtonBackgroundThemeBrush}" BorderBrush="{ThemeResource ButtonBorderThemeBrush}" />
+            </StackPanel>
+        </Grid>
     </Grid>
 </Page>
