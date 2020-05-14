@@ -54,7 +54,7 @@ namespace GravitySandboxUWP
             sim.SetMonitoredBody(0);
             sim.SetMonitoredValues();
             // sim.SetCheckSim(true);
-            sim.SetSimRounding(2);
+            // sim.SetSimRounding(2);
         }
 
 

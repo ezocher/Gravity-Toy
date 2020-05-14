@@ -114,48 +114,15 @@ namespace GravitySandboxUWP
             if (simRunning)
                 timer = ThreadPoolTimer.CreatePeriodicTimer(RunSimTick, new TimeSpan(0, 0, 0, 0, 1000 / (int)ticksPerSecond));
 
-            // TBD: Figure out which event to hook to initialize the initially loaded scenario (or maybe we have to do it this way since we need the initial layout to occur before loading the 
+            // TBD: Figure out which event to hook to initialize the initially loaded scenario (or probably we have to do it this way since we need the initial layout to occur before loading the 
             //          starting scenario)
             if (firstRun)
             {
                 firstRun = false;
-                ScenarioChanging();
-                // BuiltInScenarios.LoadTwoBodiesScenario(sim);
-
-                var ellipse1 = new Ellipse();
-                ellipse1.Fill = new SolidColorBrush(Windows.UI.Colors.Yellow);
-                ellipse1.Width = 150;
-                ellipse1.Height = 150;
-                backgroundCanvas.Children.Add(ellipse1);
-
-
-                var rect1 = new Rectangle();
-                rect1.Fill = new SolidColorBrush(Windows.UI.Colors.BlueViolet);
-                rect1.Width = 222;
-                rect1.Height = 111;
-                backgroundCanvas.Children.Add(rect1);
-
-                setpositions();
+                Button_Click_Scenario2(null, null);
             }
         }
 
-        int translateFactor = 0;
-
-        private void setpositions()
-        {
-            var tt = new TranslateTransform();
-            tt.X = translateFactor * 40.0;
-            tt.Y = translateFactor * 75.0;
-
-            var uu = new TranslateTransform();
-            uu.X = 1000.0 - (translateFactor * 33.33);
-            uu.Y = 600.0 - (translateFactor * 10.0);
-
-            translateFactor++;
-
-            backgroundCanvas.Children[0].RenderTransform = tt;
-            backgroundCanvas.Children[1].RenderTransform = uu;
-        }
 
         private void ScenarioChanging()
         {
@@ -192,8 +159,8 @@ namespace GravitySandboxUWP
 
         private void stepButton_Click(object sender, RoutedEventArgs e)
         {
-            setpositions();
-            // sim.Step(defaultStepInterval);
+            // setpositions();
+            sim.Step(defaultStepInterval);
         }
 
         private void SetRunPauseButton(bool setToRun)
