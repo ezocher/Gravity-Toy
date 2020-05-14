@@ -1,12 +1,11 @@
-Investigating Application Types of four old versions
+Investigating Application Types of the four old versions (~2013 - ~2016)
 None of the old .csproj's can be opened in Visual Studio 2017 or 2019
 
-Not sure if I ever got all of these running. Original definately ran on Win8 but eventually had issues.
+Not sure if I ever got all of these running (defintely not on Windows Phone). Original ran fine on Win8 but eventually had issues with animation (~2016).
 
 GS: Original version targeting Windows 8
     <OutputType>AppContainerExe</OutputType>
-
-	
+    
 GS81: Windows 8.1
     <OutputType>AppContainerExe</OutputType>
     <TargetPlatformVersion>8.1</TargetPlatformVersion>
@@ -20,8 +19,3 @@ GS10: (UWP for Windows 10)
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
     <TargetPlatformVersion>10.0.17763.0</TargetPlatformVersion>
     <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
-
-
-
-
-
