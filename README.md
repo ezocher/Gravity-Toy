@@ -13,7 +13,7 @@ Very old XAML/UWP app. Porting to various platforms to test and learn.
 
 ## General TBDs
 - [x] Get the simulation running again
-- [ ] Figure out the animation problem that started ~2016
+- [ ] Figure out the animation/memory problem that started ~2016
 - [ ] Perf of gravity calculations, XAML modifications
 - [ ] Run gravity calculations on multiple threads?
 - [ ] New scenarios: Orbits, stars and planets, black holes and stars

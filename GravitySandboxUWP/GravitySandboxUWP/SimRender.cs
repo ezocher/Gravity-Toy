@@ -232,10 +232,11 @@ namespace GravitySandboxUWP
                     return new Point(rand.Next((int)-screenMaxX, (int)screenMaxX),
                                       rand.Next((int)-screenMaxY, (int)screenMaxY));
                 case GravitySim.bodyStartPosition.randomCircularCluster:
-                    double length = rand.NextDouble() * simBoxMaxXY * 0.75;
+                    double length = rand.NextDouble() * simBoxMaxXY * 0.9;
                     double angle = rand.NextDouble() * Math.PI * 2.0; // radians
                     return new Point(length * Math.Cos(angle), length * Math.Sin(angle));
-                // TBD: Add random circular cluster with uniform density
+                // This approach gives us higher density toward the center of the circle
+                // TBD: Add random circular cluster with uniform density: pick random locations in a square and discard those outside the circle
 
 
                 default:

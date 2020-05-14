@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,7 +11,7 @@ namespace GravitySandboxUWP
 {
     class BuiltInScenarios
     {
-        /*
+
         public static void LoadFiveBodiesScenario(GravitySim sim)
         {
             sim.ClearSim();
@@ -18,11 +19,11 @@ namespace GravitySandboxUWP
             sim.AddBody(1.0, 3.0, 2, GravitySim.bodyStartPosition.stageTop);
             sim.AddBody(1.0, 3.0, 1, GravitySim.bodyStartPosition.stageRight);
             sim.AddBody(1.0, 3.0, 7, GravitySim.bodyStartPosition.stageBottom);
-            sim.AddBody(1.0, 5.0, 6, GravitySim.bodyStartPosition.centerOfTheUniverse);
+            sim.AddBody(1.0, 10.0, 6, GravitySim.bodyStartPosition.centerOfTheUniverse);
             sim.SetMonitoredBody(0);
             sim.SetMonitoredValues();
         }
-         * */
+
 
         public static void LoadFourBodiesScenario(GravitySim sim)
         {
@@ -34,7 +35,7 @@ namespace GravitySandboxUWP
             sim.SetMonitoredBody(0);
             sim.SetMonitoredValues();
             // sim.SetCheckSim(true);
-            sim.SetSimRounding(3);
+            // sim.SetSimRounding(3);
         }
 
         public static void LoadNineBodiesScenario(GravitySim sim)
@@ -45,16 +46,17 @@ namespace GravitySandboxUWP
             sim.AddBody(1.0, baseSize, 3, GravitySim.bodyStartPosition.stageLeft);
             sim.AddBody(1.0, baseSize, 2, GravitySim.bodyStartPosition.stageTop);
             sim.AddBody(1.0, baseSize, 1, GravitySim.bodyStartPosition.stageRight);
-            sim.AddBody(9.0, baseSize * 3.0, 7, GravitySim.bodyStartPosition.stageBottom);
+            sim.AddBody(1.0, baseSize, 7, GravitySim.bodyStartPosition.stageBottom);
             sim.AddBody(1.0, baseSize, 4, GravitySim.bodyStartPosition.stageTopLeft);
             sim.AddBody(1.0, baseSize, 5, GravitySim.bodyStartPosition.stageTopRight);
             sim.AddBody(1.0, baseSize, 6, GravitySim.bodyStartPosition.stageBottomRight);
             sim.AddBody(1.0, baseSize, 8, GravitySim.bodyStartPosition.stageBottomLeft);
-            sim.AddBody(4.0, baseSize * 2.0, 9, GravitySim.bodyStartPosition.centerOfTheUniverse);
-            sim.SetMonitoredBody(0);
+            sim.AddBody(1.0, baseSize, 9, GravitySim.bodyStartPosition.centerOfTheUniverse);
+            sim.SetMonitoredBody(8);
             sim.SetMonitoredValues();
             // sim.SetCheckSim(true);
-            // sim.SetSimRounding(2);
+            sim.SetSimRounding(2);
+            Debug.WriteLine("Loaded 9 bodies scenario");
         }
 
 
@@ -77,34 +79,34 @@ namespace GravitySandboxUWP
             sim.SetMonitoredValues();
         }
 
-        public static void LoadThreeHundredRandomBodies(GravitySim sim)
+        public static void LoadXRandomBodies(GravitySim sim, int numBodies)
         {
+            Debug.WriteLine(String.Format("Loading XRandomBodies scenario with {0} bodies", numBodies));
             Random rand = new Random();
 
             sim.ClearSim();
 
-            for (int i = 0; i < 200; i++)
+            for (int i = 0; i < numBodies; i++)
             {
-                sim.AddBody(1.0, rand.NextDouble() * 4.0 + 1.0, rand.Next(SimRender.firstColorIndex, SimRender.lastColorIndex), GravitySim.bodyStartPosition.randomScreenPosition);
+                double size = rand.NextDouble() * 4.0 + 1.0;   // Mass as square of size
+                sim.AddBody(size * size, size, rand.Next(SimRender.firstColorIndex, SimRender.lastColorIndex), GravitySim.bodyStartPosition.randomScreenPosition);
             }
 
             sim.SetMonitoredBody(0);
             sim.SetMonitoredValues();
         }
 
-        public static void LoadOneHundredBodiesCircularCluster(GravitySim sim)
+        public static void LoadXBodiesCircularCluster(GravitySim sim, int numBodies)
         {
+            Debug.WriteLine(String.Format("Loading XBodiesCircularCluster scenario with {0} bodies", numBodies));
             Random rand = new Random();
-
 
             sim.ClearSim();
 
-            for (int i = 0; i < 100; i++)
+            for (int i = 0; i < numBodies; i++)
             {
-                double size = rand.NextDouble() * 3.0 + 1.0;   // TBD: Try mass as square of size
-                if (size > 3.0)
-                    size += (size - 3.0) * 2.0;
-                sim.AddBody(size, /* rand.NextDouble() * 4.0 + 1.0*/ size, rand.Next(SimRender.firstColorIndex, SimRender.lastColorIndex), GravitySim.bodyStartPosition.randomCircularCluster);
+                double size = rand.NextDouble() * 3.0 + 1.0;   // Mass as square of size
+                sim.AddBody(size * size, size, rand.Next(SimRender.firstColorIndex, SimRender.lastColorIndex), GravitySim.bodyStartPosition.randomCircularCluster);
             }
 
             sim.SetMonitoredBody(0);

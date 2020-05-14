@@ -70,8 +70,6 @@ namespace GravitySandboxUWP
              * */
         }
 
-
-
         public void RunSimTick(ThreadPoolTimer tpt)
         {
             // TBD: run calculations on a background thread and UI updates on UI thread
@@ -81,9 +79,6 @@ namespace GravitySandboxUWP
                 sim.Step(tick);
             });
         }
-
-
-
 
         // Needs to be marshalled onto the UI thread
         public void UpdateMonitoredValues(Flatbody body, double simElapsedTime)
@@ -97,7 +92,6 @@ namespace GravitySandboxUWP
         {
             return String.Format("{0:F3}, {1:F3}", p.X, p.Y);
         }
-
 
         private void BackgroundGrid_SizeChanged(object sender, SizeChangedEventArgs e)
         {
@@ -123,7 +117,6 @@ namespace GravitySandboxUWP
             }
         }
 
-
         private void ScenarioChanging()
         {
             if (timer != null) timer.Cancel(); // If previous simulation is still running, stop it
@@ -131,31 +124,32 @@ namespace GravitySandboxUWP
             SetRunPauseButton(true);
         }
 
-
         private void Button_Click_Scenario1(object sender, RoutedEventArgs e)
-        {
-            ScenarioChanging();
-            BuiltInScenarios.LoadTwoBodiesScenario(sim);
-        }
-
-        private void Button_Click_Scenario2(object sender, RoutedEventArgs e)
         {
             ScenarioChanging();
             BuiltInScenarios.LoadNineBodiesScenario(sim);
         }
 
+        private void Button_Click_Scenario2(object sender, RoutedEventArgs e)
+        {
+            ScenarioChanging();
+            BuiltInScenarios.LoadXRandomBodies(sim, 300);
+        }
+
         private void Button_Click_Scenario3(object sender, RoutedEventArgs e)
         {
             ScenarioChanging();
-            BuiltInScenarios.LoadThreeHundredRandomBodies(sim);
+            BuiltInScenarios.LoadXBodiesCircularCluster(sim, 150);
         }
 
+        /*
         private void Button_Click_Scenario4(object sender, RoutedEventArgs e)
         {
             ScenarioChanging();
             // BuiltInScenarios.LoadFiveBodiesScenario(sim);
             BuiltInScenarios.LoadThreeHundredRandomBodies(sim);
         }
+        */
 
         private void stepButton_Click(object sender, RoutedEventArgs e)
         {

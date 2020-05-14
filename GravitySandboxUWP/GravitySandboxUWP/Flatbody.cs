@@ -81,7 +81,7 @@ namespace GravitySandboxUWP
 
         public Point BodyToBodyAccelerate(Flatbody otherBody)
         {
-            const double rMinimum = 1.0;   // we are not simulating collisions so don't let accelerations run away as bodies
+            const double rMinimum = 10.0;   // we are not simulating collisions so don't let accelerations run away as bodies
                                            //  approach 0.0 separation
             const double rMinSquared = rMinimum * rMinimum;
 
