@@ -1,5 +1,7 @@
 # Gravity-Sandbox
 Very old XAML/UWP app. Porting to various platforms to test and learn.
+
+
 ![Screenshot of UWP app](Images/UWP-Screenshot.png)
 
 Potential ports:
@@ -10,4 +12,5 @@ Potential ports:
 * (Low priority) Xamarin on Android Phone or iPad
 
 General TBDs:
+* Get the simulation running again. Figure out the animation problem that started ~2016. 
 * Run gravity calculations on multiple threads
