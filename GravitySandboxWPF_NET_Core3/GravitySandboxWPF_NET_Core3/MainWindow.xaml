@@ -6,7 +6,31 @@
         xmlns:local="clr-namespace:GravitySandboxWPF_NET_Core3"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
-    <Grid>
+    <!-- <Grid Background="{StaticResource ApplicationPageBackgroundThemeBrush}" x:Name="backgroundGrid" SizeChanged="backgroundGrid_SizeChanged"> -->
+    <Grid  x:Name="backgroundGrid" SizeChanged="backgroundGrid_SizeChanged">   <!-- see original line above -->
+        <!-- TBD: ManipulationDelta="backgroundGrid_ManipulationDelta" ManipulationStarting="backgroundGrid_ManipulationStarting" ManipulationCompleted="backgroundGrid_ManipulationCompleted" -->
+        <Canvas x:Name="backgroundCanvas" >
+        </Canvas>
+        <Grid x:Name="overlayGrid" >
+            <Grid.RowDefinitions>
+                <RowDefinition Height="88"/>
+                <RowDefinition/>
+                <RowDefinition Height="68" />
+            </Grid.RowDefinitions>
+            <StackPanel Grid.Row="0" Width="500" Orientation="Vertical" HorizontalAlignment="Left">
+                <TextBlock x:Name="velocityTextBlock" TextWrapping="Wrap" Text="-----" Width="500" Margin="10,5"/>
+                <TextBlock x:Name="positionTextBlock" TextWrapping="Wrap" Text="-----" Width="500" Margin="10,5"/>
+                <TextBlock x:Name="timeTextBlock" TextWrapping="Wrap" Text="-----" Width="500" Margin="10,5"/>
+            </StackPanel>
+            <StackPanel Grid.Row="2" Height="48" Width="900" Orientation="Horizontal" HorizontalAlignment="Left">
+                <Button Content="Scenario 1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="140" Margin="10,0" Click="Button_Click_Scenario1" />
+                <Button Content="Scenario 2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="140" Margin="10,0" Click="Button_Click_Scenario2" />
+                <Button Content="Scenario 3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="140" Margin="10,0" Click="Button_Click_Scenario3" />
+                <Button x:Name="runPauseButton" Content="Run" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="140" Margin="10,0" Click="runPauseButton_Click" />
+                <Button x:Name="stepButton" Content="Step" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="140" Margin="10,0" Click="stepButton_Click"/>
+            </StackPanel>
+
+        </Grid>
 
     </Grid>
 </Window>

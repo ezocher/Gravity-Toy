@@ -1,15 +1,15 @@
 Investigating Application Types of four old versions
 None of the old .csproj's can be opened in Visual Studio 2017 or 2019
 
-Not sure if I ever got all of these running. Original WPF version definately ran on Vista and Win8 but eventually had issues.
+Not sure if I ever got all of these running. Original definately ran on Win8 but eventually had issues.
 
-GS: (Original WPF version targeting Windows Vista)
+GS: Original version targeting Windows 8
     <OutputType>AppContainerExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Gravity_Sandbox</RootNamespace>
     <AssemblyName>Gravity sandbox</AssemblyName>
 	
-GS81: (WPF for Windows 8.1)
+GS81: Windows 8.1
     <OutputType>AppContainerExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Gravity_Sandbox</RootNamespace>
