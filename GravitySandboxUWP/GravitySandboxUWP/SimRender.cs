@@ -123,6 +123,7 @@ namespace GravitySandboxUWP
                 }
         */
 
+        // TBD: Anything that touches XAML needs to be marshalled onto the UI thread
         public void BodiesMoved(List<Flatbody> bodies)
         {
             for (int i = 0; i < bodies.Count; i++)

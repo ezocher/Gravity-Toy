@@ -85,14 +85,14 @@ namespace GravitySandboxUWP
 
 
         // TBD: add + operator to Point class ??
-        //  running - true if sim is auto-running
-        //            false if sim is single stepping
-        public void Step(double timeInterval, bool running)
+        //  simRunning - true if sim is auto-running
+        //               false if sim is single stepping
+        public void Step(double timeInterval, bool simRunning)
         {
             const double defaultAccelerationLimit = 10.0; // SimSpaceUnits per second^2
             Stopwatch perfStopwatch = new Stopwatch();
             long perfIntervalTicks = 0L;
-            bool simStepping = !running;
+            bool simStepping = !simRunning;
 
             simElapsedTime += timeInterval;
 

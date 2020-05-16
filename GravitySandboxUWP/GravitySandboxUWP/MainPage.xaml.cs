@@ -70,7 +70,6 @@ namespace GravitySandboxUWP
             Debug.WriteLine("  Timer frequency in ticks per second = {0}", frequency);
             Debug.WriteLine("  Timer frequency in ticks per millisecond = {0}", frequency / 1000L);
             long nanosecPerTick = (1000L * 1000L * 1000L) / frequency;
-            Debug.WriteLine("  Timer is accurate within {0} nanoseconds", nanosecPerTick);
         }
 
 
@@ -95,20 +94,26 @@ namespace GravitySandboxUWP
 
         public void RunSimTick(ThreadPoolTimer tpt)
         {
-            // TBD: run calculations on a background thread and UI updates on UI thread
+            // TBD: right now we're running the entire simulation on the UI thread
+            //  Update to do all calculations on a background thread and do UI updates on UI thread
             var ignored = dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
                 const double tick = 1.0 / ticksPerSecond; // seconds
                 sim.Step(tick, simRunning);
             });
+
         }
 
         // Needs to be marshalled onto the UI thread
         public void UpdateMonitoredValues(Flatbody body, double simElapsedTime)
         {
-            positionTextBlock.Text = "position = " + FormatPointToString(body.Position);
-            velocityTextBlock.Text = "velocity = " + FormatPointToString(body.Velocity);
-            timeTextBlock.Text = String.Format("time = {0:F3}", simElapsedTime);
+            /*
+            await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () => {
+            */
+                positionTextBlock.Text = "position = " + FormatPointToString(body.Position);
+                velocityTextBlock.Text = "velocity = " + FormatPointToString(body.Velocity);
+                timeTextBlock.Text = String.Format("time = {0:F3}", simElapsedTime);
+            // });
         }
 
         static string FormatPointToString(Point p)
@@ -156,7 +161,7 @@ namespace GravitySandboxUWP
         private void Button_Click_Scenario2(object sender, RoutedEventArgs e)
         {
             ScenarioChanging();
-            BuiltInScenarios.LoadXRandomBodies(sim, 250);
+            BuiltInScenarios.LoadXRandomBodies(sim, 400);
         }
 
         private void Button_Click_Scenario3(object sender, RoutedEventArgs e)

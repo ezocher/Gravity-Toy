@@ -15,7 +15,7 @@ namespace GravitySandboxUWP
         //   Sol is 1047.57 Jupiter masses and 333,000 Earth masses
         //   Sagittarius A* is 2.6 ± 0.2 million Solar masses
 
-        // Mass is in abstract units and is designed to make interesting accelerations happen at the scale of the simulation
+        // Mass is in abstract units and is designed to make interesting accelerations happen at the scale and speed of the simulation
         //      Requested masses are scaled by the massFactor, so a requested mass of 1.0 is 100,000 mass
         private const double massFactor = 100000.0;
         private const double defaultMass = 1.0;
@@ -79,6 +79,8 @@ namespace GravitySandboxUWP
             return (new Point(0.0, -earthSurfaceGravity));  // "Earth" along the bottom of the screen
         }
 
+        // TBD: Look holistically at distance minimums and acceleration limits and clean up and centralize
+        // Need to keep at least some minimum value for r to avoid divide by zero
         public Point BodyToBodyAccelerate(Flatbody otherBody)
         {
             const double rMinimum = 10.0;   // we are not simulating collisions so don't let accelerations run away as bodies
@@ -102,15 +104,13 @@ namespace GravitySandboxUWP
         {
             // Applying linear acceleration during the tick interval
 
-            Point newVelocity = new Point(0.0, 0.0);
+            double newVelocityX = velocity.X + (accel.X * deltaT);
+            position.X += (velocity.X + newVelocityX) / 2 * deltaT;
+            velocity.X = newVelocityX;
 
-            newVelocity.X = velocity.X + (accel.X * deltaT);
-            position.X += (velocity.X + newVelocity.X) / 2 * deltaT;
-            velocity.X = newVelocity.X;
-
-            newVelocity.Y = velocity.Y + (accel.Y * deltaT);
-            position.Y += (velocity.Y + newVelocity.Y) / 2 * deltaT;
-            velocity.Y = newVelocity.Y;
+            double newVelocityY = velocity.Y + (accel.Y * deltaT);
+            position.Y += (velocity.Y + newVelocityY) / 2 * deltaT;
+            velocity.Y = newVelocityY;
         }
     }
 }
