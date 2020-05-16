@@ -17,6 +17,7 @@ using Windows.System.Threading;
 using Windows.UI.Core;
 using Windows.UI.Xaml.Shapes;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
@@ -48,8 +49,30 @@ namespace GravitySandboxUWP
             SetRunPauseButton(!simRunning);
             firstRun = true;
 
-            // The inital Scenario is loaded by BackgroundGrid_SizeChanged(), which is fired when the app's window size is set initially 
+            // The inital Scenario is loaded by BackgroundGrid_SizeChanged(), which is fired when the app's window size is set initially
+
+            DisplayTimerProperties();
         }
+
+        public static void DisplayTimerProperties()
+        {
+            // Display the timer frequency and resolution.
+            if (Stopwatch.IsHighResolution)
+            {
+                Debug.WriteLine("Operations timed using the system's high-resolution performance counter.");
+            }
+            else
+            {
+                Debug.WriteLine("Operations timed using the DateTime class.");
+            }
+
+            long frequency = Stopwatch.Frequency;
+            Debug.WriteLine("  Timer frequency in ticks per second = {0}", frequency);
+            Debug.WriteLine("  Timer frequency in ticks per millisecond = {0}", frequency / 1000L);
+            long nanosecPerTick = (1000L * 1000L * 1000L) / frequency;
+            Debug.WriteLine("  Timer is accurate within {0} nanoseconds", nanosecPerTick);
+        }
+
 
         /// <summary>
         /// Invoked when this page is about to be displayed in accel Frame.
@@ -76,7 +99,7 @@ namespace GravitySandboxUWP
             var ignored = dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
                 const double tick = 1.0 / ticksPerSecond; // seconds
-                sim.Step(tick);
+                sim.Step(tick, simRunning);
             });
         }
 
@@ -113,7 +136,7 @@ namespace GravitySandboxUWP
             if (firstRun)
             {
                 firstRun = false;
-                Button_Click_Scenario2(null, null);
+                Button_Click_Scenario1(null, null);
             }
         }
 
@@ -133,13 +156,13 @@ namespace GravitySandboxUWP
         private void Button_Click_Scenario2(object sender, RoutedEventArgs e)
         {
             ScenarioChanging();
-            BuiltInScenarios.LoadXRandomBodies(sim, 300);
+            BuiltInScenarios.LoadXRandomBodies(sim, 250);
         }
 
         private void Button_Click_Scenario3(object sender, RoutedEventArgs e)
         {
             ScenarioChanging();
-            BuiltInScenarios.LoadXBodiesCircularCluster(sim, 150);
+            BuiltInScenarios.LoadXBodiesCircularCluster(sim, 200);
         }
 
         /*
@@ -154,7 +177,7 @@ namespace GravitySandboxUWP
         private void stepButton_Click(object sender, RoutedEventArgs e)
         {
             // setpositions();
-            sim.Step(defaultStepInterval);
+            sim.Step(defaultStepInterval, simRunning);
         }
 
         private void SetRunPauseButton(bool setToRun)

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -84,11 +85,23 @@ namespace GravitySandboxUWP
 
 
         // TBD: add + operator to Point class ??
-        public void Step(double timeInterval)
+        //  running - true if sim is auto-running
+        //            false if sim is single stepping
+        public void Step(double timeInterval, bool running)
         {
             const double defaultAccelerationLimit = 10.0; // SimSpaceUnits per second^2
+            Stopwatch perfStopwatch = new Stopwatch();
+            long perfIntervalTicks = 0L;
+            bool simStepping = !running;
 
             simElapsedTime += timeInterval;
+
+            if (simStepping)
+            {
+                Debug.WriteLine("Elapsed times for {0} bodies:", bodies.Count());
+                perfStopwatch.Start();
+            }
+
             if (accelerations == null)
                 accelerations = new Point[bodies.Count()];
 
@@ -111,6 +124,7 @@ namespace GravitySandboxUWP
 
             if (simRounding > 0)
                 RoundAccelerations(accelerations, simRounding);
+            if (simStepping) perfIntervalTicks = DisplayPerfIntervalElapsed(perfStopwatch, perfIntervalTicks, "Compute N-body accelerations");
 
             // Update positons and velocity
             for (int i = 0; i < bodies.Count(); i++)
@@ -121,12 +135,36 @@ namespace GravitySandboxUWP
                     simPage.UpdateMonitoredValues(bodies[i], simElapsedTime);
                 }
             }
+            if (simStepping) perfIntervalTicks = DisplayPerfIntervalElapsed(perfStopwatch, perfIntervalTicks, "Update positions and velocities");
 
             if (checkSim)
+            {
                 ValidateState(accelerations);
+                if (simStepping) perfIntervalTicks = DisplayPerfIntervalElapsed(perfStopwatch, perfIntervalTicks, "Validate state of accelerations");
+            }
 
             // Update rendering
             renderer.BodiesMoved(bodies);
+            if (simStepping) perfIntervalTicks = DisplayPerfIntervalElapsed(perfStopwatch, perfIntervalTicks, "Update transforms of XAML shapes");
+            
+            if (simStepping)
+            { 
+                Debug.WriteLine("Total elapsed time = {0:F2} ms", (double)perfIntervalTicks / (double)(Stopwatch.Frequency / 1000L));
+                Debug.WriteLine("");
+            }
+
+        }
+
+        private static long DisplayPerfIntervalElapsed(Stopwatch stopwatch, long previousIntervalStartTicks, string workDescription)
+        {
+            long elapsedTicks = stopwatch.ElapsedTicks;
+            long ticksThisInterval = elapsedTicks - previousIntervalStartTicks;
+
+            long ticksPerMillisecond = Stopwatch.Frequency / 1000L;
+
+            Debug.WriteLine("   {0} took {1:F2} ms", workDescription, (double)ticksThisInterval / (double)ticksPerMillisecond);
+
+            return elapsedTicks;
         }
 
         public void EnforceAccelerationLimit(Point[] accelerations, double limit)

@@ -51,7 +51,7 @@ namespace GravitySandboxUWP
             sim.AddBody(1.0, baseSize, 5, GravitySim.bodyStartPosition.stageTopRight);
             sim.AddBody(1.0, baseSize, 6, GravitySim.bodyStartPosition.stageBottomRight);
             sim.AddBody(1.0, baseSize, 8, GravitySim.bodyStartPosition.stageBottomLeft);
-            sim.AddBody(1.0, baseSize, 9, GravitySim.bodyStartPosition.centerOfTheUniverse);
+            sim.AddBody(10.0, baseSize, 9, GravitySim.bodyStartPosition.centerOfTheUniverse);
             sim.SetMonitoredBody(8);
             sim.SetMonitoredValues();
             // sim.SetCheckSim(true);
