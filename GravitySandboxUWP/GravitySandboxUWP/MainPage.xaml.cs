@@ -30,7 +30,7 @@ namespace GravitySandboxUWP
     public sealed partial class MainPage : Page
     {
         GravitySim sim;
-        ThreadPoolTimer timer;
+        ThreadPoolTimer frameTimer;
         CoreDispatcher dispatcher;
         Random rand;
         bool simRunning;
@@ -43,7 +43,7 @@ namespace GravitySandboxUWP
         {
             this.InitializeComponent();
             dispatcher = CoreWindow.GetForCurrentThread().Dispatcher;
-            sim = new GravitySim(backgroundCanvas, this);
+            sim = new GravitySim(backgroundCanvas, this, dispatcher);
             rand = new Random();
             simRunning = false;
             SetRunPauseButton(!simRunning);
@@ -94,26 +94,20 @@ namespace GravitySandboxUWP
 
         public void RunSimTick(ThreadPoolTimer tpt)
         {
-            // TBD: right now we're running the entire simulation on the UI thread
-            //  Update to do all calculations on a background thread and do UI updates on UI thread
-            var ignored = dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-            {
-                const double tick = 1.0 / ticksPerSecond; // seconds
-                sim.Step(tick, simRunning);
-            });
-
+            //  Updated to do all calculations in this worker thread and to do UI updates inside of this on the UI thread
+            const double tick = 1.0 / ticksPerSecond; // seconds
+            
+            sim.Step(tick, simRunning);
         }
 
-        // Needs to be marshalled onto the UI thread
+        // Updated to be marshalled onto the UI thread
         public void UpdateMonitoredValues(Flatbody body, double simElapsedTime)
         {
-            /*
-            await Dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () => {
-            */
+            var ignore = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => {
                 positionTextBlock.Text = "position = " + FormatPointToString(body.Position);
                 velocityTextBlock.Text = "velocity = " + FormatPointToString(body.Velocity);
                 timeTextBlock.Text = String.Format("time = {0:F3}", simElapsedTime);
-            // });
+            });
         }
 
         static string FormatPointToString(Point p)
@@ -125,7 +119,7 @@ namespace GravitySandboxUWP
         {
             // Pause the running simulation
             if (simRunning)
-                timer.Cancel();
+                frameTimer.Cancel();
 
             sim.renderer.SetSimulationTransform(backgroundCanvas.ActualWidth, backgroundCanvas.ActualHeight);
             // var res = DisplayProperties.ResolutionScale;  // don't need this (yet)
@@ -134,7 +128,7 @@ namespace GravitySandboxUWP
 
             // TBD: restart the running simulation
             if (simRunning)
-                timer = ThreadPoolTimer.CreatePeriodicTimer(RunSimTick, new TimeSpan(0, 0, 0, 0, 1000 / (int)ticksPerSecond));
+                frameTimer = ThreadPoolTimer.CreatePeriodicTimer(RunSimTick, new TimeSpan(0, 0, 0, 0, 1000 / (int)ticksPerSecond));
 
             // TBD: Figure out which event to hook to initialize the initially loaded scenario (or probably we have to do it this way since we need the initial layout to occur before loading the 
             //          starting scenario)
@@ -147,7 +141,7 @@ namespace GravitySandboxUWP
 
         private void ScenarioChanging()
         {
-            if (timer != null) timer.Cancel(); // If previous simulation is still running, stop it
+            if (frameTimer != null) frameTimer.Cancel(); // If previous simulation is still running, stop it
             simRunning = false;
             SetRunPauseButton(true);
         }
@@ -161,23 +155,22 @@ namespace GravitySandboxUWP
         private void Button_Click_Scenario2(object sender, RoutedEventArgs e)
         {
             ScenarioChanging();
-            BuiltInScenarios.LoadXRandomBodies(sim, 400);
+            BuiltInScenarios.LoadXRandomBodies(sim, 300, SimRender.ColorScheme.allColors);
         }
 
         private void Button_Click_Scenario3(object sender, RoutedEventArgs e)
         {
             ScenarioChanging();
-            BuiltInScenarios.LoadXBodiesCircularCluster(sim, 200);
+            BuiltInScenarios.LoadXBodiesCircularCluster(sim, 500, SimRender.ColorScheme.pastelColors);
         }
 
-        /*
+
         private void Button_Click_Scenario4(object sender, RoutedEventArgs e)
         {
             ScenarioChanging();
-            // BuiltInScenarios.LoadFiveBodiesScenario(sim);
-            BuiltInScenarios.LoadThreeHundredRandomBodies(sim);
+            // BuiltInScenarios.LoadXBodiesCircularCluster(sim, 100, SimRender.ColorScheme.grayColors);
+            BuiltInScenarios.LoadFourBodiesScenario(sim);
         }
-        */
 
         private void stepButton_Click(object sender, RoutedEventArgs e)
         {
@@ -201,12 +194,12 @@ namespace GravitySandboxUWP
             if (simRunning)
             {
                 // Pause button clicked
-                timer.Cancel();
+                frameTimer.Cancel();
             }
             else
             {
                 // Run button clicked
-                timer = ThreadPoolTimer.CreatePeriodicTimer(RunSimTick, new TimeSpan(0, 0, 0, 0, 1000 / (int)ticksPerSecond));
+                frameTimer = ThreadPoolTimer.CreatePeriodicTimer(RunSimTick, new TimeSpan(0, 0, 0, 0, 1000 / (int)ticksPerSecond));
             }
             simRunning = !simRunning;
         }

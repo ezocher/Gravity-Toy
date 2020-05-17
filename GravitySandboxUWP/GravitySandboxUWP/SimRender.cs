@@ -12,13 +12,12 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Windows.UI.Xaml.Shapes;
+using Windows.UI.Core;
 
 namespace GravitySandboxUWP
 {
     class SimRender
     {
-        public enum colorNumber { bodyColorRed = 1, bodyColorGreen, bodyColorBlue, bodyColorLtGrey = 9, bodyColorMedGrey, bodyColorDarkGrey };
-
         // The simulation box is a square with it's own coordinate space
         //      For simulations in space the origin is in the center of the square
         //      For simulations on earth, the earth surface is a flat strip across the bottom of the screen and the origin is horizontally centered with y = 0 at ground level
@@ -46,24 +45,32 @@ namespace GravitySandboxUWP
         // Mapping point in simulation space to rendering space:
         //  simPt * scaleFactor + simulationCenterTranslation + circleCenterTranslation -> renderingOffset
 
-
         private GravitySim.simulationType simType;
 
         private List<Ellipse> circles;
+
+        private CoreDispatcher dispatcher;
+
+        public enum ColorNumber { bodyColorRed = 1, bodyColorGreen, bodyColorBlue, bodyColorLtGrey = 9, bodyColorMedGrey, bodyColorDarkGrey };
 
         const string circleColorResourceBaseString = "bodyColor";
         const string circleColorMonitoredColorResourceName = "monitoredBodyColor";
 
         public const int firstColorIndex = 1;
-        public const int lastColorIndex = 10;
+        public const int lastPastelColorIndex = 8;
+        public const int firstMonochromeColorIndex = 9;
+        public const int lastColorIndex = 11;
 
-        public SimRender(GravitySim.simulationType type, Canvas simulationCanvas)
+        public enum ColorScheme { pastelColors, grayColors, allColors};
+
+        public SimRender(GravitySim.simulationType type, Canvas simulationCanvas, CoreDispatcher dispatcher)
         {
             this.simType = type;
             this.circles = new List<Ellipse>();
             this.rand = new Random();
             this.simCanvas = simulationCanvas;
             this.zoomFactor = 1.0;
+            this.dispatcher = dispatcher;
         }
 
         public void Add(double size, int colorNumber, Flatbody body)
@@ -123,18 +130,21 @@ namespace GravitySandboxUWP
                 }
         */
 
-        // TBD: Anything that touches XAML needs to be marshalled onto the UI thread
+        // Updated to be marshalled onto the UI thread
         public void BodiesMoved(List<Flatbody> bodies)
         {
-            for (int i = 0; i < bodies.Count; i++)
+            var ignore = dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
-                circles[i].RenderTransform = CircleTransform(bodies[i]);
+                for (int i = 0; i < bodies.Count; i++)
+                {
+                    circles[i].RenderTransform = CircleTransform(bodies[i]);
 
-                /* if (CircleOnscreen(circles[i]))
-                    circles[i].Visibility = Visibility.Visible;
-                else
-                    circles[i].Visibility = Visibility.Collapsed; */
-            }
+                    /* if (CircleOnscreen(circles[i]))
+                        circles[i].Visibility = Visibility.Visible;
+                    else
+                        circles[i].Visibility = Visibility.Collapsed; */
+                }
+            });
         }
 
         // TBD: test if the bounding rectangle of the circle intersects the screen rectangle

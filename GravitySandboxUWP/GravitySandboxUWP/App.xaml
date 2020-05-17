@@ -18,9 +18,9 @@
             <SolidColorBrush x:Key="bodyColor6" Color="#FFFFD8A0" />
             <SolidColorBrush x:Key="bodyColor7" Color="#FFA0A4FF" />
             <SolidColorBrush x:Key="bodyColor8" Color="#FFFFA0A0" />
-            <SolidColorBrush x:Key="bodyColor9" Color="#FF646464" />
-            <SolidColorBrush x:Key="bodyColor10" Color="#FFA0A0A0" />
-            <SolidColorBrush x:Key="bodyColor11" Color="#FFD8D8D8" />
+            <SolidColorBrush x:Key="bodyColor9" Color="#FFBFBFBF" />
+            <SolidColorBrush x:Key="bodyColor10" Color="#FF7F7F7F" />
+            <SolidColorBrush x:Key="bodyColor11" Color="#FF3F3F3F" />
 
             <SolidColorBrush x:Key="appBackground" Color="Black" />
             <SolidColorBrush x:Key="overlayTextColor" Color="White" />

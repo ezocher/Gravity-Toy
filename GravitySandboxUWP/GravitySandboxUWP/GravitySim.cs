@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Foundation;
+using Windows.UI.Core;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Shapes;
 
@@ -33,16 +34,19 @@ namespace GravitySandboxUWP
         private int simRounding;
         private Point[] accelerations;
 
-        public GravitySim(Canvas simulationCanvas, MainPage simulationPage)
+        // private static bool stepRunning;    // Didn't work as expected
+
+        public GravitySim(Canvas simulationCanvas, MainPage simulationPage, CoreDispatcher dispatcher)
         {
             simType = simulationType.spaceSimulation;
             simCanvas = simulationCanvas;
             simPage = simulationPage;
-            renderer = new SimRender(simType, simCanvas);
+            renderer = new SimRender(simType, simCanvas, dispatcher);
             simElapsedTime = 0.0;
             bodies = new List<Flatbody>();
             checkSim = false;
             simRounding = 0;
+            // stepRunning = false;
         }
 
         public void AddBody(double mass, double size, int color, bodyStartPosition startPosition)
@@ -75,6 +79,7 @@ namespace GravitySandboxUWP
             checkSim = false;
             simRounding = 0;
             accelerations = null;
+            // stepRunning = false;
         }
 
         // The scale, origin, or layout changed so we need to re-transform all of the rendered bodies
@@ -93,6 +98,15 @@ namespace GravitySandboxUWP
             Stopwatch perfStopwatch = new Stopwatch();
             long perfIntervalTicks = 0L;
             bool simStepping = !simRunning;
+
+            /*
+            if (stepRunning)
+            {
+                Debug.WriteLine("> Previous step still running, skipping this time interval");
+                return;
+            }
+            stepRunning = true;
+            */
 
             simElapsedTime += timeInterval;
 
@@ -153,6 +167,7 @@ namespace GravitySandboxUWP
                 Debug.WriteLine("");
             }
 
+            // stepRunning = false;
         }
 
         private static long DisplayPerfIntervalElapsed(Stopwatch stopwatch, long previousIntervalStartTicks, string workDescription)

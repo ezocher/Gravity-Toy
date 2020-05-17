@@ -33,10 +33,11 @@
                 <TextBlock x:Name="positionTextBlock" TextWrapping="Wrap" Text="-----" Width="500" Margin="10,5" Foreground="{StaticResource overlayTextColor}" />
                 <TextBlock x:Name="timeTextBlock" TextWrapping="Wrap" Text="-----" Width="500" Margin="10,5" Foreground="{StaticResource overlayTextColor}" />
             </StackPanel>
-            <StackPanel Grid.Row="2" Height="48" Width="900" Orientation="Horizontal" HorizontalAlignment="Left">
+            <StackPanel Grid.Row="2" Height="48" Width="1000" Orientation="Horizontal" HorizontalAlignment="Left">
                 <Button Content="Scenario 1" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="140" Margin="10,0" Click="Button_Click_Scenario1" Background="{ThemeResource ButtonBackgroundThemeBrush}" BorderBrush="{ThemeResource ButtonBorderThemeBrush}" />
                 <Button Content="Scenario 2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="140" Margin="10,0" Click="Button_Click_Scenario2" Background="{ThemeResource ButtonBackgroundThemeBrush}" BorderBrush="{ThemeResource ButtonBorderThemeBrush}" />
                 <Button Content="Scenario 3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="140" Margin="10,0" Click="Button_Click_Scenario3" Background="{ThemeResource ButtonBackgroundThemeBrush}" BorderBrush="{ThemeResource ButtonBorderThemeBrush}" />
+                <Button Content="Scenario 4" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="140" Margin="10,0" Click="Button_Click_Scenario4" Background="{ThemeResource ButtonBackgroundThemeBrush}" BorderBrush="{ThemeResource ButtonBorderThemeBrush}" />
                 <Button x:Name="runPauseButton" Content="Run" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="140" Margin="10,0" Click="runPauseButton_Click" Background="{ThemeResource ButtonBackgroundThemeBrush}" BorderBrush="{ThemeResource ButtonBorderThemeBrush}" />
                 <Button x:Name="stepButton" Content="Step" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="140" Margin="10,0" Click="stepButton_Click" Background="{ThemeResource ButtonBackgroundThemeBrush}" BorderBrush="{ThemeResource ButtonBorderThemeBrush}" />
             </StackPanel>

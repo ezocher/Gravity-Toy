@@ -51,7 +51,7 @@ namespace GravitySandboxUWP
             sim.AddBody(1.0, baseSize, 5, GravitySim.bodyStartPosition.stageTopRight);
             sim.AddBody(1.0, baseSize, 6, GravitySim.bodyStartPosition.stageBottomRight);
             sim.AddBody(1.0, baseSize, 8, GravitySim.bodyStartPosition.stageBottomLeft);
-            sim.AddBody(10.0, baseSize, 9, GravitySim.bodyStartPosition.centerOfTheUniverse);
+            sim.AddBody(1.0, baseSize, 9, GravitySim.bodyStartPosition.centerOfTheUniverse);
             sim.SetMonitoredBody(8);
             sim.SetMonitoredValues();
             // sim.SetCheckSim(true);
@@ -79,7 +79,7 @@ namespace GravitySandboxUWP
             sim.SetMonitoredValues();
         }
 
-        public static void LoadXRandomBodies(GravitySim sim, int numBodies)
+        public static void LoadXRandomBodies(GravitySim sim, int numBodies, SimRender.ColorScheme colorScheme)
         {
             Debug.WriteLine(String.Format("Loading XRandomBodies scenario with {0} bodies", numBodies));
             Random rand = new Random();
@@ -89,14 +89,14 @@ namespace GravitySandboxUWP
             for (int i = 0; i < numBodies; i++)
             {
                 double size = rand.NextDouble() * 4.0 + 1.0;   // Mass as square of size
-                sim.AddBody(size * size, size, rand.Next(SimRender.firstColorIndex, SimRender.lastColorIndex), GravitySim.bodyStartPosition.randomScreenPosition);
+                sim.AddBody(size * size, size, RandomColor(colorScheme, rand), GravitySim.bodyStartPosition.randomScreenPosition);
             }
 
             sim.SetMonitoredBody(0);
             sim.SetMonitoredValues();
         }
 
-        public static void LoadXBodiesCircularCluster(GravitySim sim, int numBodies)
+        public static void LoadXBodiesCircularCluster(GravitySim sim, int numBodies, SimRender.ColorScheme colorScheme)
         {
             Debug.WriteLine(String.Format("Loading XBodiesCircularCluster scenario with {0} bodies", numBodies));
             Random rand = new Random();
@@ -106,13 +106,25 @@ namespace GravitySandboxUWP
             for (int i = 0; i < numBodies; i++)
             {
                 double size = rand.NextDouble() * 3.0 + 1.0;   // Mass as square of size
-                sim.AddBody(size * size, size, rand.Next(SimRender.firstColorIndex, SimRender.lastColorIndex), GravitySim.bodyStartPosition.randomCircularCluster);
+                sim.AddBody(size * size, 0.5d, RandomColor(colorScheme, rand), GravitySim.bodyStartPosition.randomCircularCluster);
             }
 
             sim.SetMonitoredBody(0);
             sim.SetMonitoredValues();
         }
 
-
+        private static int RandomColor(SimRender.ColorScheme colorScheme, Random random)
+        {
+            switch (colorScheme)
+            {
+                case SimRender.ColorScheme.allColors:
+                    return random.Next(SimRender.firstColorIndex, SimRender.lastColorIndex);    // Decided to exclude the darkest gray value from this, thus the missing "+1"
+                case SimRender.ColorScheme.grayColors:
+                    return random.Next(SimRender.firstMonochromeColorIndex, SimRender.lastColorIndex + 1);
+                case SimRender.ColorScheme.pastelColors:
+                    return random.Next(SimRender.firstColorIndex, SimRender.lastPastelColorIndex + 1);
+            }
+            return 1; // Added to make the compiler happy, not reachable
+        }
     }
 }
