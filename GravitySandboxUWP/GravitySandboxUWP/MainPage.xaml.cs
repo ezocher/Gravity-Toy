@@ -39,6 +39,11 @@ namespace GravitySandboxUWP
         const double ticksPerSecond = 32.0;             // powers of two for numerical stability (divisions)
         const double defaultStepInterval = 1.0 / 8.0;   // powers of two for numerical stability (divisions)
 
+        private static bool frameInProgress = false;
+        private static long framesRendered = 0;
+        private static long framesDropped = 0;
+        private static long totalFrameDelay = 0;
+
         public MainPage()
         {
             this.InitializeComponent();
@@ -48,6 +53,7 @@ namespace GravitySandboxUWP
             simRunning = false;
             SetRunPauseButton(!simRunning);
             firstRun = true;
+            frameInProgress = false;
 
             // The inital Scenario is loaded by BackgroundGrid_SizeChanged(), which is fired when the app's window size is set initially
 
@@ -92,12 +98,34 @@ namespace GravitySandboxUWP
              * */
         }
 
+        //  Updated to do all calculations in this worker thread and to do UI updates that happen inside of this on the UI thread
         public void RunSimTick(ThreadPoolTimer tpt)
         {
-            //  Updated to do all calculations in this worker thread and to do UI updates inside of this on the UI thread
             const double tick = 1.0 / ticksPerSecond; // seconds
-            
-            sim.Step(tick, simRunning);
+            const int reportingInterval = 5 * (int)ticksPerSecond;
+
+            // Added check to see if the previous frame is still calculating/rendering when this method gets called by the timer
+            // Sufficiently large scenarios (size varies depending on the PC) can take longer than a frame tick to run
+            //  When this happens a frame is dropped and we wait until the next tick to check again
+
+            // Waiting an entire frame also gives the XAML/UWP rendering tasks time to finish before they are fired again
+            // The amount of rendering work is proportional to the amount of calculation work, so this all works out
+
+            if (frameInProgress)
+            {
+                framesDropped++;
+            }
+            else
+            {
+                frameInProgress = true;
+                sim.Step(tick, simRunning);
+                frameInProgress = false;
+                framesRendered++;
+
+                if ((framesRendered % reportingInterval) == 0)
+                    Debug.WriteLine("Frames rendered = {0}, dropped = {1}, dropped pct = {2:F2}", framesRendered, framesDropped,
+                        100.0 * (float)framesDropped / (float)(framesRendered + framesDropped));
+            }   
         }
 
         // Updated to be marshalled onto the UI thread
@@ -144,6 +172,11 @@ namespace GravitySandboxUWP
             if (frameTimer != null) frameTimer.Cancel(); // If previous simulation is still running, stop it
             simRunning = false;
             SetRunPauseButton(true);
+            framesRendered = framesDropped = totalFrameDelay = 0L;
+            frameInProgress = false;
+
+            // Wait 1 simulation tick for any frames in progress to finish
+            Task.Delay(1000 / (int)ticksPerSecond).Wait();
         }
 
         private void Button_Click_Scenario1(object sender, RoutedEventArgs e)
@@ -164,17 +197,15 @@ namespace GravitySandboxUWP
             BuiltInScenarios.LoadXBodiesCircularCluster(sim, 500, SimRender.ColorScheme.pastelColors);
         }
 
-
         private void Button_Click_Scenario4(object sender, RoutedEventArgs e)
         {
             ScenarioChanging();
-            // BuiltInScenarios.LoadXBodiesCircularCluster(sim, 100, SimRender.ColorScheme.grayColors);
-            BuiltInScenarios.LoadFourBodiesScenario(sim);
+            BuiltInScenarios.LoadXBodiesCircularCluster(sim, 418, SimRender.ColorScheme.grayColors);
+            // BuiltInScenarios.LoadFourBodiesScenario(sim);
         }
 
         private void stepButton_Click(object sender, RoutedEventArgs e)
         {
-            // setpositions();
             sim.Step(defaultStepInterval, simRunning);
         }
 
