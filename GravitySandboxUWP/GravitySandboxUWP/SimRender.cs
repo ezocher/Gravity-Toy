@@ -140,21 +140,9 @@ namespace GravitySandboxUWP
                 for (int i = 0; i < bodies.Count; i++)
                 {
                     circles[i].RenderTransform = CircleTransform(bodies[i]);
-
-                    /* if (CircleOnscreen(circles[i]))
-                        circles[i].Visibility = Visibility.Visible;
-                    else
-                        circles[i].Visibility = Visibility.Collapsed; */
                 }
             });
         }
-
-        // TBD: test if the bounding rectangle of the circle intersects the screen rectangle
-        public bool CircleOnscreen(Ellipse circle)
-        {
-            return true;
-        }
-
 
         // The simulation space is a 
         public void SetSimulationTransform(double screenWidth, double screenHeight)
