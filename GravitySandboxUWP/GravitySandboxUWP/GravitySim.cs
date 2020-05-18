@@ -88,8 +88,6 @@ namespace GravitySandboxUWP
             renderer.TransformChanged(bodies);
         }
 
-
-        // TBD: add + operator to Point class ??
         //  simRunning - true if sim is auto-running
         //               false if sim is single stepping
         public void Step(double timeInterval, bool simRunning)
@@ -127,9 +125,9 @@ namespace GravitySandboxUWP
                 for (int j = 0; j < bodies.Count(); j++)
                     if (i != j)
                     {
-                        Point a = bodies[i].BodyToBodyAccelerate(bodies[j]);
-                        accelerations[i].X += a.X;
-                        accelerations[i].Y += a.Y;
+                        Point accel = bodies[i].BodyToBodyAccelerate(bodies[j]);
+                        accelerations[i].X += accel.X;
+                        accelerations[i].Y += accel.Y;
                     }
             }
 
@@ -306,5 +304,9 @@ else
             renderer.SetMonitoredColor(monitoredBody);
         }
 
+        public void SetMessage(string message)
+        {
+            simPage.SetMessageText(message);
+        }
     }
 }

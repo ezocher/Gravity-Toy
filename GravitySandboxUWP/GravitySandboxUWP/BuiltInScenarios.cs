@@ -14,6 +14,9 @@ namespace GravitySandboxUWP
 
         public static void LoadFiveBodiesScenario(GravitySim sim)
         {
+            Debug.WriteLine("Loaded 5 bodies scenario");
+            sim.SetMessage("Running 5 Bodies Scenario");
+
             sim.ClearSim();
             sim.AddBody(1.0, 3.0, 3, GravitySim.bodyStartPosition.stageLeft);
             sim.AddBody(1.0, 3.0, 2, GravitySim.bodyStartPosition.stageTop);
@@ -27,6 +30,9 @@ namespace GravitySandboxUWP
 
         public static void LoadFourBodiesScenario(GravitySim sim)
         {
+            Debug.WriteLine("Loaded 4 bodies scenario");
+            sim.SetMessage("Running 4 Bodies Scenario");
+
             sim.ClearSim();
             sim.AddBody(1.0, 4.0, 3, GravitySim.bodyStartPosition.stageLeft);
             sim.AddBody(1.0, 4.0, 2, GravitySim.bodyStartPosition.stageTop);
@@ -42,6 +48,9 @@ namespace GravitySandboxUWP
         {
             const double baseSize = 3.0d;
 
+            Debug.WriteLine("Loaded 9 bodies scenario");
+            sim.SetMessage("Running 9 Bodies Scenario");
+
             sim.ClearSim();
             sim.AddBody(1.0, baseSize, 3, GravitySim.bodyStartPosition.stageLeft);
             sim.AddBody(1.0, baseSize, 2, GravitySim.bodyStartPosition.stageTop);
@@ -56,12 +65,13 @@ namespace GravitySandboxUWP
             sim.SetMonitoredValues();
             // sim.SetCheckSim(true);
             sim.SetSimRounding(2);
-            Debug.WriteLine("Loaded 9 bodies scenario");
         }
-
 
         public static void LoadTwoBodiesScenario(GravitySim sim)
         {
+            Debug.WriteLine("Loaded 2 bodies scenario");
+            sim.SetMessage("Running 2 Bodies Scenario");
+
             sim.ClearSim();
             sim.AddBody(1.0, 1.0, 3, GravitySim.bodyStartPosition.stageLeft, new Point(-10000.0, 10000.0));
             sim.AddBody(333000.0, 20.0, 1, GravitySim.bodyStartPosition.stageRight);
@@ -69,19 +79,10 @@ namespace GravitySandboxUWP
             sim.SetMonitoredValues();
         }
 
-
-        public static void LoadFakeEarthScenario(GravitySim sim)
-        {
-            sim.ClearSim();
-            sim.AddBody(1.0, 2.0, 1, GravitySim.bodyStartPosition.screenTop);
-            sim.AddBody(1000.0, 20.0, 7, GravitySim.bodyStartPosition.screenBottom);
-            sim.SetMonitoredBody(0);
-            sim.SetMonitoredValues();
-        }
-
         public static void LoadXRandomBodies(GravitySim sim, int numBodies, SimRender.ColorScheme colorScheme)
         {
             Debug.WriteLine(String.Format("Loading XRandomBodies scenario with {0} bodies", numBodies));
+            sim.SetMessage(String.Format("Running {0} Random Bodies Scenario", numBodies));
             Random rand = new Random();
 
             sim.ClearSim();
@@ -99,6 +100,7 @@ namespace GravitySandboxUWP
         public static void LoadXBodiesCircularCluster(GravitySim sim, int numBodies, SimRender.ColorScheme colorScheme)
         {
             Debug.WriteLine(String.Format("Loading XBodiesCircularCluster scenario with {0} bodies", numBodies));
+            sim.SetMessage(String.Format("Running {0} Bodies Circular Cluster Scenario ({1})", numBodies, colorScheme));
             Random rand = new Random();
 
             sim.ClearSim();

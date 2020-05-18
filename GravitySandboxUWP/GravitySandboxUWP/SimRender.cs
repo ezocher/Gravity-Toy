@@ -133,6 +133,8 @@ namespace GravitySandboxUWP
         // Updated to be marshalled onto the UI thread
         public void BodiesMoved(List<Flatbody> bodies)
         {
+            if (MainPage.appSuspended) return;   // Stop UI updates while app is suspended
+
             var ignore = dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
                 for (int i = 0; i < bodies.Count; i++)

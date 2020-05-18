@@ -102,7 +102,7 @@ namespace GravitySandboxUWP
 
         public void Move(Point accel, double deltaT)
         {
-            // Applying linear acceleration during the tick interval
+            // Applying linear acceleration during the time interval
 
             double newVelocityX = velocity.X + (accel.X * deltaT);
             position.X += (velocity.X + newVelocityX) / 2 * deltaT;

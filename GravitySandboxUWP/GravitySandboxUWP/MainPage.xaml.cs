@@ -20,6 +20,7 @@ using System.Threading.Tasks;
 using System.Diagnostics;
 
 
+
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
 namespace GravitySandboxUWP
@@ -44,6 +45,8 @@ namespace GravitySandboxUWP
         private static long framesDropped = 0;
         private static long totalFrameDelay = 0;
 
+        public static bool appSuspended = false;       // Keep the simulation running (if any), but stop updating the UI while app is suspended
+
         public MainPage()
         {
             this.InitializeComponent();
@@ -54,10 +57,29 @@ namespace GravitySandboxUWP
             SetRunPauseButton(!simRunning);
             firstRun = true;
             frameInProgress = false;
+            Application.Current.Suspending += new SuspendingEventHandler(App_Suspending);
+            Application.Current.Resuming += new EventHandler<Object>(App_Resuming);
 
             // The inital Scenario is loaded by BackgroundGrid_SizeChanged(), which is fired when the app's window size is set initially
 
             DisplayTimerProperties();
+        }
+
+        // When the app is suspended keep the simulation calculations running but stop updating the UI
+        //   All UI code inside the simulation loop needs to check appSuspended and not run if it's true
+        //   e.g. if (appSuspended) return;
+        void App_Suspending(Object sender, Windows.ApplicationModel.SuspendingEventArgs e)
+        {
+            appSuspended = true;
+            Debug.WriteLine(">>> App Suspended");
+            // SetMessageText(">>> App was Suspended");   // Use this message to test Suspending. Since VS debugging prevents suspending, run without debugging and
+                                                          //   look for this message to verify that suspend/resume has occured
+        }
+
+        private void App_Resuming(Object sender, Object e)
+        {
+            appSuspended = false;
+            Debug.WriteLine("<<< App Resumed");
         }
 
         public static void DisplayTimerProperties()
@@ -131,11 +153,20 @@ namespace GravitySandboxUWP
         // Updated to be marshalled onto the UI thread
         public void UpdateMonitoredValues(Flatbody body, double simElapsedTime)
         {
-            var ignore = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => {
+            if (appSuspended) return;   // Stop UI updates while app is suspended
+
+            var ignore = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
                 positionTextBlock.Text = "position = " + FormatPointToString(body.Position);
                 velocityTextBlock.Text = "velocity = " + FormatPointToString(body.Velocity);
                 timeTextBlock.Text = String.Format("time = {0:F3}", simElapsedTime);
             });
+        }
+
+        // Must be called from the UI thread
+        public void SetMessageText(string message)
+        {
+            messageTextBlock.Text = message;
         }
 
         static string FormatPointToString(Point p)
@@ -154,12 +185,12 @@ namespace GravitySandboxUWP
             if (!firstRun)
                 sim.TransformChanged();
 
-            // TBD: restart the running simulation
+            // Restart the running simulation
             if (simRunning)
                 frameTimer = ThreadPoolTimer.CreatePeriodicTimer(RunSimTick, new TimeSpan(0, 0, 0, 0, 1000 / (int)ticksPerSecond));
 
-            // TBD: Figure out which event to hook to initialize the initially loaded scenario (or probably we have to do it this way since we need the initial layout to occur before loading the 
-            //          starting scenario)
+            // We have to initialize the starting scenario here since we need the initial layout to occur before loading the 
+            //   starting scenario
             if (firstRun)
             {
                 firstRun = false;
@@ -200,7 +231,7 @@ namespace GravitySandboxUWP
         private void Button_Click_Scenario4(object sender, RoutedEventArgs e)
         {
             ScenarioChanging();
-            BuiltInScenarios.LoadXBodiesCircularCluster(sim, 418, SimRender.ColorScheme.grayColors);
+            BuiltInScenarios.LoadXBodiesCircularCluster(sim, 400, SimRender.ColorScheme.grayColors);
             // BuiltInScenarios.LoadFourBodiesScenario(sim);
         }
 
