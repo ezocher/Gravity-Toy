@@ -72,14 +72,16 @@ namespace GravitySandboxUWP
         {
             appSuspended = true;
             Debug.WriteLine(">>> App Suspended");
-            // SetMessageText(">>> App was Suspended");   // Use this message to test Suspending. Since VS debugging prevents suspending, run without debugging and
-                                                          //   look for this message to verify that suspend/resume has occured
+            SetMessageText(">>> App Suspended");   // Use this message to test Suspending. Since Visual Studio debugging prevents suspending, run without
+                                                   //   debugging and look for this message to verify that suspend/resume has occured
         }
 
         private void App_Resuming(Object sender, Object e)
         {
             appSuspended = false;
             Debug.WriteLine("<<< App Resumed");
+            AppendMessageText("<<< App Resumed");   // Use this message to test Suspending. Since Visual Studio debugging prevents suspending, run without
+                                                    //   debugging and look for this message to verify that suspend/resume has occured
         }
 
         public static void DisplayTimerProperties()
@@ -168,6 +170,15 @@ namespace GravitySandboxUWP
         {
             messageTextBlock.Text = message;
         }
+
+        // Must be called from the UI thread
+        public void AppendMessageText(string message)
+        {
+            const string threeSpaces = "   ";
+
+            messageTextBlock.Text += threeSpaces + message;
+        }
+
 
         static string FormatPointToString(Point p)
         {
