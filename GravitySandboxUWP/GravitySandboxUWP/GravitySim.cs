@@ -14,7 +14,7 @@ namespace GravitySandboxUWP
     // The simulation owns the bodies in the simulation space and holds references to their graphics incarnations (which are animated by the SimRender class)
     class GravitySim
     {
-        public enum simulationType { spaceSimulation, earthSimulation };
+        
         public enum bodyStartPosition
         {
             stageLeft, stageRight, stageTop, stageBottom, stageTopLeft, stageTopRight, stageBottomRight, stageBottomLeft,
