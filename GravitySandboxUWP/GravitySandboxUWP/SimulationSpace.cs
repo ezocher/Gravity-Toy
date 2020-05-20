@@ -11,12 +11,21 @@ namespace GravitySandboxUWP
      * Screen space is always in UWP pixel units and seconds
      * 
      */
-    class SimulationSpaces
+    class SimulationSpace
     {
-
+        public enum space { toySpace, earthOrbitSpace, solarSystemSpace };
 
         // Original simulation space: toySpace
         // Dimensions   Mass   Time    Velocity
 
+
+        // Spaces:
+        //      Toy Space
+        //      Earth Orbit Space
+        //      Solar System Space
+        //      Star System Space (Binaries and trinaries)
+        //      Globular Cluster Space
+        //      Faux Galaxy Space (for "colliding galaxies with central black holes")
+        //      Galaxy Space
     }
 }
