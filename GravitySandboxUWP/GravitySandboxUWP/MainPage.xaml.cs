@@ -37,8 +37,8 @@ namespace GravitySandboxUWP
         bool simRunning;
         bool firstRun;
 
-        const double ticksPerSecond = 32.0;             // powers of two for numerical stability (divisions)
-        const double defaultStepInterval = 1.0 / 8.0;   // powers of two for numerical stability (divisions)
+        const double coreFrameRate = 60.0;
+        const double defaultStepInterval = 1.0 / 10.0;   // 1/number of frames per step
 
         private static bool frameInProgress = false;
         private static long framesRendered = 0;
@@ -125,10 +125,10 @@ namespace GravitySandboxUWP
         }
 
         //  Updated to do all calculations in this worker thread and to do UI updates that happen inside of this on the UI thread
-        public void RunSimTick(ThreadPoolTimer tpt)
+        public void RunSimFrame(ThreadPoolTimer tpt)
         {
-            const double tick = 1.0 / ticksPerSecond; // seconds
-            const int reportingInterval = 5 * (int)ticksPerSecond;
+            const double tick = 1.0 / coreFrameRate; // seconds
+            const int reportingInterval = 10 * (int)coreFrameRate;
 
             // Added check to see if the previous frame is still calculating/rendering when this method gets called by the timer
             // Sufficiently large scenarios (size varies depending on the PC) can take longer than a frame tick to run
@@ -206,7 +206,7 @@ namespace GravitySandboxUWP
 
             // Restart the running simulation
             if (simRunning)
-                frameTimer = ThreadPoolTimer.CreatePeriodicTimer(RunSimTick, new TimeSpan(0, 0, 0, 0, 1000 / (int)ticksPerSecond));
+                frameTimer = ThreadPoolTimer.CreatePeriodicTimer(RunSimFrame, new TimeSpan(0, 0, 0, 0, 1000 / (int)coreFrameRate));
 
             // We have to initialize the starting scenario here since we need the initial layout to occur before loading the 
             //   starting scenario
@@ -226,7 +226,7 @@ namespace GravitySandboxUWP
             frameInProgress = false;
 
             // Wait 1 simulation tick for any frames in progress to finish
-            Task.Delay(1000 / (int)ticksPerSecond).Wait();
+            Task.Delay(1000 / (int)coreFrameRate).Wait();
         }
 
         #region Load Scenario Buttons
@@ -285,7 +285,7 @@ namespace GravitySandboxUWP
             else
             {
                 // Run button clicked
-                frameTimer = ThreadPoolTimer.CreatePeriodicTimer(RunSimTick, new TimeSpan(0, 0, 0, 0, 1000 / (int)ticksPerSecond));
+                frameTimer = ThreadPoolTimer.CreatePeriodicTimer(RunSimFrame, new TimeSpan(0, 0, 0, 0, 1000 / (int)coreFrameRate));
             }
             simRunning = !simRunning;
         }
