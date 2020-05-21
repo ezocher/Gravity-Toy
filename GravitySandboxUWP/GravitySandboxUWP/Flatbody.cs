@@ -9,16 +9,19 @@ namespace GravitySandboxUWP
 {
     public class Flatbody
     {
+        // TBD: refactor to SimSpace
         private const double earthSurfaceGravity = 9.80665; // m/sec^2
 
         // Mass example ratios:
         //   Sol is 1047.57 Jupiter masses and 333,000 Earth masses
         //   Sagittarius A* is 2.6 ± 0.2 million Solar masses
 
+        // TBD: refactor to SimSpace
         // Mass is in abstract units and is designed to make interesting accelerations happen at the scale and speed of the simulation
         //      Requested masses are scaled by the massFactor, so a requested mass of 1.0 is 100,000 mass
-        private const double massFactor = 100000.0;
+        private const double massFactor = 100000.0; // TBD: refactor to SimSpace
         private const double defaultMass = 1.0;
+        
         double mass;
         public double Mass
         {
@@ -27,7 +30,7 @@ namespace GravitySandboxUWP
         }
 
         // Size is in abstract units, with 1.0 the smallest size normally rendered
-        private const double defaultSize = 2.0;
+        private const double defaultSize = 2.0; // TBD: refactor to SimSpace
         double size;
         public double Size
         {
@@ -74,10 +77,12 @@ namespace GravitySandboxUWP
             Velocity = bodyStartingVelocity;
         }
 
+        /*
         public Point EarthSurfaceAccelerate()
         {
             return (new Point(0.0, -earthSurfaceGravity));  // "Earth" along the bottom of the screen
         }
+        */
 
         // TBD: Look holistically at distance minimums and acceleration limits and clean up and centralize
         // Need to keep at least some minimum value for r to avoid divide by zero
@@ -94,6 +99,7 @@ namespace GravitySandboxUWP
             rSquared = Math.Max(rSquared, rMinSquared); // enforce minimum value of r
             double r = Math.Sqrt(rSquared);
 
+            // TBD: refactor to SimSpace (currently omits g)
             // F = m1 * a, g = m1 * m2 / rSquared, m1's cancel out so a = m2 / rSquared
             double a = otherBody.mass / rSquared;
 

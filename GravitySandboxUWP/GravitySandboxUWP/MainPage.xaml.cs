@@ -68,6 +68,8 @@ namespace GravitySandboxUWP
         // When the app is suspended keep the simulation calculations running but stop updating the UI
         //   All UI code inside the simulation loop needs to check appSuspended and not run if it's true
         //   e.g. if (appSuspended) return;
+
+        // App will be suspened when it's being quit by the user
         void App_Suspending(Object sender, Windows.ApplicationModel.SuspendingEventArgs e)
         {
             appSuspended = true;
@@ -104,7 +106,7 @@ namespace GravitySandboxUWP
 
 
         /// <summary>
-        /// Invoked when this page is about to be displayed in accel Frame.
+        /// Invoked when this page is about to be displayed in ...
         /// </summary>
         /// <param name="e">Event data that describes how this page was reached.  The Parameter
         /// property is typically used to configure the page.</param>
@@ -159,9 +161,11 @@ namespace GravitySandboxUWP
 
             var ignore = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
-                positionTextBlock.Text = "position = " + FormatPointToString(body.Position);
-                velocityTextBlock.Text = "velocity = " + FormatPointToString(body.Velocity);
-                timeTextBlock.Text = String.Format("time = {0:F3}", simElapsedTime);
+                positionTextBlock.Text = "position: " + FormatPointToString(body.Position) +
+                    String.Format(", r = {0:F3} {1}", Hypotenuse(body.Position), sim.simSpace.DistanceUnitsAbbr);
+                velocityTextBlock.Text = "velocity: " + FormatPointToString(body.Velocity) + 
+                    String.Format(", v = {0:F3} {1}", Hypotenuse(body.Velocity), sim.simSpace.VelocityUnitsAbbr);
+                timeTextBlock.Text = String.Format("time: {0:F3} {1}", simElapsedTime, sim.simSpace.TimeUnitsAbbr);
             });
         }
 
@@ -179,10 +183,14 @@ namespace GravitySandboxUWP
             messageTextBlock.Text += threeSpaces + message;
         }
 
-
         static string FormatPointToString(Point p)
         {
-            return String.Format("{0:F3}, {1:F3}", p.X, p.Y);
+            return String.Format("x = {0:F3}, y = {1:F3}", p.X, p.Y);
+        }
+
+        static double Hypotenuse(Point velocity)
+        {
+            return Math.Sqrt((velocity.X * velocity.X) + (velocity.Y * velocity.Y));
         }
 
         private void BackgroundGrid_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -221,6 +229,7 @@ namespace GravitySandboxUWP
             Task.Delay(1000 / (int)ticksPerSecond).Wait();
         }
 
+        #region Load Scenario Buttons
         private void Button_Click_Scenario1(object sender, RoutedEventArgs e)
         {
             ScenarioChanging();
@@ -230,22 +239,26 @@ namespace GravitySandboxUWP
         private void Button_Click_Scenario2(object sender, RoutedEventArgs e)
         {
             ScenarioChanging();
-            BuiltInScenarios.LoadXRandomBodies(sim, 300, SimRender.ColorScheme.allColors);
+            BuiltInScenarios.LoadXRandomBodies(sim, 300, SimRenderer.ColorScheme.allColors);
         }
 
         private void Button_Click_Scenario3(object sender, RoutedEventArgs e)
         {
             ScenarioChanging();
-            BuiltInScenarios.LoadXBodiesCircularCluster(sim, 500, SimRender.ColorScheme.pastelColors);
+            //BuiltInScenarios.LoadXBodiesCircularCluster(sim, 500, SimRenderer.ColorScheme.pastelColors);
+            BuiltInScenarios.LoadOrbitingBodiesScenario(sim);
         }
 
         private void Button_Click_Scenario4(object sender, RoutedEventArgs e)
         {
             ScenarioChanging();
-            BuiltInScenarios.LoadXBodiesCircularCluster(sim, 400, SimRender.ColorScheme.grayColors);
+            BuiltInScenarios.LoadXBodiesCircularCluster(sim, 400, SimRenderer.ColorScheme.grayColors);
             // BuiltInScenarios.LoadFourBodiesScenario(sim);
         }
+        #endregion
 
+
+        #region Run/Pause and Step Buttons
         private void stepButton_Click(object sender, RoutedEventArgs e)
         {
             sim.Step(defaultStepInterval, simRunning);
@@ -276,8 +289,10 @@ namespace GravitySandboxUWP
             }
             simRunning = !simRunning;
         }
+        #endregion
 
-        #region tests
+
+        #region Tests
         private void testCoordinateMapping()
         {
             TranslateTransform t = new TranslateTransform();
@@ -294,15 +309,6 @@ namespace GravitySandboxUWP
             t = sim.renderer.CircleTransform(e);
         }
         #endregion
-
-        private void backgroundGrid_ManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
-        {}
-
-        private void backgroundGrid_ManipulationStarting(object sender, ManipulationStartingRoutedEventArgs e)
-        {}
-
-        private void backgroundGrid_ManipulationCompleted(object sender, ManipulationCompletedRoutedEventArgs e)
-        {}
 
     }
 }

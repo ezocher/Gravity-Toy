@@ -23,8 +23,8 @@ namespace GravitySandboxUWP
             randomStagePosition, randomScreenPosition, randomCircularCluster
         };
 
-        private simulationType simType;
-        public SimRender renderer;
+        public SimSpace simSpace;
+        public SimRenderer renderer;
         private List<Flatbody> bodies;
         private Canvas simCanvas;
         private MainPage simPage;
@@ -38,15 +38,15 @@ namespace GravitySandboxUWP
 
         public GravitySim(Canvas simulationCanvas, MainPage simulationPage, CoreDispatcher dispatcher)
         {
-            simType = simulationType.spaceSimulation;
             simCanvas = simulationCanvas;
             simPage = simulationPage;
-            renderer = new SimRender(simType, simCanvas, dispatcher);
+            renderer = new SimRenderer(simSpace, simCanvas, dispatcher);
             simElapsedTime = 0.0;
             bodies = new List<Flatbody>();
             checkSim = false;
             simRounding = 0;
             // stepRunning = false;
+            simSpace = new SimSpace(SimSpace.DefinedSpace.NullSpace);
         }
 
         public void AddBody(double mass, double size, int color, bodyStartPosition startPosition)
@@ -79,6 +79,7 @@ namespace GravitySandboxUWP
             checkSim = false;
             simRounding = 0;
             accelerations = null;
+            simSpace = new SimSpace(SimSpace.DefinedSpace.NullSpace);
             // stepRunning = false;
         }
 

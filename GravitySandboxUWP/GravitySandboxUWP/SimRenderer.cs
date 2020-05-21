@@ -16,7 +16,7 @@ using Windows.UI.Core;
 
 namespace GravitySandboxUWP
 {
-    class SimRender
+    class SimRenderer
     {
         // The simulation box is a square with it's own coordinate space
         //      For simulations in space the origin is in the center of the square
@@ -45,7 +45,7 @@ namespace GravitySandboxUWP
         // Mapping point in simulation space to rendering space:
         //  simPt * scaleFactor + simulationCenterTranslation + circleCenterTranslation -> renderingOffset
 
-        private GravitySim.simulationType simType;
+        private SimSpace simSpace;
 
         private List<Ellipse> circles;
 
@@ -63,9 +63,9 @@ namespace GravitySandboxUWP
 
         public enum ColorScheme { pastelColors, grayColors, allColors};
 
-        public SimRender(GravitySim.simulationType type, Canvas simulationCanvas, CoreDispatcher dispatcher)
+        public SimRenderer(SimSpace space, Canvas simulationCanvas, CoreDispatcher dispatcher)
         {
-            this.simType = type;
+            this.simSpace = space;
             this.circles = new List<Ellipse>();
             this.rand = new Random();
             this.simCanvas = simulationCanvas;
@@ -144,22 +144,25 @@ namespace GravitySandboxUWP
             });
         }
 
-        // The simulation space is a 
+        // Calculates the mapping from simulation coordinates to XAML coordinates
+        //  Called when the simulation is loaded and whenever the window is resized
         public void SetSimulationTransform(double screenWidth, double screenHeight)
         {
             screenDimensions = new Point(screenWidth, screenHeight);
             double minDimension = Math.Min(screenWidth, screenHeight);
 
-            if (simType == GravitySim.simulationType.spaceSimulation)
-            {
+            
+            //if (simType == SimulationType.spaceSimulation)
+            //{
                 scaleFactor = minDimension / simBoxHeightAndWidth;
                 simulationCenterTranslation = new Point(screenWidth / 2, screenHeight / 2);
                 screenSimulationDimensions = new Point(screenWidth / scaleFactor, screenHeight / scaleFactor);
-            }
-            else // unimplemented simType
-            {
-                throw new ArgumentException("Unimplemented simulation type:" + simType.ToString());
-            }
+            //}
+            //else // unimplemented simType
+            //{
+            //    throw new ArgumentException("Unimplemented simulation type:" + simType.ToString());
+            //}
+
             scaleFactor = scaleFactor * zoomFactor;
         }
 

@@ -120,14 +120,14 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="BuiltInScenarios.cs" />
-    <Compile Include="SimulationSpace.cs" />
+    <Compile Include="SimSpace.cs" />
     <Compile Include="Flatbody.cs" />
     <Compile Include="GravitySim.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SimRender.cs" />
+    <Compile Include="SimRenderer.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
