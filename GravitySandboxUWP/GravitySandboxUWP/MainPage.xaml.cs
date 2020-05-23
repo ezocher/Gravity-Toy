@@ -47,7 +47,7 @@ namespace GravitySandboxUWP
 
         public static bool appSuspended = false;       // Keep the simulation running (if any), but stop updating the UI while app is suspended
 
-        private static bool trailsEnabled = true;
+        private static bool trailsEnabled = false;
 
         public MainPage()
         {
@@ -293,6 +293,11 @@ namespace GravitySandboxUWP
             }
             simRunning = !simRunning;
         }
+
+        private void enableTrailsCheckBox_Click(object sender, RoutedEventArgs e)
+        {
+            trailsEnabled = !trailsEnabled;
+        }
         #endregion
 
 
@@ -313,6 +318,7 @@ namespace GravitySandboxUWP
             t = sim.renderer.CircleTransform(e);
         }
         #endregion
+
 
     }
 }
