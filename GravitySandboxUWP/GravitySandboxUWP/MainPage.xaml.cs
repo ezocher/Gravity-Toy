@@ -46,6 +46,7 @@ namespace GravitySandboxUWP
         private static long totalFrameDelay = 0;
 
         public static bool appSuspended = false;       // Keep the simulation running (if any), but stop updating the UI while app is suspended
+        public static bool scenarioEnding = false;      // True while switching scenarios, stop rendering if truw
 
         private static bool trailsEnabled = false;
 
@@ -86,6 +87,13 @@ namespace GravitySandboxUWP
             Debug.WriteLine("<<< App Resumed");
             AppendMessageText("<<< App Resumed");   // Use this message to test Suspending. Since Visual Studio debugging prevents suspending, run without
                                                     //   debugging and look for this message to verify that suspend/resume has occured
+        }
+
+        // Stop UI updates while app is suspended or changing scenarios
+        //     This should be checked before any UI updates are marshalled on to the UI thread
+        public bool UI_UpdatesStopped()
+        {
+            return ((appSuspended) || (scenarioEnding));   
         }
 
         public static void DebugTimerProperties()
@@ -161,7 +169,7 @@ namespace GravitySandboxUWP
         // Updated to be marshalled onto the UI thread
         public void UpdateMonitoredValues(Flatbody body, double simElapsedTime)
         {
-            if (appSuspended) return;   // Stop UI updates while app is suspended
+            if (UI_UpdatesStopped()) return;   // Stop UI updates while app is suspended or changing scenarios
 
             var ignore = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
@@ -223,14 +231,18 @@ namespace GravitySandboxUWP
 
         private void ScenarioChanging()
         {
-            if (frameTimer != null) frameTimer.Cancel(); // If previous simulation is still running, stop it
+            scenarioEnding = true;
+            if (frameTimer != null) frameTimer.Cancel(); // If previous simulation is still running, prevent new frames from being started
             simRunning = false;
             SetRunPauseButton(true);
             framesRendered = framesDropped = totalFrameDelay = 0L;
             frameInProgress = false;
 
-            // Wait 1 simulation tick for any frames in progress to finish
-            Task.Delay(1000 / (int)coreFrameRate).Wait();
+            Stopwatch s = new Stopwatch(); s.Start();
+            // Wait 2 simulation ticks for any frames in progress to finish
+            Task.Delay(2 * (1000 / (int)coreFrameRate)).Wait();
+            Debug.WriteLine("Scenario changing, waited for {0} ms", s.ElapsedMilliseconds);
+            scenarioEnding = false;
         }
 
         #region Load Scenario Buttons

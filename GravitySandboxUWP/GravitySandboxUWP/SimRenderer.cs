@@ -14,6 +14,8 @@ using Windows.UI.Xaml.Navigation;
 using Windows.UI.Xaml.Shapes;
 using Windows.UI.Core;
 using Windows.UI;
+using System.Diagnostics;
+using Windows.UI.Notifications;
 
 namespace GravitySandboxUWP
 {
@@ -50,8 +52,11 @@ namespace GravitySandboxUWP
         private SimSpace simSpace;
 
         private List<Ellipse> circles;
+        private List<Point> trailsPositions;        // Positions of trails dots in simulation space
 
         private CoreDispatcher dispatcher;
+
+        private MainPage mainPage;
 
         public enum ColorNumber { bodyColorRed = 1, bodyColorGreen, bodyColorBlue, bodyColorLtGrey = 9, bodyColorMedGrey, bodyColorDarkGrey };
 
@@ -67,14 +72,16 @@ namespace GravitySandboxUWP
 
         public enum ColorScheme { pastelColors, grayColors, allColors};
 
-        public SimRenderer(SimSpace space, Canvas simulationCanvas, CoreDispatcher dispatcher)
+        public SimRenderer(SimSpace space, Canvas simulationCanvas, CoreDispatcher dispatcher, MainPage mainPage)
         {
             this.simSpace = space;
             this.circles = new List<Ellipse>();
+            this.trailsPositions = new List<Point>();
             this.rand = new Random();
             this.simCanvas = simulationCanvas;
             this.zoomFactor = 1.0;
             this.dispatcher = dispatcher;
+            this.mainPage = mainPage;
             trailsBrush = new SolidColorBrush(Colors.Yellow);
         }
 
@@ -91,6 +98,8 @@ namespace GravitySandboxUWP
         private const double dotSize = 2.0;
         public void PlotDot(Point position)
         {
+            trailsPositions.Add(position);
+
             Rectangle dot = new Rectangle();
             dot.Width = dot.Height = dotSize;
             dot.Fill = trailsBrush;
@@ -105,8 +114,11 @@ namespace GravitySandboxUWP
 
         public void ClearSim()
         {
+            // TBD: Would be nice to get an exlusive lock that ensures no rendering is in progress
+
             simCanvas.Children.Clear();
             circles.Clear();
+            trailsPositions.Clear();
             scaleFactor = scaleFactor / zoomFactor;
             zoomFactor = 1.0;
         }
@@ -124,6 +136,15 @@ namespace GravitySandboxUWP
                 else
                     circle.Visibility = Visibility.Collapsed; */
                 circle.RenderTransform = CircleTransform(body);
+            }
+
+            if (simCanvas.Children.Count > bodies.Count)
+            {
+                // Trails have be drawn, move them too
+                for (int j = bodies.Count; j < simCanvas.Children.Count; j++ )
+                {
+                    simCanvas.Children[j].RenderTransform = CircleTransform(trailsPositions[j - bodies.Count], dotSize);
+                }
             }
         }
 
@@ -148,7 +169,7 @@ namespace GravitySandboxUWP
         // Updated to be marshalled onto the UI thread
         public void BodiesMoved(List<Flatbody> bodies)
         {
-            if (MainPage.appSuspended) return;   // Stop UI updates while app is suspended
+            if (mainPage.UI_UpdatesStopped()) return;   // Stop UI updates while app is suspended or changing scenarios
 
             var ignore = dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
@@ -161,7 +182,7 @@ namespace GravitySandboxUWP
 
         public void DrawTrails(Flatbody body)
         {
-            if (MainPage.appSuspended) return;   // Stop UI updates while app is suspended
+            if (mainPage.UI_UpdatesStopped()) return;   // Stop UI updates while app is suspended or changing scenarios
 
             var ignore = dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {

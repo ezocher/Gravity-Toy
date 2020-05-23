@@ -41,7 +41,7 @@ namespace GravitySandboxUWP
         {
             simCanvas = simulationCanvas;
             simPage = simulationPage;
-            renderer = new SimRenderer(simSpace, simCanvas, dispatcher);
+            renderer = new SimRenderer(simSpace, simCanvas, dispatcher, simPage);
             simElapsedTime = 0.0;
             bodies = new List<Flatbody>();
             checkSim = false;
