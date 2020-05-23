@@ -47,6 +47,8 @@ namespace GravitySandboxUWP
 
         public static bool appSuspended = false;       // Keep the simulation running (if any), but stop updating the UI while app is suspended
 
+        private static bool trailsEnabled = true;
+
         public MainPage()
         {
             this.InitializeComponent();
@@ -145,7 +147,7 @@ namespace GravitySandboxUWP
             {
                 frameInProgress = true;
                 sim.Step(tick, simRunning);
-                if ((framesRendered % trailsInterval) == 0)
+                if (((framesRendered % trailsInterval) == 0) && trailsEnabled)
                     sim.DrawTrails(simRunning);
                 frameInProgress = false;
                 framesRendered++;

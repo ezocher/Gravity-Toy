@@ -91,7 +91,7 @@ namespace GravitySandboxUWP
         private const double dotSize = 2.0;
         public void PlotDot(Point position)
         {
-            Ellipse dot = new Ellipse();
+            Rectangle dot = new Rectangle();
             dot.Width = dot.Height = dotSize;
             dot.Fill = trailsBrush;
             dot.RenderTransform = CircleTransform(position, dotSize);
