@@ -67,7 +67,7 @@ namespace GravitySandboxUWP
             sim.SetMonitoredValues();
             // sim.SetCheckSim(true);
             sim.SetSimRounding(2);
-
+            sim.SetAccelerationLimit(true);
         }
 
         public static void LoadOrbitingBodiesScenario(GravitySim sim)
@@ -78,13 +78,13 @@ namespace GravitySandboxUWP
             sim.ClearSim();
 
             sim.simSpace = new SimSpace(SimSpace.DefinedSpace.ToySpace);
-            sim.AddBody(1.0e-16, 2.0, 1, GravitySim.bodyStartPosition.stageLeft, new Point(0.0, 50.5), false);
-            //sim.AddBody(0.00001, 2.0, 2, GravitySim.bodyStartPosition.stageLeft, new Point(0.0, 40.0));
-            //sim.AddBody(0.00001, 2.0, 4, GravitySim.bodyStartPosition.stageLeft, new Point(0.0, 30.0));
-            //sim.AddBody(0.00001, 2.0, 6, GravitySim.bodyStartPosition.stageLeft, new Point(0.0, 20.0));
-            //sim.AddBody(0.00001, 2.0, 3, GravitySim.bodyStartPosition.stageLeft, new Point(0.0, 10.0));
-            //sim.AddBody(0.00001, 2.0, 5, GravitySim.bodyStartPosition.stageLeft, new Point(0.0,  0.0));
-            sim.AddBody(10000.0, 5.0, 8, GravitySim.bodyStartPosition.centerOfTheUniverse);
+            // sim.AddBody(1.0, 2.0, 1, GravitySim.bodyStartPosition.stageLeft, new Point(0.0, 50.5), false);
+            //sim.AddBody(1.0, 2.0, 2, GravitySim.bodyStartPosition.stageLeft, new Point(0.0, 40.0), false);
+            //sim.AddBody(1.0, 2.0, 4, GravitySim.bodyStartPosition.stageLeft, new Point(0.0, 30.0), false);
+            //sim.AddBody(1.0, 2.0, 6, GravitySim.bodyStartPosition.stageLeft, new Point(0.0, 20.0), false);
+            //sim.AddBody(1.0, 2.0, 3, GravitySim.bodyStartPosition.stageLeft, new Point(0.0, 60.0), false);
+            sim.AddBody(0.1, 4.0, 5, GravitySim.bodyStartPosition.stageLeft, new Point(0.0, -45.0), false);
+            sim.AddBody(10.0, 8.0, 8, GravitySim.bodyStartPosition.centerOfTheUniverse, new Point(0.0, 0.0), true);
             sim.SetMonitoredBody(0);
             sim.SetMonitoredValues();
         }
@@ -105,6 +105,7 @@ namespace GravitySandboxUWP
 
             sim.SetMonitoredBody(0);
             sim.SetMonitoredValues();
+            sim.SetAccelerationLimit(true);
         }
 
         public static void LoadXBodiesCircularCluster(GravitySim sim, int numBodies, SimRenderer.ColorScheme colorScheme)
@@ -123,6 +124,7 @@ namespace GravitySandboxUWP
 
             sim.SetMonitoredBody(0);
             sim.SetMonitoredValues();
+            sim.SetAccelerationLimit(true);
         }
 
         private static int RandomColor(SimRenderer.ColorScheme colorScheme, Random random)

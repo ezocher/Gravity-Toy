@@ -18,6 +18,7 @@ namespace GravitySandboxUWP
 {
     class SimRenderer
     {
+
         // The simulation box is a square with it's own coordinate space
         //      For simulations in space the origin is in the center of the square
         //      For simulations on earth, the earth surface is a flat strip across the bottom of the screen and the origin is horizontally centered with y = 0 at ground level

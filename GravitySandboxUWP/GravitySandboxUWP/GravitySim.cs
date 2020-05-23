@@ -32,6 +32,7 @@ namespace GravitySandboxUWP
         private double simElapsedTime;
         private bool checkSim;
         private int simRounding;
+        private bool accelerationLimit;
         private Point[] accelerations;
 
         // private static bool stepRunning;    // Didn't work as expected
@@ -78,6 +79,11 @@ namespace GravitySandboxUWP
             simRounding = roundingDigits;
         }
 
+        public void SetAccelerationLimit(bool limitOn)
+        {
+            accelerationLimit = limitOn;
+        }
+
         public void ClearSim()
         {
             bodies.Clear();
@@ -85,6 +91,7 @@ namespace GravitySandboxUWP
             simElapsedTime = 0.0;
             checkSim = false;
             simRounding = 0;
+            accelerationLimit = false;
             accelerations = null;
             simSpace = new SimSpace(SimSpace.DefinedSpace.NullSpace);
             // stepRunning = false;
@@ -139,8 +146,8 @@ namespace GravitySandboxUWP
                     }
             }
 
-            // if (accelerationLimit)
-            EnforceAccelerationLimit(accelerations, defaultAccelerationLimit);
+            if (accelerationLimit)
+                EnforceAccelerationLimit(accelerations, defaultAccelerationLimit);
 
             if (simRounding > 0)
                 RoundAccelerations(accelerations, simRounding);
