@@ -96,15 +96,24 @@ namespace GravitySandboxUWP
         }
 
         private const double dotSize = 2.0;
-        public void PlotDot(Point position)
-        {
-            trailsPositions.Add(position);
+        private Point previousTrailPosition;
 
-            Rectangle dot = new Rectangle();
-            dot.Width = dot.Height = dotSize;
-            dot.Fill = trailsBrush;
-            dot.RenderTransform = CircleTransform(position, dotSize);
-            simCanvas.Children.Add(dot);
+        public void PlotTrailDot(Point position)
+        {
+            // Always plot the first point
+            // Don't plot subsequent points iff they're repeats of the previous point
+            if ((trailsPositions.Count == 0) || !position.Equals(previousTrailPosition))
+            {
+                previousTrailPosition = position;
+
+                trailsPositions.Add(position);
+
+                Rectangle dot = new Rectangle();
+                dot.Width = dot.Height = dotSize;
+                dot.Fill = trailsBrush;
+                dot.RenderTransform = CircleTransform(position, dotSize);
+                simCanvas.Children.Add(dot);
+            }
         }
 
         public void SetMonitoredColor(int monitoredCircleIndex)
@@ -186,7 +195,7 @@ namespace GravitySandboxUWP
 
             var ignore = dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
-                PlotDot(body.Position);
+                PlotTrailDot(body.Position);
             });
         }
 
