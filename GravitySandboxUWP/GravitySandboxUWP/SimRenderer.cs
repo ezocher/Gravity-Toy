@@ -13,6 +13,7 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Windows.UI.Xaml.Shapes;
 using Windows.UI.Core;
+using Windows.UI;
 
 namespace GravitySandboxUWP
 {
@@ -62,6 +63,8 @@ namespace GravitySandboxUWP
         public const int firstMonochromeColorIndex = 9;
         public const int lastColorIndex = 11;
 
+        private static SolidColorBrush trailsBrush;
+
         public enum ColorScheme { pastelColors, grayColors, allColors};
 
         public SimRenderer(SimSpace space, Canvas simulationCanvas, CoreDispatcher dispatcher)
@@ -72,6 +75,7 @@ namespace GravitySandboxUWP
             this.simCanvas = simulationCanvas;
             this.zoomFactor = 1.0;
             this.dispatcher = dispatcher;
+            trailsBrush = new SolidColorBrush(Colors.Yellow);
         }
 
         public void Add(double size, int colorNumber, Flatbody body)
@@ -82,6 +86,16 @@ namespace GravitySandboxUWP
             newCircle.RenderTransform = CircleTransform(body);
             simCanvas.Children.Add(newCircle);
             circles.Add(newCircle);
+        }
+
+        private const double dotSize = 2.0;
+        public void PlotDot(Point position)
+        {
+            Ellipse dot = new Ellipse();
+            dot.Width = dot.Height = dotSize;
+            dot.Fill = trailsBrush;
+            dot.RenderTransform = CircleTransform(position, dotSize);
+            simCanvas.Children.Add(dot);
         }
 
         public void SetMonitoredColor(int monitoredCircleIndex)
@@ -145,6 +159,16 @@ namespace GravitySandboxUWP
             });
         }
 
+        public void DrawTrails(Flatbody body)
+        {
+            if (MainPage.appSuspended) return;   // Stop UI updates while app is suspended
+
+            var ignore = dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                PlotDot(body.Position);
+            });
+        }
+
         // Calculates the mapping from simulation coordinates to XAML coordinates
         //  Called when the simulation is loaded and whenever the window is resized
         public void SetSimulationTransform(double screenWidth, double screenHeight)
@@ -186,6 +210,19 @@ namespace GravitySandboxUWP
 
             return t;
         }
+
+
+        public TranslateTransform CircleTransform(Point position, double size)
+        {
+            TranslateTransform t = new TranslateTransform();
+            double circleCenterTranslation = -size / 2.0;
+
+            t.X = position.X * scaleFactor + simulationCenterTranslation.X + circleCenterTranslation;
+            t.Y = position.Y * -scaleFactor + simulationCenterTranslation.Y + circleCenterTranslation;
+
+            return t;
+        }
+
 
 
         // Returns starting position for a body in simulation space coordinates

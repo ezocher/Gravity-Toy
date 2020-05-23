@@ -83,8 +83,8 @@ namespace GravitySandboxUWP
             //sim.AddBody(1.0, 2.0, 4, GravitySim.bodyStartPosition.stageLeft, new Point(0.0, 30.0), false);
             //sim.AddBody(1.0, 2.0, 6, GravitySim.bodyStartPosition.stageLeft, new Point(0.0, 20.0), false);
             //sim.AddBody(1.0, 2.0, 3, GravitySim.bodyStartPosition.stageLeft, new Point(0.0, 60.0), false);
-            sim.AddBody(0.1, 4.0, 5, GravitySim.bodyStartPosition.stageLeft, new Point(0.0, -45.0), false);
-            sim.AddBody(10.0, 8.0, 8, GravitySim.bodyStartPosition.centerOfTheUniverse, new Point(0.0, 0.0), true);
+            sim.AddBody(0.1, 4.0, 5, GravitySim.bodyStartPosition.stageTopLeft, new Point(-38.9, -38.9), true);
+            sim.AddBody(10.0, 8.0, 8, GravitySim.bodyStartPosition.centerOfTheUniverse, new Point(0.389, 0.380), true);
             sim.SetMonitoredBody(0);
             sim.SetMonitoredValues();
         }
@@ -103,7 +103,7 @@ namespace GravitySandboxUWP
                 sim.AddBody(size * size, size, RandomColor(colorScheme, rand), GravitySim.bodyStartPosition.randomScreenPosition);
             }
 
-            sim.SetMonitoredBody(0);
+            sim.SetMonitoredBody(numBodies - 1);
             sim.SetMonitoredValues();
             sim.SetAccelerationLimit(true);
         }
@@ -122,9 +122,9 @@ namespace GravitySandboxUWP
                 sim.AddBody(size * size, 0.5d, RandomColor(colorScheme, rand), GravitySim.bodyStartPosition.randomCircularCluster);
             }
 
-            sim.SetMonitoredBody(0);
+            sim.SetMonitoredBody(numBodies - 1);
             sim.SetMonitoredValues();
-            sim.SetAccelerationLimit(true);
+            sim.SetAccelerationLimit(false);
         }
 
         private static int RandomColor(SimRenderer.ColorScheme colorScheme, Random random)

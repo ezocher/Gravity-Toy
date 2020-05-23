@@ -183,6 +183,11 @@ namespace GravitySandboxUWP
             // stepRunning = false;
         }
 
+        public void DrawTrails(bool simRunning)
+        {
+            renderer.DrawTrails(bodies[monitoredBody]);
+        }
+
         private static long DisplayPerfIntervalElapsed(Stopwatch stopwatch, long previousIntervalStartTicks, string workDescription)
         {
             long elapsedTicks = stopwatch.ElapsedTicks;
