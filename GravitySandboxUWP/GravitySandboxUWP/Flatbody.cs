@@ -21,7 +21,7 @@ namespace GravitySandboxUWP
         //      Requested masses are scaled by the massFactor, so a requested mass of 1.0 is 100,000 mass
         private const double massFactor = 100000.0; // TBD: refactor to SimSpace
         private const double defaultMass = 1.0;
-        
+
         double mass;
         public double Mass
         {
@@ -31,12 +31,7 @@ namespace GravitySandboxUWP
 
         // Size is in abstract units, with 1.0 the smallest size normally rendered
         private const double defaultSize = 2.0; // TBD: refactor to SimSpace
-        double size;
-        public double Size
-        {
-            get { return size; }
-            private set { size = value; }
-        }
+        public double Size { get; private set; }
 
         Point position;
         public Point Position
@@ -46,19 +41,30 @@ namespace GravitySandboxUWP
         }
 
         private Point defaultStartingVelocity = new Point(0.0, 0.0);
-        Point velocity;
+        private Point velocity;
         public Point Velocity
         {
             get { return velocity; }
             private set { velocity = value; }
         }
 
+        // GravitySource is true for bodies that exert gravity on all other bodies and false for those that don't
+        //    exert gravity on any other bodies
+        //
+        // Usage: For scenarios with many tiny bodies orbiting a large one (e.g. satellites in earth orbit), 
+        //   have only the larger body exert gravity. This will eliminate unnecessary calculations and also leave the large
+        //   body undisturbed by all the tiny things flying around it
+        private const bool defaultGravitySource = true;
+        public bool IsGravitySource { get; private set; }
+
+        #region Constructors
         public Flatbody(Point bodyStartingPosition)
         {
             Mass = defaultMass;
             Size = defaultSize;
             Position = bodyStartingPosition;
             Velocity = defaultStartingVelocity;
+            IsGravitySource = defaultGravitySource;
         }
 
         public Flatbody(double bodyMass, double bodySize, Point bodyStartingPosition)
@@ -67,6 +73,7 @@ namespace GravitySandboxUWP
             Size = bodySize;
             Position = bodyStartingPosition;
             Velocity = defaultStartingVelocity;
+            IsGravitySource = defaultGravitySource;
         }
 
         public Flatbody(double bodyMass, double bodySize, Point bodyStartingPosition, Point bodyStartingVelocity)
@@ -75,14 +82,21 @@ namespace GravitySandboxUWP
             Size = bodySize;
             Position = bodyStartingPosition;
             Velocity = bodyStartingVelocity;
+            IsGravitySource = defaultGravitySource;
         }
 
-        /*
-        public Point EarthSurfaceAccelerate()
+        public Flatbody(double bodyMass, double bodySize, Point bodyStartingPosition, Point bodyStartingVelocity,
+            bool isGravitySource)
         {
-            return (new Point(0.0, -earthSurfaceGravity));  // "Earth" along the bottom of the screen
+            Mass = bodyMass;
+            Size = bodySize;
+            Position = bodyStartingPosition;
+            Velocity = bodyStartingVelocity;
+            IsGravitySource = isGravitySource;
         }
-        */
+        #endregion
+
+        #region 2D Physics
 
         // TBD: Look holistically at distance minimums and acceleration limits and clean up and centralize
         // Need to keep at least some minimum value for r to avoid divide by zero
@@ -108,15 +122,20 @@ namespace GravitySandboxUWP
 
         public void Move(Point accel, double deltaT)
         {
-            // Applying linear acceleration during the time interval
+            if ( !((accel.X == 0.0) && (accel.Y == 0.0)) )
+            {
+                // Apply linear acceleration during the time interval
 
-            double newVelocityX = velocity.X + (accel.X * deltaT);
-            position.X += (velocity.X + newVelocityX) / 2 * deltaT;
-            velocity.X = newVelocityX;
+                double newVelocityX = velocity.X + (accel.X * deltaT);
+                position.X += (velocity.X + newVelocityX) / 2 * deltaT;
+                velocity.X = newVelocityX;
 
-            double newVelocityY = velocity.Y + (accel.Y * deltaT);
-            position.Y += (velocity.Y + newVelocityY) / 2 * deltaT;
-            velocity.Y = newVelocityY;
+                double newVelocityY = velocity.Y + (accel.Y * deltaT);
+                position.Y += (velocity.Y + newVelocityY) / 2 * deltaT;
+                velocity.Y = newVelocityY;
+            }
         }
+
+        #endregion
     }
 }

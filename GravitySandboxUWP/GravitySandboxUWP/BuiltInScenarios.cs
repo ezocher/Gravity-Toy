@@ -78,7 +78,7 @@ namespace GravitySandboxUWP
             sim.ClearSim();
 
             sim.simSpace = new SimSpace(SimSpace.DefinedSpace.ToySpace);
-            sim.AddBody(1.0e-16, 2.0, 1, GravitySim.bodyStartPosition.stageLeft, new Point(0.0, 50.5));
+            sim.AddBody(1.0e-16, 2.0, 1, GravitySim.bodyStartPosition.stageLeft, new Point(0.0, 50.5), false);
             //sim.AddBody(0.00001, 2.0, 2, GravitySim.bodyStartPosition.stageLeft, new Point(0.0, 40.0));
             //sim.AddBody(0.00001, 2.0, 4, GravitySim.bodyStartPosition.stageLeft, new Point(0.0, 30.0));
             //sim.AddBody(0.00001, 2.0, 6, GravitySim.bodyStartPosition.stageLeft, new Point(0.0, 20.0));

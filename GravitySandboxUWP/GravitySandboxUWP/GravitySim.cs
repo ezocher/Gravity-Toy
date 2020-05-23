@@ -61,6 +61,13 @@ namespace GravitySandboxUWP
             renderer.Add(size, color, bodies.Last());
         }
 
+        public void AddBody(double mass, double size, int color, bodyStartPosition startPosition, Point startVelocity,
+            bool isGravitySource)
+        {
+            bodies.Add(new Flatbody(mass, size, renderer.GetStartingPosition(startPosition), startVelocity, isGravitySource));
+            renderer.Add(size, color, bodies.Last());
+        }
+
         public void SetCheckSim(bool check)
         {
             checkSim = check;
@@ -124,7 +131,7 @@ namespace GravitySandboxUWP
                 accelerations[i].X = 0.0;
                 accelerations[i].Y = 0.0;
                 for (int j = 0; j < bodies.Count(); j++)
-                    if (i != j)
+                    if ((i != j) && bodies[j].IsGravitySource)
                     {
                         Point accel = bodies[i].BodyToBodyAccelerate(bodies[j]);
                         accelerations[i].X += accel.X;
@@ -139,7 +146,7 @@ namespace GravitySandboxUWP
                 RoundAccelerations(accelerations, simRounding);
             if (simStepping) perfIntervalTicks = DisplayPerfIntervalElapsed(perfStopwatch, perfIntervalTicks, "Compute N-body accelerations");
 
-            // Update positons and velocity
+            // Update positons and velocities
             for (int i = 0; i < bodies.Count(); i++)
             {
                 bodies[i].Move(accelerations[i], timeInterval);
@@ -196,6 +203,7 @@ namespace GravitySandboxUWP
         }
 
 
+        #region Validation Checks
         private void ValidateState(Point[] accelerations)
         {
             bool invalid;
@@ -254,6 +262,7 @@ namespace GravitySandboxUWP
                 return true;
         }
 
+        #endregion
 
         private void RoundAccelerations(Point[] accelerations, int roundingDigits)
         {

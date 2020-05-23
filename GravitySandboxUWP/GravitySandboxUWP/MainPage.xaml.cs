@@ -38,7 +38,7 @@ namespace GravitySandboxUWP
         bool firstRun;
 
         const double coreFrameRate = 60.0;
-        const double defaultStepInterval = 1.0 / 10.0;   // 1/number of frames per step
+        const double defaultStepInterval = 1.0 / 10.0;   // In seconds
 
         private static bool frameInProgress = false;
         private static long framesRendered = 0;
@@ -62,7 +62,7 @@ namespace GravitySandboxUWP
 
             // The inital Scenario is loaded by BackgroundGrid_SizeChanged(), which is fired when the app's window size is set initially
 
-            DisplayTimerProperties();
+            DebugTimerProperties();
         }
 
         // When the app is suspended keep the simulation calculations running but stop updating the UI
@@ -86,7 +86,7 @@ namespace GravitySandboxUWP
                                                     //   debugging and look for this message to verify that suspend/resume has occured
         }
 
-        public static void DisplayTimerProperties()
+        public static void DebugTimerProperties()
         {
             // Display the timer frequency and resolution.
             if (Stopwatch.IsHighResolution)
@@ -101,7 +101,6 @@ namespace GravitySandboxUWP
             long frequency = Stopwatch.Frequency;
             Debug.WriteLine("  Timer frequency in ticks per second = {0}", frequency);
             Debug.WriteLine("  Timer frequency in ticks per millisecond = {0}", frequency / 1000L);
-            long nanosecPerTick = (1000L * 1000L * 1000L) / frequency;
         }
 
 
