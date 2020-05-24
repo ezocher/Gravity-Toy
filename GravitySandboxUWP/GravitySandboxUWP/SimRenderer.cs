@@ -28,13 +28,7 @@ namespace GravitySandboxUWP
         //
         // The simulation box will be centered on the display and will be the maximum size it can be while remaining completely on the screen
         //
-        const double simBoxHeightAndWidth = 1000.0;
-        const double simBoxMaxXY = simBoxHeightAndWidth / 2.0;
-
         const double earthStripHeight = 20.0;
-
-        const double circleSizeFactor = 10.0;  // the smallest body will have a simulaton size of 1.0, render it with this diameter in simulation space
-
 
         private Point screenDimensions;     // screen dimensions in rendering space
         private double scaleFactor;         // use scaleFactor for x, use -scaleFactor for y - incorporates any zoom factor
@@ -49,7 +43,7 @@ namespace GravitySandboxUWP
         // Mapping point in simulation space to rendering space:
         //  simPt * scaleFactor + simulationCenterTranslation + circleCenterTranslation -> renderingOffset
 
-        private SimSpace simSpace;
+        public SimSpace simSpace;
 
         private List<Ellipse> circles;
         private List<Point> trailsPositions;        // Positions of trails dots in simulation space
@@ -201,17 +195,17 @@ namespace GravitySandboxUWP
             screenDimensions = new Point(screenWidth, screenHeight);
             double minDimension = Math.Min(screenWidth, screenHeight);
 
-            
-            //if (simType == SimulationType.spaceSimulation)
-            //{
-                scaleFactor = minDimension / simBoxHeightAndWidth;
-                simulationCenterTranslation = new Point(screenWidth / 2, screenHeight / 2);
-                screenSimulationDimensions = new Point(screenWidth / scaleFactor, screenHeight / scaleFactor);
-            //}
-            //else // unimplemented simType
-            //{
-            //    throw new ArgumentException("Unimplemented simulation type:" + simType.ToString());
-            //}
+
+            // This can be called before any scenarios have been loaded, provide a placeholder value in this case
+            double simBoxDimensions;
+            if (simSpace == null)
+                simBoxDimensions = 1.0;
+            else
+                simBoxDimensions = simSpace.SimBoxHeightAndWidth;
+
+            scaleFactor = minDimension / simBoxDimensions;
+            simulationCenterTranslation = new Point(screenWidth / 2, screenHeight / 2);
+            screenSimulationDimensions = new Point(screenWidth / scaleFactor, screenHeight / scaleFactor);
 
             scaleFactor = scaleFactor * zoomFactor;
         }
@@ -219,7 +213,7 @@ namespace GravitySandboxUWP
 
         private double CircleSize(double bodySize)
         {
-            return (bodySize * circleSizeFactor * scaleFactor);
+            return (bodySize * scaleFactor);
         }
 
 
@@ -248,13 +242,13 @@ namespace GravitySandboxUWP
             return t;
         }
 
-
-
         // Returns starting position for a body in simulation space coordinates
         public Point GetStartingPosition(GravitySim.bodyStartPosition startPos)
         {
             const double stagePosition = 0.5; // For the "stage" positions - proportion of the way from the center of the stage to the edge
                                               //    in all directions
+
+            double simBoxMaxXY = simSpace.SimBoxHeightAndWidth / 2.0;
             double stageXY = simBoxMaxXY * stagePosition;
 
             double screenMaxX = screenSimulationDimensions.X / 2.0;

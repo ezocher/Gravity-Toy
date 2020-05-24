@@ -14,7 +14,7 @@ namespace GravitySandboxUWP
      */
     class SimSpace
     {
-        public enum DefinedSpace { NullSpace, ToySpace //, EarthOrbitSpace, SolarSystemSpace
+        public enum DefinedSpace { NullSpace, ToySpace, LEOSpace   // , SolarSystemSpace
                 };
 
         // Null space has no units and is 1 x 1 in extent
@@ -32,6 +32,8 @@ namespace GravitySandboxUWP
         //      Faux Galaxy Space (for "colliding galaxies with central black holes")
         //      Galaxy Space
 
+        public const double EarthRadiusKm = 6371.0;
+        public const double LEO_OrbitMaxAltitudeKm = 2000.0;
 
         readonly string velocityUnitsAbbr;
         public string VelocityUnitsAbbr { get { return velocityUnitsAbbr; } }
@@ -42,6 +44,12 @@ namespace GravitySandboxUWP
         readonly string timeUnitsAbbr;
         public string TimeUnitsAbbr { get { return timeUnitsAbbr; } }
 
+        readonly double simBoxHeightAndWidth;
+        public double SimBoxHeightAndWidth {  get { return simBoxHeightAndWidth; } }
+
+        readonly double distanceOffset;
+        public double DistanceOffset {  get { return distanceOffset; } }
+
         public SimSpace(DefinedSpace space)
         {
             if (space == DefinedSpace.ToySpace)
@@ -49,12 +57,27 @@ namespace GravitySandboxUWP
                 this.velocityUnitsAbbr = "";
                 this.distanceUnitsAbbr = "";
                 this.timeUnitsAbbr = "sec.";
+
+                this.simBoxHeightAndWidth = 1000.0;
+                this.distanceOffset = 0.0;
             }
             else if (space == DefinedSpace.NullSpace)
             {
                 this.velocityUnitsAbbr = "";
                 this.distanceUnitsAbbr = "";
                 this.timeUnitsAbbr = "";
+
+                this.simBoxHeightAndWidth = 500.0;
+                this.distanceOffset = 0.0;
+            }
+            else if (space == DefinedSpace.LEOSpace)
+            {
+                this.velocityUnitsAbbr = "km/h";
+                this.distanceUnitsAbbr = "km";
+                this.timeUnitsAbbr = "min.";
+
+                this.simBoxHeightAndWidth = 4.0 * EarthRadiusKm;
+                this.distanceOffset = EarthRadiusKm;
             }
         }
     }

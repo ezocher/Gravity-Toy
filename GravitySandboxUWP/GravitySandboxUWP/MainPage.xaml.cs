@@ -173,10 +173,11 @@ namespace GravitySandboxUWP
 
             var ignore = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
-                positionTextBlock.Text = "position: " + FormatPointToString(body.Position) +
-                    String.Format(", r = {0:F3} {1}", Hypotenuse(body.Position), sim.simSpace.DistanceUnitsAbbr);
                 velocityTextBlock.Text = "velocity: " + FormatPointToString(body.Velocity) + 
                     String.Format(", v = {0:F3} {1}", Hypotenuse(body.Velocity), sim.simSpace.VelocityUnitsAbbr);
+                positionTextBlock.Text = "position: " + FormatPointToString(body.Position) +
+                    String.Format(", r = {0:F3} {1}", Hypotenuse(body.Position) - sim.simSpace.DistanceOffset,
+                    sim.simSpace.DistanceUnitsAbbr);
                 timeTextBlock.Text = String.Format("time: {0:F3} {1}", simElapsedTime, sim.simSpace.TimeUnitsAbbr);
             });
         }
@@ -274,7 +275,8 @@ namespace GravitySandboxUWP
         private void Button_Click_Scenario4(object sender, RoutedEventArgs e)
         {
             ScenarioChanging();
-            BuiltInScenarios.LoadXBodiesCircularCluster(sim, 400, SimRenderer.ColorScheme.grayColors);
+            BuiltInScenarios.LoadLowEarthOrbit(sim);
+            // BuiltInScenarios.LoadXBodiesCircularCluster(sim, 400, SimRenderer.ColorScheme.grayColors);
             // BuiltInScenarios.LoadFourBodiesScenario(sim);
         }
         #endregion
