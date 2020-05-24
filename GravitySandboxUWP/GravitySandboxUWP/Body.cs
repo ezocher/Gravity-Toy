@@ -7,10 +7,10 @@ using Windows.Foundation;
 
 namespace GravitySandboxUWP
 {
-    public class Flatbody
+    public class Body
     {
 
-        // TBD: refactor to SimSpace
+        // TBD: refactor to SimSpace - These are for original toySpace scenarios
         // Mass is in abstract units and is designed to make interesting accelerations happen at the scale and speed of the simulation
         //      Requested masses are scaled by the massFactor, so a requested mass of 1.0 is 100,000 mass
         private const double massFactor = 100000.0; // TBD: refactor to SimSpace
@@ -52,7 +52,7 @@ namespace GravitySandboxUWP
         public bool IsGravitySource { get; private set; }
 
         #region Constructors
-        public Flatbody(Point bodyStartingPosition)
+        public Body(Point bodyStartingPosition)
         {
             Mass = defaultMass;
             Size = defaultSize;
@@ -61,7 +61,7 @@ namespace GravitySandboxUWP
             IsGravitySource = defaultGravitySource;
         }
 
-        public Flatbody(double bodyMass, double bodySize, Point bodyStartingPosition)
+        public Body(double bodyMass, double bodySize, Point bodyStartingPosition)
         {
             Mass = bodyMass;
             Size = bodySize;
@@ -70,7 +70,7 @@ namespace GravitySandboxUWP
             IsGravitySource = defaultGravitySource;
         }
 
-        public Flatbody(double bodyMass, double bodySize, Point bodyStartingPosition, Point bodyStartingVelocity)
+        public Body(double bodyMass, double bodySize, Point bodyStartingPosition, Point bodyStartingVelocity)
         {
             Mass = bodyMass;
             Size = bodySize;
@@ -79,7 +79,7 @@ namespace GravitySandboxUWP
             IsGravitySource = defaultGravitySource;
         }
 
-        public Flatbody(double bodyMass, double bodySize, Point bodyStartingPosition, Point bodyStartingVelocity,
+        public Body(double bodyMass, double bodySize, Point bodyStartingPosition, Point bodyStartingVelocity,
             bool isGravitySource)
         {
             Mass = bodyMass;
@@ -94,7 +94,7 @@ namespace GravitySandboxUWP
 
         // TBD: Look holistically at distance minimums and acceleration limits and clean up and centralize
         // Need to keep at least some minimum value for r to avoid divide by zero
-        public Point BodyToBodyAccelerate(Flatbody otherBody)
+        public Point BodyToBodyAccelerate(Body otherBody)
         {
             const double rMinimum = 10.0;   // we are not simulating collisions so don't let accelerations run away as bodies
                                            //  approach 0.0 separation

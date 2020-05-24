@@ -37,8 +37,8 @@ namespace GravitySandboxUWP
         bool simRunning;
         bool firstRun;
 
-        const double coreFrameRate = 60.0;
-        const double defaultStepInterval = 1.0 / 10.0;   // In seconds
+        const double coreFrameRate = 60.0;               
+        const double defaultStepInterval = 1.0 / 10.0;   // Portion of 
 
         private static bool frameInProgress = false;
         private static long framesRendered = 0;
@@ -167,7 +167,7 @@ namespace GravitySandboxUWP
         }
 
         // Updated to be marshalled onto the UI thread
-        public void UpdateMonitoredValues(Flatbody body, double simElapsedTime)
+        public void UpdateMonitoredValues(Body body, double simElapsedTime)
         {
             if (UI_UpdatesStopped()) return;   // Stop UI updates while app is suspended or changing scenarios
 
@@ -326,15 +326,15 @@ namespace GravitySandboxUWP
         {
             TranslateTransform t = new TranslateTransform();
 
-            Flatbody a = new Flatbody(new Point(0, 0));
+            Body a = new Body(new Point(0, 0));
             t = sim.renderer.CircleTransform(a);
-            Flatbody b = new Flatbody(new Point(-500, 0));
+            Body b = new Body(new Point(-500, 0));
             t = sim.renderer.CircleTransform(b);
-            Flatbody c = new Flatbody(new Point(500, 0));
+            Body c = new Body(new Point(500, 0));
             t = sim.renderer.CircleTransform(c);
-            Flatbody d = new Flatbody(new Point(0, 500));
+            Body d = new Body(new Point(0, 500));
             t = sim.renderer.CircleTransform(d);
-            Flatbody e = new Flatbody(new Point(0, -500));
+            Body e = new Body(new Point(0, -500));
             t = sim.renderer.CircleTransform(e);
         }
 

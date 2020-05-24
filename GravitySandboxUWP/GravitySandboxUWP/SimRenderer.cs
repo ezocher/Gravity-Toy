@@ -79,7 +79,7 @@ namespace GravitySandboxUWP
             trailsBrush = new SolidColorBrush(Colors.Yellow);
         }
 
-        public void Add(double size, int colorNumber, Flatbody body)
+        public void Add(double size, int colorNumber, Body body)
         {
             Ellipse newCircle = new Ellipse();
             newCircle.Width = newCircle.Height = CircleSize(size);
@@ -138,11 +138,11 @@ namespace GravitySandboxUWP
             zoomFactor *= 1.0 / zoomIncrement;
         }
 
-        public void TransformChanged(List<Flatbody> bodies)
+        public void TransformChanged(List<Body> bodies)
         {
             int i = 0;
             Ellipse circle;
-            foreach (Flatbody body in bodies)
+            foreach (Body body in bodies)
             {
                 circle = circles[i++];
                 circle.Width = circle.Height = CircleSize(body.Size);
@@ -165,7 +165,7 @@ namespace GravitySandboxUWP
 
 
         // Updated to be marshalled onto the UI thread
-        public void BodiesMoved(List<Flatbody> bodies)
+        public void BodiesMoved(List<Body> bodies)
         {
             if (mainPage.UI_UpdatesStopped()) return;   // Stop UI updates while app is suspended or changing scenarios
 
@@ -178,7 +178,7 @@ namespace GravitySandboxUWP
             });
         }
 
-        public void DrawTrails(Flatbody body)
+        public void DrawTrails(Body body)
         {
             if (mainPage.UI_UpdatesStopped()) return;   // Stop UI updates while app is suspended or changing scenarios
 
@@ -219,7 +219,7 @@ namespace GravitySandboxUWP
 
         // Mapping point in simulation space to rendering space:
         //  simPt * scaleFactor + simulationCenterTranslation + circleCenterTranslation -> renderingOffset
-        public TranslateTransform CircleTransform(Flatbody body)
+        public TranslateTransform CircleTransform(Body body)
         {
             TranslateTransform t = new TranslateTransform();
             double circleCenterTranslation = -CircleSize(body.Size) / 2.0;

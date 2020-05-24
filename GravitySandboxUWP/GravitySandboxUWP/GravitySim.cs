@@ -26,7 +26,7 @@ namespace GravitySandboxUWP
         public SimSpace simSpace;
         public CalculationSettings simCalcSettings;
         public SimRenderer renderer;
-        private List<Flatbody> bodies;
+        private List<Body> bodies;
         private Canvas simCanvas;
         private MainPage simPage;
         private int monitoredBody = 0;
@@ -40,17 +40,36 @@ namespace GravitySandboxUWP
 
         public GravitySim(Canvas simulationCanvas, MainPage simulationPage, CoreDispatcher dispatcher)
         {
+            bodies = new List<Body>();
             simCanvas = simulationCanvas;
             simPage = simulationPage;
             simSpace = new SimSpace(SimSpace.DefinedSpace.NullSpace);
             renderer = new SimRenderer(simSpace, simCanvas, dispatcher, simPage);
+            // accelerations default to null, they're newed when they're needed
             simCalcSettings = new CalculationSettings();
             simElapsedTime = 0.0;
-            bodies = new List<Flatbody>();
+            checkSim = false; 
+            simRounding = 0;
+            accelerationLimit = false;
+            
+            // stepRunning = false;
+        }
+
+        public void ClearSim()
+        {
+            bodies.Clear();
+            // simCanvas never changes
+            // simPage never changes
+            SetSimSpace(new SimSpace(SimSpace.DefinedSpace.NullSpace));
+            renderer.ClearSim();
+            accelerations = null;
+            simCalcSettings = new CalculationSettings();
+            simElapsedTime = 0.0;
             checkSim = false;
             simRounding = 0;
-            // stepRunning = false;
+            accelerationLimit = false;
 
+            // stepRunning = false;
         }
 
         public void SetSimSpace(SimSpace space)
@@ -64,26 +83,26 @@ namespace GravitySandboxUWP
 
         public void AddBody(double mass, double size, int color, bodyStartPosition startPosition)
         {
-            bodies.Add(new Flatbody(mass, size, renderer.GetStartingPosition(startPosition)));
+            bodies.Add(new Body(mass, size, renderer.GetStartingPosition(startPosition)));
             renderer.Add(size, color, bodies.Last());
         }
 
         public void AddBody(double mass, double size, int color, bodyStartPosition startPosition, Point startVelocity)
         {
-            bodies.Add(new Flatbody(mass, size, renderer.GetStartingPosition(startPosition), startVelocity));
+            bodies.Add(new Body(mass, size, renderer.GetStartingPosition(startPosition), startVelocity));
             renderer.Add(size, color, bodies.Last());
         }
 
         public void AddBody(double mass, double size, int color, bodyStartPosition startPosition, Point startVelocity,
             bool isGravitySource)
         {
-            bodies.Add(new Flatbody(mass, size, renderer.GetStartingPosition(startPosition), startVelocity, isGravitySource));
+            bodies.Add(new Body(mass, size, renderer.GetStartingPosition(startPosition), startVelocity, isGravitySource));
             renderer.Add(size, color, bodies.Last());
         }
 
         public void AddBodyActual(double mass, bool isGravitySource, double size, int color, Point startPosition, Point startVelocity)
         {
-            bodies.Add(new Flatbody(mass, size, startPosition, startVelocity, isGravitySource));
+            bodies.Add(new Body(mass, size, startPosition, startVelocity, isGravitySource));
             renderer.Add(size, color, bodies.Last());
         }
 
@@ -102,19 +121,6 @@ namespace GravitySandboxUWP
             accelerationLimit = limitOn;
         }
 
-        public void ClearSim()
-        {
-            bodies.Clear();
-            renderer.ClearSim();
-            simElapsedTime = 0.0;
-            checkSim = false;
-            simRounding = 0;
-            accelerationLimit = false;
-            accelerations = null;
-            simSpace = new SimSpace(SimSpace.DefinedSpace.NullSpace);
-            simCalcSettings = new CalculationSettings();
-            // stepRunning = false;
-        }
 
         // The scale, origin, or layout changed so we need to re-transform all of the rendered bodies
         public void TransformChanged()
