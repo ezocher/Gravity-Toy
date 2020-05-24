@@ -28,7 +28,7 @@ namespace GravitySandboxUWP
         //
         // The simulation box will be centered on the display and will be the maximum size it can be while remaining completely on the screen
         //
-        const double simBoxHeightAndWidth = 1000.0;
+        const double simBoxHeightAndWidth = 2000.0;
         const double simBoxMaxXY = simBoxHeightAndWidth / 2.0;
 
         const double earthStripHeight = 20.0;
@@ -258,7 +258,7 @@ namespace GravitySandboxUWP
         // Returns starting position for a body in simulation space coordinates
         public Point GetStartingPosition(GravitySim.bodyStartPosition startPos)
         {
-            const double stagePosition = 0.5; // For the "stage" positions - proportion of the way from the center of the stage to the edge
+            const double stagePosition = 0.25; // For the "stage" positions - proportion of the way from the center of the stage to the edge
                                               //    in all directions
             double stageXY = simBoxMaxXY * stagePosition;
 
