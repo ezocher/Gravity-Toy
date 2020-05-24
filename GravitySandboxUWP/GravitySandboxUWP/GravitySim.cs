@@ -24,6 +24,7 @@ namespace GravitySandboxUWP
         };
 
         public SimSpace simSpace;
+        public CalculationSettings simCalcSettings;
         public SimRenderer renderer;
         private List<Flatbody> bodies;
         private Canvas simCanvas;
@@ -43,6 +44,7 @@ namespace GravitySandboxUWP
             simPage = simulationPage;
             simSpace = new SimSpace(SimSpace.DefinedSpace.NullSpace);
             renderer = new SimRenderer(simSpace, simCanvas, dispatcher, simPage);
+            simCalcSettings = new CalculationSettings();
             simElapsedTime = 0.0;
             bodies = new List<Flatbody>();
             checkSim = false;
@@ -57,6 +59,8 @@ namespace GravitySandboxUWP
             renderer.simSpace = space;
             renderer.SetSimulationTransform(simCanvas.ActualWidth, simCanvas.ActualHeight);
         }
+
+        public void SetCalculationSettings(CalculationSettings calculationSettings) => simCalcSettings = calculationSettings;
 
         public void AddBody(double mass, double size, int color, bodyStartPosition startPosition)
         {
@@ -108,6 +112,7 @@ namespace GravitySandboxUWP
             accelerationLimit = false;
             accelerations = null;
             simSpace = new SimSpace(SimSpace.DefinedSpace.NullSpace);
+            simCalcSettings = new CalculationSettings();
             // stepRunning = false;
         }
 

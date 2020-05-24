@@ -80,6 +80,7 @@ namespace GravitySandboxUWP
             sim.ClearSim();
 
             sim.SetSimSpace(new SimSpace(SimSpace.DefinedSpace.ToySpace));
+            sim.SetCalculationSettings(new CalculationSettings(400, false));
             // sim.AddBody(1.0, 2.0, 1, GravitySim.bodyStartPosition.stageLeft, new Point(0.0, 50.5), false);
             //sim.AddBody(1.0, 2.0, 2, GravitySim.bodyStartPosition.stageLeft, new Point(0.0, 40.0), false);
             //sim.AddBody(1.0, 2.0, 4, GravitySim.bodyStartPosition.stageLeft, new Point(0.0, 30.0), false);
@@ -99,6 +100,7 @@ namespace GravitySandboxUWP
 
             sim.ClearSim();
             sim.SetSimSpace(new SimSpace(SimSpace.DefinedSpace.ToySpace));
+            // TBD: Add calls to sim.SetCalculationSettings() based on number of bodies requested
 
             for (int i = 0; i < numBodies; i++)
             {
@@ -119,6 +121,7 @@ namespace GravitySandboxUWP
 
             sim.ClearSim();
             sim.SetSimSpace(new SimSpace(SimSpace.DefinedSpace.ToySpace));
+            // TBD: Add calls to sim.SetCalculationSettings() based on number of bodies requested
 
             for (int i = 0; i < numBodies; i++)
             {
@@ -138,6 +141,7 @@ namespace GravitySandboxUWP
 
             sim.ClearSim();
             sim.SetSimSpace(new SimSpace(SimSpace.DefinedSpace.LEOSpace));
+            sim.SetCalculationSettings(new CalculationSettings(100, false));
 
             // EARTH
             sim.AddBodyActual(5.97220E+24, true, SimSpace.EarthRadiusKm * 2.0, 3, new Point(0.0, 0.0), new Point(0.0, 0.0));

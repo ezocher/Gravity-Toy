@@ -120,6 +120,7 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="BuiltInScenarios.cs" />
+    <Compile Include="CalculationSettings.cs" />
     <Compile Include="SimSpace.cs" />
     <Compile Include="Flatbody.cs" />
     <Compile Include="GravitySim.cs" />
