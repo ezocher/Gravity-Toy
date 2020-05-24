@@ -9,12 +9,6 @@ namespace GravitySandboxUWP
 {
     public class Flatbody
     {
-        // TBD: refactor to SimSpace
-        private const double earthSurfaceGravity = 9.80665; // m/sec^2
-
-        // Mass example ratios:
-        //   Sol is 1047.57 Jupiter masses and 333,000 Earth masses
-        //   Sagittarius A* is 2.6 ± 0.2 million Solar masses
 
         // TBD: refactor to SimSpace
         // Mass is in abstract units and is designed to make interesting accelerations happen at the scale and speed of the simulation

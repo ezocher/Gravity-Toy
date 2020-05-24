@@ -144,12 +144,12 @@ namespace GravitySandboxUWP
             sim.SetCalculationSettings(new CalculationSettings(100, false));
 
             // EARTH
-            sim.AddBodyActual(5.97220E+24, true, SimSpace.EarthRadiusKm * 2.0, 3, new Point(0.0, 0.0), new Point(0.0, 0.0));
+            sim.AddBodyActual(SimSpace.EarthMassKg, true, SimSpace.EarthRadiusKm * 2.0, 3, new Point(0.0, 0.0), new Point(0.0, 0.0));
 
             // Satellites, space station, etc.
             // Calculated for circular orbit of 200 km it is 7.79 km/s  (28,000 km/h)
-            sim.AddBodyActual(0.0, false, 150.0, 1, new Point(-(SimSpace.EarthRadiusKm + 200.0), 0.0), new Point(0.0, 28000.0));
-
+            sim.AddBodyActual(0.0, false, sim.simSpace.SmallestBodySizePx, 1, new Point(-(SimSpace.EarthRadiusKm + 200.0), 0.0), 
+                new Point(0.0, SimSpace.EarthLEO200kmCircularVelocityKmH));
 
             sim.SetMonitoredBody(1);
             sim.SetMonitoredValues();

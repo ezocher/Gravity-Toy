@@ -351,5 +351,15 @@ namespace GravitySandboxUWP
             sim.ZoomPlus();
             ViewSizeChanged();
         }
+
+        private void timeSlowerButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void timeFasterButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

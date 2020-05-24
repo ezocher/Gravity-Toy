@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Devices.Bluetooth.Advertisement;
 
 namespace GravitySandboxUWP
 {
@@ -17,7 +18,7 @@ namespace GravitySandboxUWP
         public enum DefinedSpace { NullSpace, ToySpace, LEOSpace   // , SolarSystemSpace
                 };
 
-        // Null space has no units and is 1 x 1 in extent
+        // Null space has no distance units and is 100 x 100 in extent
 
         // Original simulation space: toySpace
         // Dimensions   Mass   Time    Velocity
@@ -32,17 +33,53 @@ namespace GravitySandboxUWP
         //      Faux Galaxy Space (for "colliding galaxies with central black holes")
         //      Galaxy Space
 
+        #region Physical Constants
+
+        // ========== GRAVITY and MASS ==========
+        public const double BigG_M3PerKgSec2 = 6.6743E-11; // m^3/kg*sec^2
+
+        public const double EarthSurfaceAccelerationMPerSec2 = 9.80665; // m/sec^2
+
+        public const double EarthMassKg = 5.97220E+24;
+
+        // Mass example ratios:
+        //   Sol is 1047.57 Jupiter masses and 333,000 Earth masses
+        //   Sagittarius A* is 2.6 ± 0.2 million Solar masses
+
+
+        // ========== SPACE ==========
         public const double EarthRadiusKm = 6371.0;
         public const double LEO_OrbitMaxAltitudeKm = 2000.0;
 
-        readonly string velocityUnitsAbbr;
-        public string VelocityUnitsAbbr { get { return velocityUnitsAbbr; } }
 
+        // ========== TIME ==========
+        public const double MinutesPerHour = 60.0;
+        public const double SecondsPerMinute = 60.0;
+        public const double SecondsPerHour = SecondsPerMinute * MinutesPerHour;
+
+
+        // ========== VELOCITY ==========
+
+        // Calculated for circular orbit of 200 km it is 7.79 km/s  (28,000 km/h)
+        public const double EarthLEO200kmCircularVelocityKmH = 28000.0;
+
+
+        // ========== SCREEN UNITS ==========
+        private const double SmallestBodySizeAsPortionOfStartingScreenSize = 0.005;      // = 1/2 of a %
+
+        #endregion
+
+
+        #region Fields
+
+        // ========== GRAVITY and MASS ==========
+        readonly double bigG;
+        public double BigG { get { return bigG;  } }
+
+
+        // ========== SPACE ==========
         readonly string distanceUnitsAbbr;
         public string DistanceUnitsAbbr { get { return distanceUnitsAbbr; } }
-
-        readonly string timeUnitsAbbr;
-        public string TimeUnitsAbbr { get { return timeUnitsAbbr; } }
 
         readonly double simBoxHeightAndWidth;
         public double SimBoxHeightAndWidth {  get { return simBoxHeightAndWidth; } }
@@ -50,35 +87,94 @@ namespace GravitySandboxUWP
         readonly double distanceOffset;
         public double DistanceOffset {  get { return distanceOffset; } }
 
+
+        // ========== TIME ==========
+        readonly string timeUnitsAbbr;
+        public string TimeUnitsAbbr { get { return timeUnitsAbbr; } }
+
+        readonly double timeUnitsPerUISecond;
+        public double TimeUnitsPerUISecond {  get { return timeUnitsPerUISecond; } }
+
+
+        // ========== VELOCITY ==========
+        readonly string velocityUnitsAbbr;
+        public string VelocityUnitsAbbr { get { return velocityUnitsAbbr; } }
+
+        // Factor for deriving velocity when either distance or time units in velocity are
+        //  different from base time or distance units
+        readonly double velocityConversionFactor;
+        public double VelocityConnversionFactor { get { return velocityConversionFactor; } }
+
+
+        // ========== SCREEN UNITS ==========
+        readonly double smallestBodySizePx;
+        public double SmallestBodySizePx { get { return smallestBodySizePx; } }
+
+        #endregion
+
+
+        #region Constructor
         public SimSpace(DefinedSpace space)
         {
             if (space == DefinedSpace.ToySpace)
             {
-                this.velocityUnitsAbbr = "";
-                this.distanceUnitsAbbr = "";
-                this.timeUnitsAbbr = "sec.";
+                bigG = 1.0;
 
-                this.simBoxHeightAndWidth = 1000.0;
-                this.distanceOffset = 0.0;
+                distanceUnitsAbbr = "simunits";
+                simBoxHeightAndWidth = 1000.0;
+                distanceOffset = 0.0;
+
+                timeUnitsAbbr = "sec.";
+                timeUnitsPerUISecond = 1.0;
+
+                velocityUnitsAbbr = "simunits/sec.";
+                velocityConversionFactor = 1.0;
+
+                smallestBodySizePx = simBoxHeightAndWidth * SmallestBodySizeAsPortionOfStartingScreenSize;
             }
             else if (space == DefinedSpace.NullSpace)
             {
-                this.velocityUnitsAbbr = "";
-                this.distanceUnitsAbbr = "";
-                this.timeUnitsAbbr = "";
+                bigG = 1.0;
 
-                this.simBoxHeightAndWidth = 500.0;
-                this.distanceOffset = 0.0;
+                distanceUnitsAbbr = "";
+                simBoxHeightAndWidth = 100.0;
+                distanceOffset = 0.0;
+
+                timeUnitsAbbr = "sec.";
+                timeUnitsPerUISecond = 1.0;
+
+                velocityUnitsAbbr = "";
+                velocityConversionFactor = 1.0;
+
+                smallestBodySizePx = simBoxHeightAndWidth * SmallestBodySizeAsPortionOfStartingScreenSize;
             }
             else if (space == DefinedSpace.LEOSpace)
             {
-                this.velocityUnitsAbbr = "km/h";
-                this.distanceUnitsAbbr = "km";
-                this.timeUnitsAbbr = "min.";
+                bigG = 1.0;
 
-                this.simBoxHeightAndWidth = 4.0 * EarthRadiusKm;
-                this.distanceOffset = EarthRadiusKm;
+                distanceUnitsAbbr = "km";
+                simBoxHeightAndWidth = 4.0 * EarthRadiusKm;
+                distanceOffset = EarthRadiusKm;
+
+                timeUnitsAbbr = "min.";
+                timeUnitsPerUISecond = 1.0;
+
+                velocityUnitsAbbr = "km/h";
+                velocityConversionFactor = 1.0/MinutesPerHour;
+                
+                bigG = 1.0;
+                timeUnitsPerUISecond = 1.0;
+
+                velocityUnitsAbbr = "km/h";
+                distanceUnitsAbbr = "km";
+                timeUnitsAbbr = "min.";
+
+
+                // Time base: 1 min / second real
+
+                smallestBodySizePx = simBoxHeightAndWidth * SmallestBodySizeAsPortionOfStartingScreenSize;
             }
         }
+        #endregion
     }
 }
