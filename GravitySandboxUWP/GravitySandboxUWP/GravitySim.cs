@@ -103,6 +103,10 @@ namespace GravitySandboxUWP
             renderer.TransformChanged(bodies);
         }
 
+        public void ZoomPlus() => renderer.ZoomIn();
+
+        public void ZoomMinus() => renderer.ZoomOut();
+
         //  simRunning - true if sim is auto-running
         //               false if sim is single stepping
         public void Step(double timeInterval, bool simRunning)

@@ -207,18 +207,7 @@ namespace GravitySandboxUWP
 
         private void BackgroundGrid_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            // Pause the running simulation
-            if (simRunning)
-                frameTimer.Cancel();
-
-            sim.renderer.SetSimulationTransform(backgroundCanvas.ActualWidth, backgroundCanvas.ActualHeight);
-            // var res = DisplayProperties.ResolutionScale;  // don't need this (yet)
-            if (!firstRun)
-                sim.TransformChanged();
-
-            // Restart the running simulation
-            if (simRunning)
-                frameTimer = ThreadPoolTimer.CreatePeriodicTimer(RunSimFrame, new TimeSpan(0, 0, 0, 0, 1000 / (int)coreFrameRate));
+            ViewSizeChanged();
 
             // We have to initialize the starting scenario here since we need the initial layout to occur before loading the 
             //   starting scenario
@@ -227,6 +216,23 @@ namespace GravitySandboxUWP
                 firstRun = false;
                 Button_Click_Scenario1(null, null);
             }
+        }
+
+        // Window size changed or zoom level changed
+        private void ViewSizeChanged()
+        {
+            // Pause the running simulation
+            if (simRunning)
+                frameTimer.Cancel();
+
+            sim.renderer.SetSimulationTransform(backgroundCanvas.ActualWidth, backgroundCanvas.ActualHeight);
+
+            if (!firstRun)
+                sim.TransformChanged();
+
+            // Restart the running simulation
+            if (simRunning)
+                frameTimer = ThreadPoolTimer.CreatePeriodicTimer(RunSimFrame, new TimeSpan(0, 0, 0, 0, 1000 / (int)coreFrameRate));
         }
 
         private void ScenarioChanging()
@@ -329,8 +335,19 @@ namespace GravitySandboxUWP
             Flatbody e = new Flatbody(new Point(0, -500));
             t = sim.renderer.CircleTransform(e);
         }
+
         #endregion
 
+        private void zoomMinusButton_Click(object sender, RoutedEventArgs e)
+        {
+            sim.ZoomMinus();
+            ViewSizeChanged();
+        }
 
+        private void zoomPlusButton_Click(object sender, RoutedEventArgs e)
+        {
+            sim.ZoomPlus();
+            ViewSizeChanged();
+        }
     }
 }
