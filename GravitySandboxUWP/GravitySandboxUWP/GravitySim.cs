@@ -136,7 +136,10 @@ namespace GravitySandboxUWP
         //               false if sim is single stepping
         public void Step(double timeInterval, bool simRunning)
         {
+            // TBD: factor out to SimSpace
             const double defaultAccelerationLimit = 10.0; // SimSpaceUnits per second^2
+
+
             Stopwatch perfStopwatch = new Stopwatch();
             long perfIntervalTicks = 0L;
             bool simStepping = !simRunning;
@@ -161,47 +164,51 @@ namespace GravitySandboxUWP
             if (accelerations == null)
                 accelerations = new Point[bodies.Count()];
 
-            // Calculate NBody acceleration
-            for (int i = 0; i < bodies.Count(); i++)
+            double timeIntervalPerCycle = timeInterval / (double)simCalcSettings.CalculationCyclesPerFrame;
+
+            for (int calcCycle = 0; calcCycle < simCalcSettings.CalculationCyclesPerFrame; calcCycle++)
             {
-                accelerations[i].X = 0.0;
-                accelerations[i].Y = 0.0;
-                for (int j = 0; j < bodies.Count(); j++)
-                    if ((i != j) && bodies[j].IsGravitySource)
-                    {
-                        Point accel = bodies[i].BodyToBodyAccelerate(bodies[j]);
-                        accelerations[i].X += accel.X;
-                        accelerations[i].Y += accel.Y;
-                    }
-            }
-
-            if (accelerationLimit)
-                EnforceAccelerationLimit(accelerations, defaultAccelerationLimit);
-
-            if (simRounding > 0)
-                RoundAccelerations(accelerations, simRounding);
-            if (simStepping) perfIntervalTicks = DisplayPerfIntervalElapsed(perfStopwatch, perfIntervalTicks, "Compute N-body accelerations");
-
-            // Update positons and velocities
-            for (int i = 0; i < bodies.Count(); i++)
-            {
-                bodies[i].Move(accelerations[i], timeInterval);
-                if (i == monitoredBody)
+                // Calculate NBody acceleration
+                for (int i = 0; i < bodies.Count(); i++)
                 {
-                    simPage.UpdateMonitoredValues(bodies[i], simElapsedTime);
+                    accelerations[i].X = 0.0;
+                    accelerations[i].Y = 0.0;
+                    for (int j = 0; j < bodies.Count(); j++)
+                        if ((i != j) && bodies[j].IsGravitySource)
+                        {
+                            Point accel = bodies[i].BodyToBodyAccelerate(bodies[j]);
+                            accelerations[i].X += accel.X;
+                            accelerations[i].Y += accel.Y;
+                        }
                 }
-            }
-            if (simStepping) perfIntervalTicks = DisplayPerfIntervalElapsed(perfStopwatch, perfIntervalTicks, "Update positions and velocities");
 
-            if (checkSim)
-            {
-                ValidateState(accelerations);
-                if (simStepping) perfIntervalTicks = DisplayPerfIntervalElapsed(perfStopwatch, perfIntervalTicks, "Validate state of accelerations");
+                if (accelerationLimit)
+                    EnforceAccelerationLimit(accelerations, defaultAccelerationLimit);
+
+                if (simRounding > 0)
+                    RoundAccelerations(accelerations, simRounding);
+
+                // Update positons and velocities
+                for (int i = 0; i < bodies.Count(); i++)
+                {
+                    bodies[i].Move(accelerations[i], timeIntervalPerCycle);
+                }
+                
             }
+            if (simStepping) perfIntervalTicks = DisplayPerfIntervalElapsed(perfStopwatch, perfIntervalTicks, 
+                String.Format("Compute N-body accelerations, update positions & velocities ({0} iterations)", simCalcSettings.CalculationCyclesPerFrame) );
+
+            //if (checkSim)
+            //{
+            //    ValidateState(accelerations);
+            //    if (simStepping) perfIntervalTicks = DisplayPerfIntervalElapsed(perfStopwatch, perfIntervalTicks, "Validate state of accelerations");
+            //}
 
             // Update rendering
             renderer.BodiesMoved(bodies);
-            if (simStepping) perfIntervalTicks = DisplayPerfIntervalElapsed(perfStopwatch, perfIntervalTicks, "Update transforms of XAML shapes");
+            simPage.UpdateMonitoredValues(bodies[monitoredBody], simElapsedTime);
+
+            if (simStepping) perfIntervalTicks = DisplayPerfIntervalElapsed(perfStopwatch, perfIntervalTicks, "Update transforms of XAML shapes & monitored values");
             
             if (simStepping)
             { 

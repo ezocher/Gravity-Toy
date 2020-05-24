@@ -56,6 +56,8 @@ namespace GravitySandboxUWP
             sim.ClearSim();
 
             sim.SetSimSpace(new SimSpace(SimSpace.DefinedSpace.ToySpace));
+            sim.SetCalculationSettings(new CalculationSettings(200, false));
+
             sim.AddBody(1.0, baseSize, 3, GravitySim.bodyStartPosition.stageLeft);
             sim.AddBody(1.0, baseSize, 2, GravitySim.bodyStartPosition.stageTop);
             sim.AddBody(1.0, baseSize, 1, GravitySim.bodyStartPosition.stageRight);
@@ -80,7 +82,8 @@ namespace GravitySandboxUWP
             sim.ClearSim();
 
             sim.SetSimSpace(new SimSpace(SimSpace.DefinedSpace.ToySpace));
-            sim.SetCalculationSettings(new CalculationSettings(400, false));
+            sim.SetCalculationSettings(new CalculationSettings(1000, false));       // To produce braided pattern of trails change calcsPerFrame to 1
+            
             // sim.AddBody(1.0, 2.0, 1, GravitySim.bodyStartPosition.stageLeft, new Point(0.0, 50.5), false);
             //sim.AddBody(1.0, 2.0, 2, GravitySim.bodyStartPosition.stageLeft, new Point(0.0, 40.0), false);
             //sim.AddBody(1.0, 2.0, 4, GravitySim.bodyStartPosition.stageLeft, new Point(0.0, 30.0), false);
@@ -90,6 +93,7 @@ namespace GravitySandboxUWP
             sim.AddBody(10.0, 80.0, 8, GravitySim.bodyStartPosition.centerOfTheUniverse, new Point(0.389, 0.380), true);
             sim.SetMonitoredBody(0);
             sim.SetMonitoredValues();
+            sim.SetAccelerationLimit(false);
         }
 
         public static void LoadXRandomBodies(GravitySim sim, int numBodies, SimRenderer.ColorScheme colorScheme)

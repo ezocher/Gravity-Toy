@@ -37,8 +37,9 @@ namespace GravitySandboxUWP
         bool simRunning;
         bool firstRun;
 
-        const double coreFrameRate = 60.0;               
-        const double defaultStepInterval = 1.0 / 10.0;   // Portion of 
+        const double FrameRate = 60.0;                  // Frames per second in UI time            
+        const double StepInterval = 1.0 / 10.0;         // Portion of one UI second of simulation to do per click of Step button
+                                                        //
 
         private static bool frameInProgress = false;
         private static long framesRendered = 0;
@@ -136,9 +137,9 @@ namespace GravitySandboxUWP
         //  Updated to do all calculations in this worker thread and to do UI updates that happen inside of this on the UI thread
         public void RunSimFrame(ThreadPoolTimer tpt)
         {
-            const double tick = 1.0 / coreFrameRate; // seconds
-            const int reportingInterval = 10 * (int)coreFrameRate;
-            const int trailsInterval = (int)coreFrameRate / 2;
+            const double tick = 1.0 / FrameRate; // UI seconds
+            const int reportingInterval = 10 * (int)FrameRate;
+            const int trailsInterval = (int)FrameRate / 2;
 
             // Added check to see if the previous frame is still calculating/rendering when this method gets called by the timer
             // Sufficiently large scenarios (size varies depending on the PC) can take longer than a frame tick to run
@@ -233,7 +234,7 @@ namespace GravitySandboxUWP
 
             // Restart the running simulation
             if (simRunning)
-                frameTimer = ThreadPoolTimer.CreatePeriodicTimer(RunSimFrame, new TimeSpan(0, 0, 0, 0, 1000 / (int)coreFrameRate));
+                frameTimer = ThreadPoolTimer.CreatePeriodicTimer(RunSimFrame, new TimeSpan(0, 0, 0, 0, 1000 / (int)FrameRate));
         }
 
         private void ScenarioChanging()
@@ -245,10 +246,12 @@ namespace GravitySandboxUWP
             framesRendered = framesDropped = totalFrameDelay = 0L;
             frameInProgress = false;
 
-            Stopwatch s = new Stopwatch(); s.Start();
+            //Stopwatch s = new Stopwatch(); s.Start();  // For confirming that the Delay().Wait() works as expected
+
             // Wait 2 simulation ticks for any frames in progress to finish
-            Task.Delay(2 * (1000 / (int)coreFrameRate)).Wait();
-            Debug.WriteLine("Scenario changing, waited for {0} ms", s.ElapsedMilliseconds);
+            Task.Delay(2 * (1000 / (int)FrameRate)).Wait();
+
+            //Debug.WriteLine("Scenario changing, waited for {0} ms", s.ElapsedMilliseconds);   // For confirming that the Delay().Wait() works as expected
             scenarioEnding = false;
         }
 
@@ -285,7 +288,7 @@ namespace GravitySandboxUWP
         #region Run/Pause and Step Buttons
         private void stepButton_Click(object sender, RoutedEventArgs e)
         {
-            sim.Step(defaultStepInterval, simRunning);
+            sim.Step(StepInterval, simRunning);
         }
 
         private void SetRunPauseButton(bool setToRun)
@@ -309,7 +312,7 @@ namespace GravitySandboxUWP
             else
             {
                 // Run button clicked
-                frameTimer = ThreadPoolTimer.CreatePeriodicTimer(RunSimFrame, new TimeSpan(0, 0, 0, 0, 1000 / (int)coreFrameRate));
+                frameTimer = ThreadPoolTimer.CreatePeriodicTimer(RunSimFrame, new TimeSpan(0, 0, 0, 0, 1000 / (int)FrameRate));
             }
             simRunning = !simRunning;
         }
@@ -317,6 +320,31 @@ namespace GravitySandboxUWP
         private void enableTrailsCheckBox_Click(object sender, RoutedEventArgs e)
         {
             trailsEnabled = !trailsEnabled;
+        }
+        #endregion
+
+
+       #region Zoom and Faster/Slower Buttons
+        private void zoomMinusButton_Click(object sender, RoutedEventArgs e)
+        {
+            sim.ZoomMinus();
+            ViewSizeChanged();
+        }
+
+        private void zoomPlusButton_Click(object sender, RoutedEventArgs e)
+        {
+            sim.ZoomPlus();
+            ViewSizeChanged();
+        }
+
+        private void timeSlowerButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void timeFasterButton_Click(object sender, RoutedEventArgs e)
+        {
+
         }
         #endregion
 
@@ -340,26 +368,5 @@ namespace GravitySandboxUWP
 
         #endregion
 
-        private void zoomMinusButton_Click(object sender, RoutedEventArgs e)
-        {
-            sim.ZoomMinus();
-            ViewSizeChanged();
-        }
-
-        private void zoomPlusButton_Click(object sender, RoutedEventArgs e)
-        {
-            sim.ZoomPlus();
-            ViewSizeChanged();
-        }
-
-        private void timeSlowerButton_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void timeFasterButton_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-    }
+     }
 }
