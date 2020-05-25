@@ -152,8 +152,8 @@ namespace GravitySandboxUWP
 
         public static void LoadLowEarthOrbit(GravitySim sim)
         {
-            Debug.WriteLine("Loaded Low Earth Orbit (ISS) scenario");
-            sim.SetMessage("Running Low Earth Orbit (ISS) Scenario");
+            Debug.WriteLine("Loaded Low Earth Orbit (ISS and friends) scenario");
+            sim.SetMessage("Running Low Earth Orbit (ISS and friends) Scenario");
 
             sim.ClearSim();
             sim.SetSimSpace(new SimSpace(SimSpace.DefinedSpace.LEOSpace));      // LEO Space -> Km, minutes, Kg, Km/h
@@ -172,11 +172,11 @@ namespace GravitySandboxUWP
                 new Point(0.0, SimSpace.EarthRadiusKm + SimSpace.StarlinkOrbitAltitudeKm),
                 new Point(SimSpace.StarlinkOrbitVelocityKmH, 0.0));
 
-            sim.AddBodyActual(0.0, false, sim.simSpace.SmallestBodySizePx * 2.5, 4,
-                new Point(-(SimSpace.EarthRadiusKm + SimSpace.GPS_OrbitAltitudeKm), 0.0),
-                new Point(0.0, SimSpace.GPS_OrbitVelocityKmH));
+            //sim.AddBodyActual(0.0, false, sim.simSpace.SmallestBodySizePx * 2.5, 4,
+            //    new Point(-(SimSpace.EarthRadiusKm + SimSpace.GPS_OrbitAltitudeKm), 0.0),
+            //    new Point(0.0, SimSpace.GPS_OrbitVelocityKmH));
 
-            //sim.AddBodyActual(0.0, false, sim.simSpace.SmallestBodySizePx * 2.5, 5,
+            ////sim.AddBodyActual(0.0, false, sim.simSpace.SmallestBodySizePx * 2.5, 5,
             //    new Point(-(SimSpace.EarthRadiusKm + SimSpace.GeosynchronousOrbitAltitudeKm), 0.0),
             //    new Point(0.0, SimSpace.GeosynchronousOrbitVelocityKmH));
 

@@ -139,7 +139,7 @@ namespace GravitySandboxUWP
         {
             const double tick = 1.0 / FrameRate; // UI seconds
             const int reportingInterval = 10 * (int)FrameRate;
-            const int trailsInterval = (int)FrameRate / 2;
+
 
             // Added check to see if the previous frame is still calculating/rendering when this method gets called by the timer
             // Sufficiently large scenarios (size varies depending on the PC) can take longer than a frame tick to run
@@ -156,8 +156,6 @@ namespace GravitySandboxUWP
             {
                 frameInProgress = true;
                 sim.Step(tick, simRunning);
-                if (((framesRendered % trailsInterval) == 0) && trailsEnabled)
-                    sim.DrawTrails(simRunning);
                 frameInProgress = false;
                 framesRendered++;
 
@@ -341,12 +339,12 @@ namespace GravitySandboxUWP
 
         private void timeSlowerButton_Click(object sender, RoutedEventArgs e)
         {
-
+            sim.RunSlower();
         }
 
         private void timeFasterButton_Click(object sender, RoutedEventArgs e)
         {
-
+            sim.RunFaster();
         }
         #endregion
 

@@ -36,7 +36,7 @@ namespace GravitySandboxUWP
         private bool accelerationLimit;
         private Point[] accelerations;
 
-        // private static bool stepRunning;    // Didn't work as expected
+        private double speedFactor;          // simulation speed factor, 1.0 = 100% of original scenario speed
 
         public GravitySim(Canvas simulationCanvas, MainPage simulationPage, CoreDispatcher dispatcher)
         {
@@ -51,8 +51,7 @@ namespace GravitySandboxUWP
             checkSim = false; 
             simRounding = 0;
             accelerationLimit = false;
-            
-            // stepRunning = false;
+            speedFactor = 1.0;
         }
 
         public void ClearSim()
@@ -68,8 +67,7 @@ namespace GravitySandboxUWP
             checkSim = false;
             simRounding = 0;
             accelerationLimit = false;
-
-            // stepRunning = false;
+            speedFactor = 1.0;
         }
 
         public void SetSimSpace(SimSpace space)
@@ -133,6 +131,20 @@ namespace GravitySandboxUWP
 
         public void ZoomMinus() => renderer.ZoomOut();
 
+
+        private const double speedIncrement = 1.25992105;    // Cube root of 2 -> three steps doubles or halves simulation speed
+
+        public void RunFaster()
+        {
+            speedFactor *= speedIncrement;
+        }
+
+        public void RunSlower()
+        {
+            speedFactor *= 1.0 / speedIncrement;
+        }
+
+
         //  simRunning - true if sim is auto-running
         //               false if sim is single stepping
         public void Step(double timeInterval, bool simRunning)
@@ -153,7 +165,8 @@ namespace GravitySandboxUWP
             stepRunning = true;
             */
 
-            simElapsedTime += timeInterval;
+            double scaledTimeInterval = timeInterval * speedFactor;
+            SetTimeForTrailMark(simElapsedTime);
 
             if (simStepping)
             {
@@ -164,7 +177,7 @@ namespace GravitySandboxUWP
             if (accelerations == null)
                 accelerations = new Point[bodies.Count()];
 
-            double timeIntervalPerCycle = timeInterval / (double)simCalcSettings.CalculationCyclesPerFrame;
+            double timeIntervalPerCycle = scaledTimeInterval / (double)simCalcSettings.CalculationCyclesPerFrame;
 
             for (int calcCycle = 0; calcCycle < simCalcSettings.CalculationCyclesPerFrame; calcCycle++)
             {
@@ -193,7 +206,11 @@ namespace GravitySandboxUWP
                 {
                     bodies[i].Move(accelerations[i], timeIntervalPerCycle);
                 }
-                
+
+                simElapsedTime += timeIntervalPerCycle;
+
+                if (TimeForTrailsMark(simElapsedTime))
+                    DrawTrails();
             }
             if (simStepping) perfIntervalTicks = DisplayPerfIntervalElapsed(perfStopwatch, perfIntervalTicks, 
                 String.Format("Compute N-body accelerations, update positions & velocities ({0} iterations)", simCalcSettings.CalculationCyclesPerFrame) );
@@ -219,7 +236,31 @@ namespace GravitySandboxUWP
             // stepRunning = false;
         }
 
-        public void DrawTrails(bool simRunning)
+        private const double trailMarksPerSimulationTimeUnit = 2.0;
+        private static int previousTimeUnit;
+
+        private void SetTimeForTrailMark(double currentSimTime)
+        {
+            previousTimeUnit = (int) Math.Truncate(currentSimTime * trailMarksPerSimulationTimeUnit);
+        }
+
+        // Triggers drawing of a trail mark every time we cross a sim time unit boundary
+        //  as defined by trailMarksPerSimulationTimeUnit
+        // It's now possible to draw more than one trail mark per frame (versus drawing one every 30 frames before)
+        private bool TimeForTrailsMark(double currentSimTime)
+        {
+            int newTimeUnit = (int)Math.Truncate(currentSimTime * trailMarksPerSimulationTimeUnit);
+
+            if (newTimeUnit > previousTimeUnit)
+            {
+                previousTimeUnit = newTimeUnit;
+                return true;
+            }
+            else
+                return false;
+        }
+
+        private void DrawTrails()
         {
             renderer.DrawTrails(bodies[monitoredBody]);
         }
