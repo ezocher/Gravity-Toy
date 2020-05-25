@@ -83,26 +83,27 @@ namespace GravitySandboxUWP
 
         public void AddBody(double mass, double size, int color, bodyStartPosition startPosition)
         {
-            bodies.Add(new Body(mass, size, renderer.GetStartingPosition(startPosition)));
+            bodies.Add(new Body(mass, size, renderer.GetStartingPosition(startPosition), simSpace));
             renderer.Add(size, color, bodies.Last());
         }
 
         public void AddBody(double mass, double size, int color, bodyStartPosition startPosition, Point startVelocity)
         {
-            bodies.Add(new Body(mass, size, renderer.GetStartingPosition(startPosition), startVelocity));
+            bodies.Add(new Body(mass, size, renderer.GetStartingPosition(startPosition), startVelocity, simSpace));
             renderer.Add(size, color, bodies.Last());
         }
 
         public void AddBody(double mass, double size, int color, bodyStartPosition startPosition, Point startVelocity,
             bool isGravitySource)
         {
-            bodies.Add(new Body(mass, size, renderer.GetStartingPosition(startPosition), startVelocity, isGravitySource));
+            bodies.Add(new Body(mass, size, renderer.GetStartingPosition(startPosition), startVelocity, isGravitySource, simSpace));
             renderer.Add(size, color, bodies.Last());
         }
 
         public void AddBodyActual(double mass, bool isGravitySource, double size, int color, Point startPosition, Point startVelocity)
         {
-            bodies.Add(new Body(mass, size, startPosition, startVelocity, isGravitySource));
+            var velocity = new Point(startVelocity.X / simSpace.VelocityConnversionFactor, startVelocity.Y / simSpace.VelocityConnversionFactor);
+            bodies.Add(new Body(mass, size, startPosition, velocity, isGravitySource, simSpace));
             renderer.Add(size, color, bodies.Last());
         }
 
@@ -138,7 +139,6 @@ namespace GravitySandboxUWP
         {
             // TBD: factor out to SimSpace
             const double defaultAccelerationLimit = 10.0; // SimSpaceUnits per second^2
-
 
             Stopwatch perfStopwatch = new Stopwatch();
             long perfIntervalTicks = 0L;

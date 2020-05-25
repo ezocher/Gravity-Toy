@@ -174,8 +174,10 @@ namespace GravitySandboxUWP
 
             var ignore = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
-                velocityTextBlock.Text = "velocity: " + FormatPointToString(body.Velocity) + 
-                    String.Format(", v = {0:F3} {1}", Hypotenuse(body.Velocity), sim.simSpace.VelocityUnitsAbbr);
+                var velocity = new Point(body.Velocity.X * sim.simSpace.VelocityConnversionFactor,
+                    body.Velocity.Y * sim.simSpace.VelocityConnversionFactor);
+                velocityTextBlock.Text = "velocity: " + FormatPointToString(velocity) + 
+                    String.Format(", v = {0:F3} {1}", Hypotenuse(velocity), sim.simSpace.VelocityUnitsAbbr);
                 positionTextBlock.Text = "position: " + FormatPointToString(body.Position) +
                     String.Format(", r = {0:F3} {1}", Hypotenuse(body.Position) - sim.simSpace.DistanceOffset,
                     sim.simSpace.DistanceUnitsAbbr);
@@ -354,15 +356,15 @@ namespace GravitySandboxUWP
         {
             TranslateTransform t = new TranslateTransform();
 
-            Body a = new Body(new Point(0, 0));
+            Body a = new Body(new Point(0, 0), sim.simSpace);
             t = sim.renderer.CircleTransform(a);
-            Body b = new Body(new Point(-500, 0));
+            Body b = new Body(new Point(-500, 0), sim.simSpace);
             t = sim.renderer.CircleTransform(b);
-            Body c = new Body(new Point(500, 0));
+            Body c = new Body(new Point(500, 0), sim.simSpace);
             t = sim.renderer.CircleTransform(c);
-            Body d = new Body(new Point(0, 500));
+            Body d = new Body(new Point(0, 500), sim.simSpace);
             t = sim.renderer.CircleTransform(d);
-            Body e = new Body(new Point(0, -500));
+            Body e = new Body(new Point(0, -500), sim.simSpace);
             t = sim.renderer.CircleTransform(e);
         }
 

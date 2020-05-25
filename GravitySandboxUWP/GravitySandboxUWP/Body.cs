@@ -9,22 +9,12 @@ namespace GravitySandboxUWP
 {
     public class Body
     {
+        // Mass, size, position, and velocity are in the units defined by the SimSpace used by the scenario
 
-        // TBD: refactor to SimSpace - These are for original toySpace scenarios
-        // Mass is in abstract units and is designed to make interesting accelerations happen at the scale and speed of the simulation
-        //      Requested masses are scaled by the massFactor, so a requested mass of 1.0 is 100,000 mass
-        private const double massFactor = 100000.0; // TBD: refactor to SimSpace
-        private const double defaultMass = 1.0;
+        private const double defaultValue = 1.0;
 
-        double mass;
-        public double Mass
-        {
-            get { return mass; }
-            private set { mass = value * massFactor; }
-        }
+        public double Mass { get; private set; }
 
-        // Size is in abstract units, with 1.0 the smallest size normally rendered
-        private const double defaultSize = 2.0; // TBD: refactor to SimSpace
         public double Size { get; private set; }
 
         Point position;
@@ -51,49 +41,57 @@ namespace GravitySandboxUWP
         private const bool defaultGravitySource = true;
         public bool IsGravitySource { get; private set; }
 
+        private SimSpace simSpace;
+
         #region Constructors
-        public Body(Point bodyStartingPosition)
+        public Body(Point bodyStartingPosition, SimSpace space)
         {
-            Mass = defaultMass;
-            Size = defaultSize;
+            Mass = defaultValue;
+            Size = defaultValue;
             Position = bodyStartingPosition;
             Velocity = defaultStartingVelocity;
             IsGravitySource = defaultGravitySource;
+            simSpace = space;
         }
 
-        public Body(double bodyMass, double bodySize, Point bodyStartingPosition)
+        public Body(double bodyMass, double bodySize, Point bodyStartingPosition, SimSpace space)
         {
             Mass = bodyMass;
             Size = bodySize;
             Position = bodyStartingPosition;
             Velocity = defaultStartingVelocity;
             IsGravitySource = defaultGravitySource;
+            simSpace = space;
         }
 
-        public Body(double bodyMass, double bodySize, Point bodyStartingPosition, Point bodyStartingVelocity)
+        public Body(double bodyMass, double bodySize, Point bodyStartingPosition, Point bodyStartingVelocity, SimSpace space)
         {
             Mass = bodyMass;
             Size = bodySize;
             Position = bodyStartingPosition;
             Velocity = bodyStartingVelocity;
             IsGravitySource = defaultGravitySource;
+            simSpace = space;
         }
 
         public Body(double bodyMass, double bodySize, Point bodyStartingPosition, Point bodyStartingVelocity,
-            bool isGravitySource)
+            bool isGravitySource, SimSpace space)
         {
             Mass = bodyMass;
             Size = bodySize;
             Position = bodyStartingPosition;
             Velocity = bodyStartingVelocity;
             IsGravitySource = isGravitySource;
+            simSpace = space;
         }
         #endregion
 
         #region 2D Physics
 
-        // TBD: Look holistically at distance minimums and acceleration limits and clean up and centralize
+        // TBD: Issue #9
+        // Look holistically at distance minimums and acceleration limits and clean up and centralize
         // Need to keep at least some minimum value for r to avoid divide by zero
+        // Put new values into SimSpace class
         public Point BodyToBodyAccelerate(Body otherBody)
         {
             const double rMinimum = 10.0;   // we are not simulating collisions so don't let accelerations run away as bodies
@@ -108,8 +106,8 @@ namespace GravitySandboxUWP
             double r = Math.Sqrt(rSquared);
 
             // TBD: refactor to SimSpace (currently omits g)
-            // F = m1 * a, g = m1 * m2 / rSquared, m1's cancel out so a = m2 / rSquared
-            double a = otherBody.mass / rSquared;
+            // F = m1 * a, g = G * m1 * m2 / rSquared, m1's cancel out so a = G * m2 / rSquared
+            double a = simSpace.BigG * otherBody.Mass / rSquared;
 
             return (new Point(a * rX / r, a * rY / r));
         }

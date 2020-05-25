@@ -13,7 +13,7 @@ namespace GravitySandboxUWP
      * Screen space is always in UWP XAML units and seconds
      * 
      */
-    class SimSpace
+    public class SimSpace
     {
         public enum DefinedSpace { NullSpace, ToySpace, LEOSpace   // , SolarSystemSpace
                 };
@@ -48,6 +48,7 @@ namespace GravitySandboxUWP
 
 
         // ========== SPACE ==========
+        public const double KmPerMeter = 1.0 / 1000.0;
         public const double EarthRadiusKm = 6371.0;
         public const double LEO_OrbitMaxAltitudeKm = 2000.0;
 
@@ -69,12 +70,34 @@ namespace GravitySandboxUWP
 
         #endregion
 
+        #region Spacecraft
+
+        // ========== ISS ==========
+        // From https://spotthestation.nasa.gov/tracking_map.cfm on 5/25/2020 at 00:30:00 GMT
+        public const double ISS_OrbitAltitudeKm = 420.0;
+        public const double ISS_OrbitVelocityKmH = 27583.0;
+
+        public const double StarlinkOrbitAltitudeKm = 550.0;
+        public const double StarlinkOrbitVelocityKmH = 27320.0;
+
+        public const double GPS_OrbitAltitudeKm = 20180.0;
+        public const double GPS_OrbitVelocityKmH = 13949.0;
+
+        public const double GeosynchronousOrbitAltitudeKm = 35786.0;
+        public const double GeosynchronousOrbitVelocityKmH = 11070.0;
+
+
+        #endregion
+
 
         #region Fields
 
         // ========== GRAVITY and MASS ==========
         readonly double bigG;
         public double BigG { get { return bigG;  } }
+
+        readonly string massUnitsAbbr;
+        public string MassUnitsAbbr { get { return massUnitsAbbr; } }
 
 
         // ========== SPACE ==========
@@ -119,6 +142,7 @@ namespace GravitySandboxUWP
             if (space == DefinedSpace.ToySpace)
             {
                 bigG = 1.0;
+                massUnitsAbbr = "simass";
 
                 distanceUnitsAbbr = "simunits";
                 simBoxHeightAndWidth = 1000.0;
@@ -135,6 +159,7 @@ namespace GravitySandboxUWP
             else if (space == DefinedSpace.NullSpace)
             {
                 bigG = 1.0;
+                massUnitsAbbr = "";
 
                 distanceUnitsAbbr = "";
                 simBoxHeightAndWidth = 100.0;
@@ -151,6 +176,7 @@ namespace GravitySandboxUWP
             else if (space == DefinedSpace.LEOSpace)
             {
                 bigG = 1.0;
+                massUnitsAbbr = "kg";
 
                 distanceUnitsAbbr = "km";
                 simBoxHeightAndWidth = 4.0 * EarthRadiusKm;
@@ -160,17 +186,16 @@ namespace GravitySandboxUWP
                 timeUnitsPerUISecond = 1.0;
 
                 velocityUnitsAbbr = "km/h";
-                velocityConversionFactor = 1.0/MinutesPerHour;
-                
-                bigG = 1.0;
-                timeUnitsPerUISecond = 1.0;
+                // Internal velocities are in km/min., multiply by this to get km/h
+                velocityConversionFactor = MinutesPerHour;
 
-                velocityUnitsAbbr = "km/h";
-                distanceUnitsAbbr = "km";
-                timeUnitsAbbr = "min.";
-
+                // Needs to be in kg, km, and minutes
+                //      km^3/kg*min^2
+                bigG = BigG_M3PerKgSec2 *
+                    KmPerMeter * KmPerMeter * KmPerMeter * SecondsPerMinute * SecondsPerMinute;
 
                 // Time base: 1 min / second real
+                timeUnitsPerUISecond = 1.0;
 
                 smallestBodySizePx = simBoxHeightAndWidth * SmallestBodySizeAsPortionOfStartingScreenSize;
             }
