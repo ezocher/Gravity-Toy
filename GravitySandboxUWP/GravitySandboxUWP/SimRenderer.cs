@@ -52,7 +52,7 @@ namespace GravitySandboxUWP
 
         private MainPage mainPage;
 
-        public enum ColorNumber { bodyColorRed = 1, bodyColorGreen, bodyColorBlue, bodyColorLtGrey = 9, bodyColorMedGrey, bodyColorDarkGrey };
+        public enum ColorNumber { BodyColorRed = 1, BodyColorGreen, BodyColorBlue, BodyColorLtGrey = 9, BodyColorMedGrey, BodyColorDarkGrey, BodyColorWhite };
 
         const string circleColorResourceBaseString = "bodyColor";
         const string circleColorMonitoredColorResourceName = "monitoredBodyColor";
@@ -64,7 +64,7 @@ namespace GravitySandboxUWP
 
         private static SolidColorBrush trailsBrush;
 
-        public enum ColorScheme { pastelColors, grayColors, allColors};
+        public enum ColorScheme { PastelColors, GrayColors, AllColors};
 
         public SimRenderer(SimSpace space, Canvas simulationCanvas, CoreDispatcher dispatcher, MainPage mainPage)
         {
@@ -117,7 +117,7 @@ namespace GravitySandboxUWP
 
         public void ClearSim()
         {
-            // TBD: Would be nice to get an exlusive lock that ensures no rendering is in progress
+            // Issue #29: Would be nice to have a clean way to ensure that no rendering is in progress (exclusive lock?)
 
             simCanvas.Children.Clear();
             circles.Clear();
@@ -243,7 +243,7 @@ namespace GravitySandboxUWP
         }
 
         // Returns starting position for a body in simulation space coordinates
-        public Point GetStartingPosition(GravitySim.bodyStartPosition startPos)
+        public Point GetStartingPosition(GravitySim.BodyStartPosition startPos)
         {
             const double stagePosition = 0.5; // For the "stage" positions - proportion of the way from the center of the stage to the edge
                                               //    in all directions
@@ -256,49 +256,60 @@ namespace GravitySandboxUWP
 
             switch (startPos)
             {
-                case GravitySim.bodyStartPosition.stageLeft:
+                case GravitySim.BodyStartPosition.StageLeft:
                     return new Point(-stageXY, 0.0);
-                case GravitySim.bodyStartPosition.stageRight:
+                case GravitySim.BodyStartPosition.StageRight:
                     return new Point(stageXY, 0.0);
-                case GravitySim.bodyStartPosition.stageTop:
+                case GravitySim.BodyStartPosition.StageTop:
                     return new Point(0.0, stageXY);
-                case GravitySim.bodyStartPosition.stageBottom:
+                case GravitySim.BodyStartPosition.StageBottom:
                     return new Point(0.0, -stageXY);
 
-                case GravitySim.bodyStartPosition.stageTopLeft:
+                case GravitySim.BodyStartPosition.StageTopLeft:
                     return new Point(-stageXY, stageXY);
-                case GravitySim.bodyStartPosition.stageTopRight:
+                case GravitySim.BodyStartPosition.StageTopRight:
                     return new Point(stageXY, stageXY);
-                case GravitySim.bodyStartPosition.stageBottomLeft:
+                case GravitySim.BodyStartPosition.StageBottomLeft:
                     return new Point(-stageXY, -stageXY);
-                case GravitySim.bodyStartPosition.stageBottomRight:
+                case GravitySim.BodyStartPosition.StageBottomRight:
                     return new Point(stageXY, -stageXY);
 
-                case GravitySim.bodyStartPosition.screenLeft:
+                case GravitySim.BodyStartPosition.ScreenLeft:
                     return new Point(-screenMaxX, 0.0);
-                case GravitySim.bodyStartPosition.screenRight:
+                case GravitySim.BodyStartPosition.ScreenRight:
                     return new Point(screenMaxX, 0.0);
-                case GravitySim.bodyStartPosition.screenTop:
+                case GravitySim.BodyStartPosition.ScreenTop:
                     return new Point(0.0, screenMaxY);
-                case GravitySim.bodyStartPosition.screenBottom:
+                case GravitySim.BodyStartPosition.ScreenBottom:
                     return new Point(0.0, -screenMaxY);
 
-                case GravitySim.bodyStartPosition.centerOfTheUniverse:
+                case GravitySim.BodyStartPosition.CenterOfTheUniverse:
                     return new Point(0.0, 0.0);
 
-                case GravitySim.bodyStartPosition.randomStagePosition:
+                case GravitySim.BodyStartPosition.RandomStagePosition:
                     return new Point(rand.Next((int)-simBoxMaxXY, (int)simBoxMaxXY),
                                       rand.Next((int)-simBoxMaxXY, (int)simBoxMaxXY));
-                case GravitySim.bodyStartPosition.randomScreenPosition:
+                case GravitySim.BodyStartPosition.RandomScreenPosition:
                     return new Point(rand.Next((int)-screenMaxX, (int)screenMaxX),
                                       rand.Next((int)-screenMaxY, (int)screenMaxY));
-                case GravitySim.bodyStartPosition.randomCircularCluster:
+
+                // This approach gives us higher density toward the center of the circle
+                case GravitySim.BodyStartPosition.RandomDenseCenterCircularCluster:
                     double length = rand.NextDouble() * simBoxMaxXY * 0.9;
                     double angle = rand.NextDouble() * Math.PI * 2.0; // radians
                     return new Point(length * Math.Cos(angle), length * Math.Sin(angle));
-                // This approach gives us higher density toward the center of the circle
-                // TBD: Add random circular cluster with uniform density: pick random locations in a square and discard those outside the circle
-
+                
+                // This approach gives us uniform density throughout the circle
+                case GravitySim.BodyStartPosition.RandomUniformDensityCircularCluster:
+                    Point newBodyPosition;
+                    double limitXY = 0.9 * simBoxMaxXY;
+                    do
+                    {
+                        newBodyPosition = new Point(rand.Next((int)-limitXY, (int)limitXY),
+                                      rand.Next((int)-limitXY, (int)limitXY));
+                    }
+                    while (MainPage.Hypotenuse(newBodyPosition) > limitXY);
+                    return (newBodyPosition);
 
                 default:
                     return new Point(0.0, 0.0);

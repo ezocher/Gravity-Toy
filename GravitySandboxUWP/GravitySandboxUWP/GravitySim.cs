@@ -15,12 +15,13 @@ namespace GravitySandboxUWP
     class GravitySim
     {
         
-        public enum bodyStartPosition
+        public enum BodyStartPosition
         {
-            stageLeft, stageRight, stageTop, stageBottom, stageTopLeft, stageTopRight, stageBottomRight, stageBottomLeft,
-            screenTop, screenLeft, screenRight, screenBottom,
-            centerOfTheUniverse,
-            randomStagePosition, randomScreenPosition, randomCircularCluster
+            StageLeft, StageRight, StageTop, StageBottom, StageTopLeft, StageTopRight, StageBottomRight, StageBottomLeft,
+            ScreenTop, ScreenLeft, ScreenRight, ScreenBottom,
+            CenterOfTheUniverse,
+            RandomStagePosition, RandomScreenPosition, 
+            RandomDenseCenterCircularCluster, RandomUniformDensityCircularCluster
         };
 
         public SimSpace simSpace;
@@ -79,19 +80,19 @@ namespace GravitySandboxUWP
 
         public void SetCalculationSettings(CalculationSettings calculationSettings) => simCalcSettings = calculationSettings;
 
-        public void AddBody(double mass, double size, int color, bodyStartPosition startPosition)
+        public void AddBody(double mass, double size, int color, BodyStartPosition startPosition)
         {
             bodies.Add(new Body(mass, size, renderer.GetStartingPosition(startPosition), simSpace));
             renderer.Add(size, color, bodies.Last());
         }
 
-        public void AddBody(double mass, double size, int color, bodyStartPosition startPosition, Point startVelocity)
+        public void AddBody(double mass, double size, int color, BodyStartPosition startPosition, Point startVelocity)
         {
             bodies.Add(new Body(mass, size, renderer.GetStartingPosition(startPosition), startVelocity, simSpace));
             renderer.Add(size, color, bodies.Last());
         }
 
-        public void AddBody(double mass, double size, int color, bodyStartPosition startPosition, Point startVelocity,
+        public void AddBody(double mass, double size, int color, BodyStartPosition startPosition, Point startVelocity,
             bool isGravitySource)
         {
             bodies.Add(new Body(mass, size, renderer.GetStartingPosition(startPosition), startVelocity, isGravitySource, simSpace));
@@ -149,21 +150,12 @@ namespace GravitySandboxUWP
         //               false if sim is single stepping
         public void Step(double timeInterval, bool simRunning)
         {
-            // TBD: factor out to SimSpace
+            // Issue #9: Clean up acceleration limits
             const double defaultAccelerationLimit = 10.0; // SimSpaceUnits per second^2
 
             Stopwatch perfStopwatch = new Stopwatch();
             long perfIntervalTicks = 0L;
             bool simStepping = !simRunning;
-
-            /*
-            if (stepRunning)
-            {
-                Debug.WriteLine("> Previous step still running, skipping this time interval");
-                return;
-            }
-            stepRunning = true;
-            */
 
             double scaledTimeInterval = timeInterval * speedFactor;
             SetTimeForTrailMark(simElapsedTime);
@@ -209,7 +201,7 @@ namespace GravitySandboxUWP
 
                 simElapsedTime += timeIntervalPerCycle;
 
-                if (TimeForTrailsMark(simElapsedTime))
+                if ((MainPage.trailsEnabled) && TimeForTrailsMark(simElapsedTime))
                     DrawTrails();
             }
             if (simStepping) perfIntervalTicks = DisplayPerfIntervalElapsed(perfStopwatch, perfIntervalTicks, 

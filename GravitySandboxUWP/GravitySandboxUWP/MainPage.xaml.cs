@@ -49,7 +49,7 @@ namespace GravitySandboxUWP
         public static bool appSuspended = false;       // Keep the simulation running (if any), but stop updating the UI while app is suspended
         public static bool scenarioEnding = false;      // True while switching scenarios, stop rendering if truw
 
-        private static bool trailsEnabled = false;
+        public static bool trailsEnabled = false;
 
         public MainPage()
         {
@@ -202,9 +202,9 @@ namespace GravitySandboxUWP
             return String.Format("x = {0:F3}, y = {1:F3}", p.X, p.Y);
         }
 
-        static double Hypotenuse(Point velocity)
+        public static double Hypotenuse(Point point)
         {
-            return Math.Sqrt((velocity.X * velocity.X) + (velocity.Y * velocity.Y));
+            return Math.Sqrt((point.X * point.X) + (point.Y * point.Y));
         }
 
         private void BackgroundGrid_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -265,13 +265,13 @@ namespace GravitySandboxUWP
         private void Button_Click_Scenario2(object sender, RoutedEventArgs e)
         {
             ScenarioChanging();
-            BuiltInScenarios.LoadXRandomBodies(sim, 300, SimRenderer.ColorScheme.allColors);
+            BuiltInScenarios.LoadXRandomBodies(sim, 300, SimRenderer.ColorScheme.AllColors);
         }
 
         private void Button_Click_Scenario3(object sender, RoutedEventArgs e)
         {
             ScenarioChanging();
-            //BuiltInScenarios.LoadXBodiesCircularCluster(sim, 500, SimRenderer.ColorScheme.pastelColors);
+            //BuiltInScenarios.LoadXBodiesCircularCluster(sim, 500, 6.0, SimRenderer.ColorScheme.PastelColors, GravitySim.BodyStartPosition.RandomUniformDensityCircularCluster);
             BuiltInScenarios.LoadOrbitingBodiesScenario(sim);
         }
 
@@ -279,8 +279,8 @@ namespace GravitySandboxUWP
         {
             ScenarioChanging();
             BuiltInScenarios.LoadLowEarthOrbit(sim);
-            // BuiltInScenarios.LoadXBodiesCircularCluster(sim, 400, SimRenderer.ColorScheme.grayColors);
-            // BuiltInScenarios.LoadFourBodiesScenario(sim);
+            //BuiltInScenarios.LoadXBodiesCircularCluster(sim, 400, 2.0, SimRenderer.ColorScheme.GrayColors, GravitySim.BodyStartPosition.RandomDenseCenterCircularCluster);
+            //BuiltInScenarios.LoadFourBodiesScenario(sim);
         }
         #endregion
 

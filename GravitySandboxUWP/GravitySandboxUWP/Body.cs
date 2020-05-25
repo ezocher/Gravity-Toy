@@ -88,7 +88,7 @@ namespace GravitySandboxUWP
 
         #region 2D Physics
 
-        // TBD: Issue #9
+        // Issue #9:
         // Look holistically at distance minimums and acceleration limits and clean up and centralize
         // Need to keep at least some minimum value for r to avoid divide by zero
         // Put new values into SimSpace class
@@ -105,7 +105,6 @@ namespace GravitySandboxUWP
             rSquared = Math.Max(rSquared, rMinSquared); // enforce minimum value of r
             double r = Math.Sqrt(rSquared);
 
-            // TBD: refactor to SimSpace (currently omits g)
             // F = m1 * a, g = G * m1 * m2 / rSquared, m1's cancel out so a = G * m2 / rSquared
             double a = simSpace.BigG * otherBody.Mass / rSquared;
 
