@@ -34,7 +34,9 @@ namespace GravitySandboxUWP
         private double simElapsedTime;
         private bool checkSim;
         private int simRounding;
-        private bool accelerationLimit;
+        private bool accelerationLimitOn;
+        private double accelerationLimit;
+        public static double minimumSeparationSquared;
         private Point[] accelerations;
 
         private double speedFactor;          // simulation speed factor, 1.0 = 100% of original scenario speed
@@ -51,7 +53,8 @@ namespace GravitySandboxUWP
             simElapsedTime = 0.0;
             checkSim = false; 
             simRounding = 0;
-            accelerationLimit = false;
+            accelerationLimitOn = false;
+            minimumSeparationSquared = 1.0;
             speedFactor = 1.0;
         }
 
@@ -67,7 +70,8 @@ namespace GravitySandboxUWP
             simElapsedTime = 0.0;
             checkSim = false;
             simRounding = 0;
-            accelerationLimit = false;
+            accelerationLimitOn = false;
+            minimumSeparationSquared = 1.0;
             speedFactor = 1.0;
         }
 
@@ -116,9 +120,16 @@ namespace GravitySandboxUWP
             simRounding = roundingDigits;
         }
 
-        public void SetAccelerationLimit(bool limitOn)
+        // We are not simulating collisions so we need to have a minimum body separation > 0 
+        //  to avoid dividing by 0 in acceleration calculations
+        public void SetAccelerationLimits(bool limitOn, double limit, double minimumSeparation)
         {
-            accelerationLimit = limitOn;
+            accelerationLimitOn = limitOn;
+            accelerationLimit = limit;
+
+            if (minimumSeparation == 0.0)
+                minimumSeparation = 1.0;
+            minimumSeparationSquared = minimumSeparation * minimumSeparation;
         }
 
 
@@ -150,9 +161,6 @@ namespace GravitySandboxUWP
         //               false if sim is single stepping
         public void Step(double timeInterval, bool simRunning)
         {
-            // Issue #9: Clean up acceleration limits
-            const double defaultAccelerationLimit = 10.0; // SimSpaceUnits per second^2
-
             Stopwatch perfStopwatch = new Stopwatch();
             long perfIntervalTicks = 0L;
             bool simStepping = !simRunning;
@@ -187,8 +195,8 @@ namespace GravitySandboxUWP
                         }
                 }
 
-                if (accelerationLimit)
-                    EnforceAccelerationLimit(accelerations, defaultAccelerationLimit);
+                if (accelerationLimitOn)
+                    EnforceAccelerationLimit(accelerations, accelerationLimit);
 
                 if (simRounding > 0)
                     RoundAccelerations(accelerations, simRounding);
@@ -358,25 +366,24 @@ namespace GravitySandboxUWP
         //  rounding error. For differences less than epsilon, snap the values back to zero or the 
         //  perfect diagonal.
 
-
         /*// Clean X & Y to eliminate cumulative rounding errors
-double absX = Math.Abs(accelerations[i].X);
-double absY = Math.Abs(accelerations[i].Y);
+        double absX = Math.Abs(accelerations[i].X);
+        double absY = Math.Abs(accelerations[i].Y);
 
-if (Math.Abs(absX - absY) < epsilon)
-{
-    double avgDiagonalAccel = (absX + absY) / 2.0;
-    accelerations[i].X = Math.Sign(accelerations[i].X) * avgDiagonalAccel;
-    accelerations[i].Y = Math.Sign(accelerations[i].Y) * avgDiagonalAccel;
-}
-else
-{
+        if (Math.Abs(absX - absY) < epsilon)
+        {
+            double avgDiagonalAccel = (absX + absY) / 2.0;
+            accelerations[i].X = Math.Sign(accelerations[i].X) * avgDiagonalAccel;
+            accelerations[i].Y = Math.Sign(accelerations[i].Y) * avgDiagonalAccel;
+        }
+        else
+        {
                 
-    if ((absX > 0.0) && (absX < epsilon))
-        accelerations[i].X = 0.0;
-    if ((absY > 0.0) && (absY < epsilon))
-        accelerations[i].Y = 0.0;
-**/
+            if ((absX > 0.0) && (absX < epsilon))
+                accelerations[i].X = 0.0;
+            if ((absY > 0.0) && (absY < epsilon))
+                accelerations[i].Y = 0.0;
+        **/
 
         // Treats a point as a vector and calculates its magnitude
         public static double Magnitude(Point v)

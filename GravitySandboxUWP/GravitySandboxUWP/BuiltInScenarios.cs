@@ -11,13 +11,14 @@ namespace GravitySandboxUWP
 {
     class BuiltInScenarios
     {
+        private const double toySpaceScenariosDefaultAccelerationLimit = 10.0;
+        private const double toySpaceScenariosDeaultMinimumSeparation = 10.0;
 
         public static void LoadFiveBodiesScenario(GravitySim sim)
         {
             const double baseMass = 100000.0;
 
-            Debug.WriteLine("Loaded 5 bodies scenario");
-            sim.SetMessage("Running 5 Bodies Scenario");
+            SetScenarioName(sim, "5 Bodies Scenario");
 
             sim.ClearSim();
             sim.SetSimSpace(new SimSpace(SimSpace.DefinedSpace.ToySpace));
@@ -28,6 +29,7 @@ namespace GravitySandboxUWP
             sim.AddBody(baseMass, 10.0, 6, GravitySim.BodyStartPosition.CenterOfTheUniverse);
             sim.SetMonitoredBody(0);
             sim.SetMonitoredValues();
+            sim.SetAccelerationLimits(true, toySpaceScenariosDefaultAccelerationLimit, toySpaceScenariosDeaultMinimumSeparation);
         }
 
 
@@ -35,8 +37,7 @@ namespace GravitySandboxUWP
         {
             const double baseMass = 100000.0;
 
-            Debug.WriteLine("Loaded 4 bodies scenario");
-            sim.SetMessage("Running 4 Bodies Scenario");
+            SetScenarioName(sim, "4 Bodies Scenario");
 
             sim.ClearSim();
             sim.SetSimSpace(new SimSpace(SimSpace.DefinedSpace.ToySpace));
@@ -48,6 +49,7 @@ namespace GravitySandboxUWP
             sim.SetMonitoredValues();
             // sim.SetCheckSim(true);
             // sim.SetSimRounding(3);
+            sim.SetAccelerationLimits(true, toySpaceScenariosDefaultAccelerationLimit, toySpaceScenariosDeaultMinimumSeparation);
         }
 
         public static void LoadNineBodiesScenario(GravitySim sim)
@@ -55,8 +57,7 @@ namespace GravitySandboxUWP
             const double baseSize = 30.0;
             const double baseMass = 100000.0;
 
-            Debug.WriteLine("Loaded 9 bodies scenario");
-            sim.SetMessage("Running 9 Bodies Scenario");
+            SetScenarioName(sim, "9 Bodies Scenario");
 
             sim.ClearSim();
 
@@ -76,15 +77,14 @@ namespace GravitySandboxUWP
             sim.SetMonitoredValues();
             // sim.SetCheckSim(true);
             sim.SetSimRounding(2);
-            sim.SetAccelerationLimit(true);
+            sim.SetAccelerationLimits(true, toySpaceScenariosDefaultAccelerationLimit, toySpaceScenariosDeaultMinimumSeparation);
         }
 
         public static void LoadOrbitingBodiesScenario(GravitySim sim)
         {
             const double baseMass = 100000.0;
 
-            Debug.WriteLine("Loaded orbiting bodies scenario");
-            sim.SetMessage("Running Orbiting Bodies Scenario");
+            SetScenarioName(sim, "Orbiting Bodies Scenario");
 
             sim.ClearSim();
 
@@ -101,15 +101,15 @@ namespace GravitySandboxUWP
             sim.AddBody(10.0 * baseMass, 80.0, 8, GravitySim.BodyStartPosition.CenterOfTheUniverse, new Point(0.389, 0.380), true);
             sim.SetMonitoredBody(0);
             sim.SetMonitoredValues();
-            sim.SetAccelerationLimit(false);
+            sim.SetAccelerationLimits(false, 0.0, 0.0);
         }
 
         public static void LoadXRandomBodies(GravitySim sim, int numBodies, SimRenderer.ColorScheme colorScheme)
         {
             const double baseMass = 100000.0;
 
-            Debug.WriteLine(String.Format("Loading XRandomBodies scenario with {0} bodies", numBodies));
-            sim.SetMessage(String.Format("Running {0} Random Bodies Scenario", numBodies));
+            SetScenarioName(sim, String.Format("{0} Random Bodies Scenario ({1})", numBodies, colorScheme));
+            
             Random rand = new Random();
 
             sim.ClearSim();
@@ -123,7 +123,7 @@ namespace GravitySandboxUWP
 
             sim.SetMonitoredBody(numBodies - 1);
             sim.SetMonitoredValues();
-            sim.SetAccelerationLimit(true);
+            sim.SetAccelerationLimits(true, toySpaceScenariosDefaultAccelerationLimit, toySpaceScenariosDeaultMinimumSeparation);
         }
 
         // Use GravitySim.BodyStartPosition.RandomDenseCenterCircularCluster OR GravitySim.BodyStartPosition.RandomUniformDensityCircularCluster
@@ -132,8 +132,8 @@ namespace GravitySandboxUWP
         {
             const double baseMass = 100000.0;
 
-            Debug.WriteLine(String.Format("Loading XBodiesCircularCluster scenario with {0} bodies", numBodies));
-            sim.SetMessage(String.Format("Running {0} Bodies Circular Cluster Scenario ({1})", numBodies, colorScheme));
+            SetScenarioName(sim, String.Format("{0} Bodies Circular Cluster Scenario ({1})", numBodies, colorScheme));
+
             Random rand = new Random();
 
             sim.ClearSim();
@@ -147,13 +147,12 @@ namespace GravitySandboxUWP
 
             sim.SetMonitoredBody(numBodies - 1);
             sim.SetMonitoredValues();
-            sim.SetAccelerationLimit(false);
+            sim.SetAccelerationLimits(true, toySpaceScenariosDefaultAccelerationLimit, toySpaceScenariosDeaultMinimumSeparation);
         }
 
         public static void LoadLowEarthOrbit(GravitySim sim)
         {
-            Debug.WriteLine("Loaded Low Earth Orbit (ISS + 4 Starlink) scenario");
-            sim.SetMessage("Running Low Earth Orbit (ISS + 4 Starlink) Scenario");
+            SetScenarioName(sim, "Low Earth Orbit (ISS + 4 Starlink satellites) Scenario");
 
             sim.ClearSim();
             sim.SetSimSpace(new SimSpace(SimSpace.DefinedSpace.LEOSpace));      // LEO Space -> Km, minutes, Kg, Km/h
@@ -184,7 +183,14 @@ namespace GravitySandboxUWP
 
             sim.SetMonitoredBody(2);
             sim.SetMonitoredValues();
-            sim.SetAccelerationLimit(false);
+            sim.SetAccelerationLimits(false, 0.0, 0.0);
+        }
+
+        private static void SetScenarioName(GravitySim sim, string name)
+        {
+            Debug.WriteLine("Loaded " + name);
+            sim.SetMessage("Running " + name);
+
         }
 
         private static int RandomColor(SimRenderer.ColorScheme colorScheme, Random random)

@@ -88,21 +88,13 @@ namespace GravitySandboxUWP
 
         #region 2D Physics
 
-        // Issue #9:
-        // Look holistically at distance minimums and acceleration limits and clean up and centralize
-        // Need to keep at least some minimum value for r to avoid divide by zero
-        // Put new values into SimSpace class
         public Point BodyToBodyAccelerate(Body otherBody)
         {
-            const double rMinimum = 10.0;   // we are not simulating collisions so don't let accelerations run away as bodies
-                                           //  approach 0.0 separation
-            const double rMinSquared = rMinimum * rMinimum;
-
             double rX = otherBody.position.X - position.X;
             double rY = otherBody.position.Y - position.Y;
 
             double rSquared = (rX * rX) + (rY * rY);
-            rSquared = Math.Max(rSquared, rMinSquared); // enforce minimum value of r
+            rSquared = Math.Max(rSquared, GravitySim.minimumSeparationSquared); // enforce minimum value of r
             double r = Math.Sqrt(rSquared);
 
             // F = m1 * a, g = G * m1 * m2 / rSquared, m1's cancel out so a = G * m2 / rSquared
