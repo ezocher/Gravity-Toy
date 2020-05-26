@@ -30,13 +30,14 @@ namespace GravitySandboxUWP
         private List<Body> bodies;
         private Canvas simCanvas;
         private MainPage simPage;
-        private int monitoredBody = 0;
+        public int monitoredBody = 0;
         private double simElapsedTime;
         private bool checkSim;
         private int simRounding;
         private bool accelerationLimitOn;
         private double accelerationLimit;
         public static double minimumSeparationSquared;
+        public static string currentScenarioName;
         private Point[] accelerations;
 
         private double speedFactor;          // simulation speed factor, 1.0 = 100% of original scenario speed
@@ -179,32 +180,73 @@ namespace GravitySandboxUWP
 
             double timeIntervalPerCycle = scaledTimeInterval / (double)simCalcSettings.CalculationCyclesPerFrame;
 
+            List<Point> otherPositions = new List<Point>();
+            List<Point> otherAccelerations = new List<Point>();
+
             for (int calcCycle = 0; calcCycle < simCalcSettings.CalculationCyclesPerFrame; calcCycle++)
             {
+                if (DumpData.collectingData)
+                {
+                    DumpData.times.Add(simElapsedTime);
+                    DumpData.timeIntervals.Add(timeIntervalPerCycle);
+                    DumpData.prePositions.Add(bodies[monitoredBody].Position);
+                    DumpData.preVelocities.Add(bodies[monitoredBody].Velocity);
+
+                    otherPositions = new List<Point>();
+                    otherAccelerations = new List<Point>();
+                }
+
                 // Calculate NBody acceleration
                 for (int i = 0; i < bodies.Count(); i++)
                 {
                     accelerations[i].X = 0.0;
                     accelerations[i].Y = 0.0;
+
                     for (int j = 0; j < bodies.Count(); j++)
                         if ((i != j) && bodies[j].IsGravitySource)
                         {
                             Point accel = bodies[i].BodyToBodyAccelerate(bodies[j]);
                             accelerations[i].X += accel.X;
                             accelerations[i].Y += accel.Y;
+
+                            if ((i == monitoredBody) && (DumpData.collectingData))
+                            {
+                                otherPositions.Add(bodies[j].Position);
+                                otherAccelerations.Add(accel);
+                            }
                         }
+                }
+
+                if (DumpData.collectingData)
+                {
+                    DumpData.otherBodyPositions.Add(otherPositions);
+                    DumpData.otherBodyAccelerations.Add(otherAccelerations);
+
+                    DumpData.totalAccelerations.Add(accelerations[monitoredBody]);
                 }
 
                 if (accelerationLimitOn)
                     EnforceAccelerationLimit(accelerations, accelerationLimit);
 
+                if (DumpData.collectingData)
+                    DumpData.afterAccLimitAccelerations.Add(accelerations[monitoredBody]);
+
                 if (simRounding > 0)
                     RoundAccelerations(accelerations, simRounding);
+
+                if (DumpData.collectingData)
+                    DumpData.afterRoundingAccelerations.Add(accelerations[monitoredBody]);
 
                 // Update positons and velocities
                 for (int i = 0; i < bodies.Count(); i++)
                 {
                     bodies[i].Move(accelerations[i], timeIntervalPerCycle);
+                }
+
+                if (DumpData.collectingData)
+                {
+                    DumpData.postPositions.Add(bodies[monitoredBody].Position);
+                    DumpData.postVelocities.Add(bodies[monitoredBody].Velocity);
                 }
 
                 simElapsedTime += timeIntervalPerCycle;

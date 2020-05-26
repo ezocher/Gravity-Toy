@@ -300,6 +300,12 @@ namespace GravitySandboxUWP
             stepButton.IsEnabled = setToRun;      // Step is available when Run is available
         }
 
+        // Try logging calculation details to a text file and then analyze in Excel.
+        //  
+        // Use Show trails to turn logging on and off. 
+        //
+        // Accumulate values in memory from a Run click to a Pause click and then dump them to a text file.
+
         private void runPauseButton_Click(object sender, RoutedEventArgs e)
         {
             SetRunPauseButton(simRunning);
@@ -308,9 +314,21 @@ namespace GravitySandboxUWP
             {
                 // Pause button clicked
                 frameTimer.Cancel();
+
+                if (DumpData.collectingData)
+                {
+                    DumpData.collectingData = false;
+                    DumpData.DumpAccumulatedData();
+                }
             }
             else
             {
+                if (DumpData.loggingOn)
+                {
+                    DumpData.collectingData = true;
+                    DumpData.BeginAccumulatingData(sim);
+                }
+
                 // Run button clicked
                 frameTimer = ThreadPoolTimer.CreatePeriodicTimer(RunSimFrame, new TimeSpan(0, 0, 0, 0, 1000 / (int)FrameRate));
             }
@@ -320,6 +338,8 @@ namespace GravitySandboxUWP
         private void enableTrailsCheckBox_Click(object sender, RoutedEventArgs e)
         {
             trailsEnabled = !trailsEnabled;
+
+            DumpData.loggingOn = trailsEnabled;
         }
         #endregion
 

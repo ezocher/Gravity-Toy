@@ -190,7 +190,7 @@ namespace GravitySandboxUWP
         {
             Debug.WriteLine("Loaded " + name);
             sim.SetMessage("Running " + name);
-
+            GravitySim.currentScenarioName = name;
         }
 
         private static int RandomColor(SimRenderer.ColorScheme colorScheme, Random random)
