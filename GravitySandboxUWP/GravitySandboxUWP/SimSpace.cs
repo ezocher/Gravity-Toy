@@ -77,6 +77,7 @@ namespace GravitySandboxUWP
         public const double ISS_OrbitRadiusKm = 420.0 + EarthRadiusKm;
         public const double ISS_OrbitVelocityKmH = 27583.0;
 
+        // Other spacecraft
         public const double StarlinkOrbitRadiusKm = 550.0 + EarthRadiusKm;
         public const double StarlinkOrbitVelocityKmH = 27320.0;
 
@@ -175,7 +176,6 @@ namespace GravitySandboxUWP
             }
             else if (space == DefinedSpace.LEOSpace)
             {
-                bigG = 1.0;
                 massUnitsAbbr = "kg";
 
                 distanceUnitsAbbr = "km";

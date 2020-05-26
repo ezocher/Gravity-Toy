@@ -156,7 +156,7 @@ namespace GravitySandboxUWP
 
             sim.ClearSim();
             sim.SetSimSpace(new SimSpace(SimSpace.DefinedSpace.LEOSpace));      // LEO Space -> Km, minutes, Kg, Km/h
-            sim.SetCalculationSettings(new CalculationSettings(500, false));
+            sim.SetCalculationSettings(new CalculationSettings(50, false));
 
             // === EARTH ===
             sim.AddBodyActual(SimSpace.EarthMassKg, true, SimSpace.EarthRadiusKm * 2.0, 3, new Point(0.0, 0.0), new Point(0.0, 0.0));
@@ -168,20 +168,20 @@ namespace GravitySandboxUWP
             // Satellites - Starlink times 4, GPS, Geosynchronous
             sim.AddBodyActual(0.0, false, sim.simSpace.SmallestBodySizePx, (int)SimRenderer.ColorNumber.BodyColorWhite,
                 new Point(0.0, SimSpace.StarlinkOrbitRadiusKm), new Point(SimSpace.StarlinkOrbitVelocityKmH, 0.0));
-            sim.AddBodyActual(0.0, false, sim.simSpace.SmallestBodySizePx, (int)SimRenderer.ColorNumber.BodyColorWhite,
-                new Point(-SimSpace.StarlinkOrbitRadiusKm, 0.0), new Point(0.0, SimSpace.StarlinkOrbitVelocityKmH));
-            sim.AddBodyActual(0.0, false, sim.simSpace.SmallestBodySizePx, (int)SimRenderer.ColorNumber.BodyColorWhite,
-                new Point(0.0, -SimSpace.StarlinkOrbitRadiusKm), new Point(-SimSpace.StarlinkOrbitVelocityKmH, 0.0));
-            sim.AddBodyActual(0.0, false, sim.simSpace.SmallestBodySizePx, (int)SimRenderer.ColorNumber.BodyColorWhite,
-                new Point(SimSpace.StarlinkOrbitRadiusKm, 0.0), new Point(0.0, -SimSpace.StarlinkOrbitVelocityKmH));
+            //sim.AddBodyActual(0.0, false, sim.simSpace.SmallestBodySizePx, (int)SimRenderer.ColorNumber.BodyColorWhite,
+            //    new Point(-SimSpace.StarlinkOrbitRadiusKm, 0.0), new Point(0.0, SimSpace.StarlinkOrbitVelocityKmH));
+            //sim.AddBodyActual(0.0, false, sim.simSpace.SmallestBodySizePx, (int)SimRenderer.ColorNumber.BodyColorWhite,
+            //    new Point(0.0, -SimSpace.StarlinkOrbitRadiusKm), new Point(-SimSpace.StarlinkOrbitVelocityKmH, 0.0));
+            //sim.AddBodyActual(0.0, false, sim.simSpace.SmallestBodySizePx, (int)SimRenderer.ColorNumber.BodyColorWhite,
+            //    new Point(SimSpace.StarlinkOrbitRadiusKm, 0.0), new Point(0.0, -SimSpace.StarlinkOrbitVelocityKmH));
 
             //sim.AddBodyActual(0.0, false, sim.simSpace.SmallestBodySizePx * 2.5, 4,
             //    new Point(-SimSpace.GPS_OrbitRadiusKm, 0.0), new Point(0.0, SimSpace.GPS_OrbitVelocityKmH));
 
-            ////sim.AddBodyActual(0.0, false, sim.simSpace.SmallestBodySizePx * 2.5, 5,
-            //new Point(-SimSpace.GeosynchronousOrbitRadiusKm, 0.0), new Point(0.0, SimSpace.GeosynchronousOrbitVelocityKmH));
+            //sim.AddBodyActual(0.0, false, sim.simSpace.SmallestBodySizePx * 2.5, 5,
+            //    new Point(-SimSpace.GeosynchronousOrbitRadiusKm, 0.0), new Point(0.0, SimSpace.GeosynchronousOrbitVelocityKmH));
 
-            sim.SetMonitoredBody(2);
+            sim.SetMonitoredBody(1);
             sim.SetMonitoredValues();
             sim.SetAccelerationLimits(false, 0.0, 0.0);
         }
