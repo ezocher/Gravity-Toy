@@ -29,7 +29,7 @@ namespace GravitySandboxUWP
         public SimRenderer renderer;
         private List<Body> bodies;
         private Canvas simCanvas;
-        private MainPage simPage;
+        public MainPage simPage;
         public int monitoredBody = 0;
         private double simElapsedTime;
         private bool checkSim;

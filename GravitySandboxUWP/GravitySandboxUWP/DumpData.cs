@@ -37,6 +37,7 @@ namespace GravitySandboxUWP
             monitoredBody = sim.monitoredBody;
 
             ClearAccumulatedData();
+            sim.simPage.SetMessageText("*** RECORDING IN PROGRESS ***");
         }
 
         private static void ClearAccumulatedData()
@@ -54,12 +55,29 @@ namespace GravitySandboxUWP
             postVelocities = new List<Point>();
         }
 
+        
 
-        public async static void DumpAccumulatedData()
+        public async static void DumpAccumulatedData(GravitySim sim)
         {
-            const string dumpFileHeader = "Num\tTime\tTime Int.\tPos Before\tVel Before\tOther Positions\tAccelerations\tTotal Acc\tAfter Acc Limit\tAfter Round\tPos After\tVel After";
-            const string firstFourFieldsFormat = "{0}\t{1}\t{2}\t{3}\t{4}";
-            const string lastFiveFieldsFormat = "\t{0}\t{1}\t{2}\t{3}\t{4}";
+            sim.simPage.SetMessageText("*** DUMPING DATA...");
+
+            const string recordHeaderPart1 = "Num\tTime\tTime Int.\tPos Before\t\tVel Before\t\t";
+            string recordHeaderPart2 = "Other Positions\t\t";
+            string recordHeaderPart3 = "Accelerations\t\t";
+            const string recordHeaderPart4 = "Total Acc\t\tAfter Acc Limit\t\tAfter Round\t\tPos After\t\tVel After";
+            int numberOfOtherBodies = otherBodyPositions[0].Count;
+
+            if ((numberOfOtherBodies - 1) > 0)
+            {
+                string additionalTabs = new string('\t', (numberOfOtherBodies - 1) * 2);
+                recordHeaderPart2 += additionalTabs;
+                recordHeaderPart3 += additionalTabs;
+            }
+
+            const string recordFieldsFormatPart1 = "{0}\t{1:R}\t{2:R}\t{3:R}\t{4:R}\t{5:R}\t{6:R}\t";
+            const string recordFieldsFormatPart2 = "{0:R}\t{1:R}\t";
+            const string recordFieldsFormatPart3 = recordFieldsFormatPart2;
+            const string recordFieldsFormatPart4 = "{0:R}\t{1:R}\t{2:R}\t{3:R}\t{4:R}\t{4:R}\t{4:R}\t{4:R}\t{4:R}\t{4:R}";
 
             StorageFolder storageFolder = Windows.Storage.ApplicationData.Current.LocalFolder;
 
@@ -72,21 +90,24 @@ namespace GravitySandboxUWP
                 using (var writer = new StreamWriter(stream))
                 {
                     writer.WriteLine("{0} Dump of body # {1}\n", scenarioName, monitoredBody);
-                    writer.WriteLine(dumpFileHeader);
+                    writer.WriteLine("{0}{1}{2}{3}", recordHeaderPart1, recordHeaderPart2, recordHeaderPart3, recordHeaderPart4);
 
                     for (int i = 0; i < times.Count; i++)
                     {
-                        writer.Write(firstFourFieldsFormat, i + 1, times[i], timeIntervals[i], prePositions[i], preVelocities[i]);
+                        writer.Write(recordFieldsFormatPart1, i + 1, times[i], timeIntervals[i], prePositions[i].X, prePositions[i].Y, preVelocities[i].X, preVelocities[i].Y);
                         foreach (Point point in otherBodyPositions[i])
-                            writer.Write("\t{0}", point);
+                            writer.Write(recordFieldsFormatPart2, point.X, point.Y);
                         foreach (Point point in otherBodyAccelerations[i])
-                            writer.Write("\t{0}", point);
-                        writer.WriteLine(lastFiveFieldsFormat, totalAccelerations[i], afterAccLimitAccelerations[i], afterRoundingAccelerations[i], postPositions[i], postVelocities[i]);
+                            writer.Write(recordFieldsFormatPart3, point.X, point.Y);
+                        writer.WriteLine(recordFieldsFormatPart4, totalAccelerations[i].X, totalAccelerations[i].Y, afterAccLimitAccelerations[i].X, afterAccLimitAccelerations[i].Y, 
+                          afterRoundingAccelerations[i].X, afterRoundingAccelerations[i].Y, postPositions[i].X, postPositions[i].Y, postVelocities[i].X, postVelocities[i].Y);
                     }
                 }
             }
 
             ClearAccumulatedData();
+
+            sim.simPage.AppendMessageText("  ...Data Dump completed");
         }
 
     }

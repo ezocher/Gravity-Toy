@@ -318,7 +318,7 @@ namespace GravitySandboxUWP
                 if (DumpData.collectingData)
                 {
                     DumpData.collectingData = false;
-                    DumpData.DumpAccumulatedData();
+                    DumpData.DumpAccumulatedData(sim);
                 }
             }
             else
@@ -340,6 +340,10 @@ namespace GravitySandboxUWP
             trailsEnabled = !trailsEnabled;
 
             DumpData.loggingOn = trailsEnabled;
+            if (DumpData.loggingOn)
+                AppendMessageText(">> Logging enabled, Run starts recording, then Pause to dump");
+            else
+                SetMessageText("Running " + GravitySim.currentScenarioName);
         }
         #endregion
 
