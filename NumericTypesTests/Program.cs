@@ -14,68 +14,37 @@ namespace NumericTypesTests
     {
         static void Main(string[] args)
         {
-            double diagonals = 0.56568926572799683;
-            double across = 0.40000274777412415;
-            double center = 1.6000109910964966;
+            double alpha = -0.56569329780727118;
+            double theta = -0.40000556695130257;
+            double center = -1.6000222678052103;
             
-            float facross = 0.400002747f;
-            double dfacross = (double)facross;
-
-            float fdiagonals = 0.565689266f;
-            double dfdiagonals = (double)fdiagonals;
-
-            double incorrectSumAfterTwo = 0.96569204330444336;
 
             Point[] accelerations = new Point[5];
-            Point accel;
 
             accelerations[0].X = 0.0;
 
-            accel.X = diagonals;
-            accelerations[0].X += accel.X;
+            accelerations[0].X += alpha;
+            accelerations[0].X += theta;
+            accelerations[0].X += alpha;
+            accelerations[0].X += center;
 
-            accel.X = dfacross;
-            accelerations[0].X += accel.X;
+            accelerations[1].Y = 0.0;
 
-            float s = facross + fdiagonals;
-            double ds = (double)s;
+            accelerations[1].Y += -alpha;
+            accelerations[1].Y += -alpha;
+            accelerations[1].Y += -theta;
 
-            Console.WriteLine("accelerations[0].X = {0:G17}", accelerations[0].X);
+            accelerations[1].Y += -center;
 
-            Console.WriteLine("Error delta = {0:G17}", incorrectSumAfterTwo - accelerations[0].X);
+            double a = alpha + alpha + theta;
+            double b = alpha + theta + alpha;
 
-            /*
-            double zeroX = 0.0, oneY = 0.0, twoX = 0.0;
+            Console.WriteLine("a = {0:G17}", a);
+            Console.WriteLine("b = {0:G17}", b);
+            Console.WriteLine("a == b? {0}", a == b);
 
-            Console.WriteLine("zeroX = {0:G17}", zeroX);
-            zeroX = diagonals;
-            Console.WriteLine("zeroX = {0:G17}", zeroX);
-            zeroX += across;
-            Console.WriteLine("zeroX = {0:G17}", zeroX);
-            zeroX += diagonals;
-            Console.WriteLine("zeroX = {0:G17}", zeroX); 
-            zeroX += center;
-            Console.WriteLine("zeroX = {0:G17}", zeroX);
-
-            Console.WriteLine("oneY = {0:G17}", oneY);
-            oneY = -diagonals;
-            Console.WriteLine("oneY = {0:G17}", oneY);
-            oneY += -diagonals;
-            Console.WriteLine("oneY = {0:G17}", oneY);
-            oneY += -across;
-            Console.WriteLine("oneY = {0:G17}", oneY);
-            oneY += -center;
-            Console.WriteLine("oneY = {0:G17}", oneY);
-
-            twoX = -across;
-            twoX += -diagonals;
-            twoX += -diagonals;
-            twoX += -center;
-
-
-            Console.WriteLine("zero = {0:G17}\none  = {1:G17}\ntwo  = {2:R}", zeroX, oneY, twoX);
-            */
-
+            Console.WriteLine("[0].X = {0:G17}", accelerations[0].X);
+            Console.WriteLine("[1].Y = {0:G17}", accelerations[1].Y);
 
 
             /*
