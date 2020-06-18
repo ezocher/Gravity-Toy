@@ -48,7 +48,7 @@ namespace GravitySandboxUWP
             sim.SetMonitoredValues();
             sim.SetCheckSim(true);
 
-            //sim.SetSimRounding(2);
+            sim.SetSimRounding(8);
             sim.SetAccelerationLimits(true, toySpaceScenariosDefaultAccelerationLimit, toySpaceScenariosDeaultMinimumSeparation);
         }
 

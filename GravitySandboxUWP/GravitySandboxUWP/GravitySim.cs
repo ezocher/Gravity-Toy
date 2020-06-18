@@ -262,7 +262,7 @@ namespace GravitySandboxUWP
                 if (DumpData.collectingData)
                     DumpData.afterRoundingAccelerations.Add(accelerations[monitoredBody]);
 
-                //if (checkSim) Validate5BodyCross(accelerations, "Accelerations After Limit and Rounding");
+                if (checkSim) Validate5BodyCross(accelerations, "Accelerations After Limit and Rounding");
 
                 // Update positons and velocities
                 for (int i = 0; i < bodies.Count(); i++)
