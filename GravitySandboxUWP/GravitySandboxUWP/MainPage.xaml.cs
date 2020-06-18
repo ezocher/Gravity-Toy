@@ -175,11 +175,11 @@ namespace GravitySandboxUWP
                 var velocity = new Point(body.Velocity.X * sim.simSpace.VelocityConnversionFactor,
                     body.Velocity.Y * sim.simSpace.VelocityConnversionFactor);
                 velocityTextBlock.Text = "velocity: " + FormatPointToString(velocity) + 
-                    String.Format(", v = {0:F3} {1}", Hypotenuse(velocity), sim.simSpace.VelocityUnitsAbbr);
+                    String.Format(", v = {0:N1} {1}", Hypotenuse(velocity), sim.simSpace.VelocityUnitsAbbr);
                 positionTextBlock.Text = "position: " + FormatPointToString(body.Position) +
-                    String.Format(", r = {0:F3} {1}", Hypotenuse(body.Position) - sim.simSpace.DistanceOffset,
+                    String.Format(", r = {0:N1} {1}", Hypotenuse(body.Position) - sim.simSpace.DistanceOffset,
                     sim.simSpace.DistanceUnitsAbbr);
-                timeTextBlock.Text = String.Format("time: {0:F3} {1}", simElapsedTime, sim.simSpace.TimeUnitsAbbr);
+                timeTextBlock.Text = String.Format("time: {0:N1} {1}", simElapsedTime, sim.simSpace.TimeUnitsAbbr);
             });
         }
 
@@ -199,7 +199,7 @@ namespace GravitySandboxUWP
 
         static string FormatPointToString(Point p)
         {
-            return String.Format("x = {0:F3}, y = {1:F3}", p.X, p.Y);
+            return String.Format("x = {0:N1}, y = {1:N1}", p.X, p.Y);
         }
 
         public static double Hypotenuse(Point point)
@@ -265,14 +265,16 @@ namespace GravitySandboxUWP
         private void Button_Click_Scenario2(object sender, RoutedEventArgs e)
         {
             ScenarioChanging();
-            BuiltInScenarios.LoadXRandomBodies(sim, 300, SimRenderer.ColorScheme.AllColors);
+            //BuiltInScenarios.LoadXRandomBodies(sim, 300, SimRenderer.ColorScheme.AllColors);
+            BuiltInScenarios.LoadFiveBodiesScenario(sim, false);
         }
 
         private void Button_Click_Scenario3(object sender, RoutedEventArgs e)
         {
             ScenarioChanging();
             //BuiltInScenarios.LoadXBodiesCircularCluster(sim, 500, 6.0, SimRenderer.ColorScheme.PastelColors, GravitySim.BodyStartPosition.RandomUniformDensityCircularCluster);
-            BuiltInScenarios.LoadOrbitingBodiesScenario(sim);
+            //BuiltInScenarios.LoadOrbitingBodiesScenario(sim);
+            BuiltInScenarios.LoadFiveBodiesScenario(sim, true);
         }
 
         private void Button_Click_Scenario4(object sender, RoutedEventArgs e)

@@ -1,27 +1,100 @@
 ﻿using System;
+using System.Drawing;
+
 
 namespace NumericTypesTests
 {
+    struct Point
+    {
+        public double X;
+        public double Y;
+    }
+
     class Program
     {
         static void Main(string[] args)
         {
+            double diagonals = 0.56568926572799683;
+            double across = 0.40000274777412415;
+            double center = 1.6000109910964966;
+            
+            float facross = 0.400002747f;
+            double dfacross = (double)facross;
+
+            float fdiagonals = 0.565689266f;
+            double dfdiagonals = (double)fdiagonals;
+
+            double incorrectSumAfterTwo = 0.96569204330444336;
+
+            Point[] accelerations = new Point[5];
+            Point accel;
+
+            accelerations[0].X = 0.0;
+
+            accel.X = diagonals;
+            accelerations[0].X += accel.X;
+
+            accel.X = dfacross;
+            accelerations[0].X += accel.X;
+
+            float s = facross + fdiagonals;
+            double ds = (double)s;
+
+            Console.WriteLine("accelerations[0].X = {0:G17}", accelerations[0].X);
+
+            Console.WriteLine("Error delta = {0:G17}", incorrectSumAfterTwo - accelerations[0].X);
+
+            /*
+            double zeroX = 0.0, oneY = 0.0, twoX = 0.0;
+
+            Console.WriteLine("zeroX = {0:G17}", zeroX);
+            zeroX = diagonals;
+            Console.WriteLine("zeroX = {0:G17}", zeroX);
+            zeroX += across;
+            Console.WriteLine("zeroX = {0:G17}", zeroX);
+            zeroX += diagonals;
+            Console.WriteLine("zeroX = {0:G17}", zeroX); 
+            zeroX += center;
+            Console.WriteLine("zeroX = {0:G17}", zeroX);
+
+            Console.WriteLine("oneY = {0:G17}", oneY);
+            oneY = -diagonals;
+            Console.WriteLine("oneY = {0:G17}", oneY);
+            oneY += -diagonals;
+            Console.WriteLine("oneY = {0:G17}", oneY);
+            oneY += -across;
+            Console.WriteLine("oneY = {0:G17}", oneY);
+            oneY += -center;
+            Console.WriteLine("oneY = {0:G17}", oneY);
+
+            twoX = -across;
+            twoX += -diagonals;
+            twoX += -diagonals;
+            twoX += -center;
+
+
+            Console.WriteLine("zero = {0:G17}\none  = {1:G17}\ntwo  = {2:R}", zeroX, oneY, twoX);
+            */
+
+
+
+            /*
             double large = -42157.0;
             //double deltaT = 0.0000333333333333333;
             //double v = 0.8077192;
-            //Console.WriteLine("pos = {0:R} v = {1:R} deltaT = {2:R}", large, v, deltaT);
+            //Console.WriteLine("pos = {0:G17} v = {1:G17} deltaT = {2:G17}", large, v, deltaT);
 
             //double dist = deltaT * v / 2.0;
             //large += dist;
 
-            //Console.WriteLine("dist = {0:R} pos = {1:R}", dist, large);
+            //Console.WriteLine("dist = {0:G17} pos = {1:G17}", dist, large);
 
             Console.WriteLine("=========== double ==========");
             large = -42157.0;
             double small = 0.1;
             for (int i = 0; i < 20; i++)
             {
-                Console.WriteLine("pos ({0:R}) + small ({1:R}) = {2:R} - significant digits in calculation: {3}, log10s: {4:R}, {5:R}, log difference: {6}", 
+                Console.WriteLine("pos ({0:G17}) + small ({1:G17}) = {2:R} - significant digits in calculation: {3}, log10s: {4:R}, {5:R}, log difference: {6}", 
                     large, small, large + small, DetectAdditionPrecisionIssue_Original(large, small), Math.Log10(Math.Abs(small)), Math.Log10(Math.Abs(large)), 
                     DetectAdditionPrecisionIssue_LogVersion(large, small));
                 small *= 0.1;
@@ -35,6 +108,7 @@ namespace NumericTypesTests
                 Console.WriteLine("pos ({0:G}) + small ({1:E}) = {2:G} - significant digits in calculation: {3}", dpos, dsmall, dpos + dsmall, DetectAdditionPrecisionIssue_Original(dpos, dsmall));
                 dsmall *= 0.1m;
             }
+            */
         }
 
 

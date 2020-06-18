@@ -39,6 +39,8 @@ namespace GravitySandboxUWP
         public static double minimumSeparationSquared;
         public static string currentScenarioName;
         private Point[] accelerations;
+        private Point[] positions;          // Used for checkSim only
+        private Point[] velocities;         // Used for checkSim only
 
         private double speedFactor;          // simulation speed factor, 1.0 = 100% of original scenario speed
 
@@ -178,10 +180,30 @@ namespace GravitySandboxUWP
             if (accelerations == null)
                 accelerations = new Point[bodies.Count()];
 
+            if (checkSim)
+            {
+                if (positions == null)
+                    positions = new Point[bodies.Count()];
+                if (velocities == null)
+                    velocities = new Point[bodies.Count()];
+
+            }
+
             double timeIntervalPerCycle = scaledTimeInterval / (double)simCalcSettings.CalculationCyclesPerFrame;
 
             List<Point> otherPositions = new List<Point>();
             List<Point> otherAccelerations = new List<Point>();
+
+            if (checkSim)
+            {
+                for (int i = 0; i < bodies.Count(); i++)
+                {
+                    positions[i] = bodies[i].Position;
+                    velocities[i] = bodies[i].Velocity;
+                }
+                Validate5BodyCross(positions, "Positions Before Update");
+                Validate5BodyCross(velocities, "Velocities Before Update");
+            }
 
             for (int calcCycle = 0; calcCycle < simCalcSettings.CalculationCyclesPerFrame; calcCycle++)
             {
@@ -206,7 +228,7 @@ namespace GravitySandboxUWP
                         if ((i != j) && bodies[j].IsGravitySource)
                         {
                             Point accel = bodies[i].BodyToBodyAccelerate(bodies[j]);
-                            accelerations[i].X += accel.X;
+                            accelerations[i].X = accelerations[i].X + accel.X;
                             accelerations[i].Y += accel.Y;
 
                             if ((i == monitoredBody) && (DumpData.collectingData))
@@ -216,6 +238,9 @@ namespace GravitySandboxUWP
                             }
                         }
                 }
+
+                if (checkSim) Validate5BodyCross(accelerations, "Accelerations Before Limit and Rounding");
+
 
                 if (DumpData.collectingData)
                 {
@@ -237,10 +262,23 @@ namespace GravitySandboxUWP
                 if (DumpData.collectingData)
                     DumpData.afterRoundingAccelerations.Add(accelerations[monitoredBody]);
 
+                if (checkSim) Validate5BodyCross(accelerations, "Accelerations After Limit and Rounding");
+
                 // Update positons and velocities
                 for (int i = 0; i < bodies.Count(); i++)
                 {
                     bodies[i].Move(accelerations[i], timeIntervalPerCycle);
+                }
+
+                if (checkSim)
+                {
+                    for (int i = 0; i < bodies.Count(); i++)
+                    {
+                        positions[i] = bodies[i].Position;
+                        velocities[i] = bodies[i].Velocity;
+                    }
+                    Validate5BodyCross(positions, "Positions After Update");
+                    Validate5BodyCross(velocities, "Velocities After Update");
                 }
 
                 if (DumpData.collectingData)
@@ -257,11 +295,6 @@ namespace GravitySandboxUWP
             if (simStepping) perfIntervalTicks = DisplayPerfIntervalElapsed(perfStopwatch, perfIntervalTicks, 
                 String.Format("Compute N-body accelerations, update positions & velocities ({0} iterations)", simCalcSettings.CalculationCyclesPerFrame) );
 
-            //if (checkSim)
-            //{
-            //    ValidateState(accelerations);
-            //    if (simStepping) perfIntervalTicks = DisplayPerfIntervalElapsed(perfStopwatch, perfIntervalTicks, "Validate state of accelerations");
-            //}
 
             // Update rendering
             renderer.BodiesMoved(bodies);
@@ -335,63 +368,85 @@ namespace GravitySandboxUWP
 
 
         #region Validation Checks
-        private void ValidateState(Point[] accelerations)
+
+        // Validates accelerations and positions match where they should
+        // Validates values that should always be zero
+        private void Validate5BodyCross(Point[] points, string when)
         {
-            bool invalid;
-
-            invalid = false;
-            if (!CheckMirrorAndZeroY(accelerations[0], accelerations[2]))
-                invalid = true;
-            if (!CheckMirrorAndZeroY(bodies[0].Position, bodies[2].Position))
-                invalid = true;
-            if (!CheckMirrorAndZeroY(bodies[0].Velocity, bodies[2].Velocity))
-                invalid = true;
-            if (!CheckMirrorAndZeroX(accelerations[1], accelerations[3]))
-                invalid = true;
-            if (!CheckMirrorAndZeroX(bodies[1].Position, bodies[3].Position))
-                invalid = true;
-            if (!CheckMirrorAndZeroX(bodies[1].Velocity, bodies[3].Velocity))
-                invalid = true;
-            if (!CrossCheckXY(accelerations[0], accelerations[3]))
-                invalid = true;
-            if (!CrossCheckXY(bodies[0].Position, bodies[3].Position))
-                invalid = true;
-            if (!CrossCheckXY(bodies[0].Velocity, bodies[3].Velocity))
-                invalid = true;
-            if (!CrossCheckXY(accelerations[1], accelerations[2]))
-                invalid = true;
-            if (!CrossCheckXY(bodies[1].Position, bodies[2].Position))
-                invalid = true;
-            if (!CrossCheckXY(bodies[1].Velocity, bodies[2].Velocity))
-                invalid = true;
-
-            if (invalid)
-                invalid = true;
+            if (!FourWayMatch(points[0].X, -points[1].Y, -points[2].X, points[3].Y))
+                Debugger.Break();
+            if (!AllAreZero(points[0].Y, points[1].X, points[2].Y, points[3].X))
+                Debugger.Break();
+            if (!AllAreZero(points[4].X, points[4].Y))
+                Debugger.Break();
         }
 
-        private static bool CheckMirrorAndZeroY(Point a, Point b)
+        private bool FourWayMatch(double a, double b, double c, double d)
         {
-            if ((a.Y != 0.0) || (b.Y != 0.0) || (a.X != -b.X))
-                return false;
-            else
-                return true;
+            bool result = ((a == b) && (b == c) && (c == d));
+            if (!result)
+            {
+                Debugger.Break();
+                bool test;
+                test = (a == b);
+                test = (b == c);
+                test = (c == d);
+            }
+            return result;
+        }
+        
+        private bool AllAreZero(double a, double b, double c, double d)
+        {
+            bool result = ((a == 0.0) && (b == 0.0) && (c == 0.0) && (d == 0.0));
+            if (!result)
+            {
+                Debugger.Break();
+                bool test;
+                test = (a == 0.0);
+                test = (b == 0.0);
+                test = (c == 0.0);
+                test = (d == 0.0);
+            }
+            return result;
         }
 
-        private static bool CheckMirrorAndZeroX(Point a, Point b)
+        private bool AllAreZero(double a, double b)
         {
-            if ((a.X != 0.0) || (b.X != 0.0) || (a.Y != -b.Y))
-                return false;
-            else
-                return true;
+            bool result = ((a == 0.0) && (b == 0.0));
+            if (!result)
+            {
+                Debugger.Break();
+                bool test;
+                test = (a == 0.0);
+                test = (b == 0.0);
+            }
+            return result;
         }
 
-        private static bool CrossCheckXY(Point a, Point b)
-        {
-            if ((a.X != b.Y) || (a.Y != b.X))
-                return false;
-            else
-                return true;
-        }
+
+        //private static bool CheckMirrorAndZeroY(Point a, Point b)
+        //{
+        //    if ((a.Y != 0.0) || (b.Y != 0.0) || (a.X != -b.X))
+        //        return false;
+        //    else
+        //        return true;
+        //}
+
+        //private static bool CheckMirrorAndZeroX(Point a, Point b)
+        //{
+        //    if ((a.X != 0.0) || (b.X != 0.0) || (a.Y != -b.Y))
+        //        return false;
+        //    else
+        //        return true;
+        //}
+
+        //private static bool CrossCheckXY(Point a, Point b)
+        //{
+        //    if ((a.X != b.Y) || (a.Y != b.X))
+        //        return false;
+        //    else
+        //        return true;
+        //}
 
         #endregion
 

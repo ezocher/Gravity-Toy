@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -63,9 +64,17 @@ namespace GravitySandboxUWP
 
             const string recordHeaderPart1 = "Num\tTime\tTime Int.\tPos Before\t\tVel Before\t\t";
             string recordHeaderPart2 = "Other Positions\t\t";
-            string recordHeaderPart3 = "Accelerations\t\t";
+            string recordHeaderPart3 = "Accelerations from Other Bodies\t\t";
             const string recordHeaderPart4 = "Total Acc\t\tAfter Acc Limit\t\tAfter Round\t\tPos After\t\tVel After";
-            int numberOfOtherBodies = otherBodyPositions[0].Count;
+            int numberOfOtherBodies;
+
+            if (otherBodyPositions.Count > 0)
+                numberOfOtherBodies = otherBodyPositions[0].Count;
+            else
+            {
+                Debugger.Break();
+                numberOfOtherBodies = 0;
+            }
 
             if ((numberOfOtherBodies - 1) > 0)
             {
@@ -77,7 +86,7 @@ namespace GravitySandboxUWP
             const string recordFieldsFormatPart1 = "{0}\t{1:R}\t{2:R}\t{3:R}\t{4:R}\t{5:R}\t{6:R}\t";
             const string recordFieldsFormatPart2 = "{0:R}\t{1:R}\t";
             const string recordFieldsFormatPart3 = recordFieldsFormatPart2;
-            const string recordFieldsFormatPart4 = "{0:R}\t{1:R}\t{2:R}\t{3:R}\t{4:R}\t{4:R}\t{4:R}\t{4:R}\t{4:R}\t{4:R}";
+            const string recordFieldsFormatPart4 = "{0:R}\t{1:R}\t{2:R}\t{3:R}\t{4:R}\t{5:R}\t{6:R}\t{7:R}\t{8:R}\t{9:R}";
 
             StorageFolder storageFolder = Windows.Storage.ApplicationData.Current.LocalFolder;
 

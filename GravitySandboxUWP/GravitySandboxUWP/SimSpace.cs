@@ -74,8 +74,10 @@ namespace GravitySandboxUWP
 
         // ========== ISS ==========
         // From https://spotthestation.nasa.gov/tracking_map.cfm on 5/25/2020 at 00:30:00 GMT
-        public const double ISS_OrbitRadiusKm = 420.0 + EarthRadiusKm;
-        public const double ISS_OrbitVelocityKmH = 27583.0;
+        public const double ISS_OrbitRadiusKm = 6782.6;
+        //public const double ISS_OrbitRadiusKm = 420.0 + EarthRadiusKm;
+        public const double ISS_OrbitVelocityKmH = 27599.4;     // 7666.5 m/s
+        //public const double ISS_OrbitVelocityKmH = 27583.0;
 
         // Other spacecraft
         public const double StarlinkOrbitRadiusKm = 550.0 + EarthRadiusKm;
@@ -84,7 +86,8 @@ namespace GravitySandboxUWP
         public const double GPS_OrbitRadiusKm = 20180.0 + EarthRadiusKm;
         public const double GPS_OrbitVelocityKmH = 13949.0;
 
-        public const double GeosynchronousOrbitRadiusKm = 35786.0 + EarthRadiusKm;
+        public const double GeosynchronousOrbitRadiusKm = 42164.2;
+        //public const double GeosynchronousOrbitRadiusKm = 35786.0 + EarthRadiusKm;
         public const double GeosynchronousOrbitVelocityKmH = 11070.0;
 
 
@@ -180,7 +183,7 @@ namespace GravitySandboxUWP
 
                 distanceUnitsAbbr = "km";
                 simBoxHeightAndWidth = 4.0 * EarthRadiusKm;
-                distanceOffset = EarthRadiusKm;
+                distanceOffset = 0; // EarthRadiusKm;
 
                 timeUnitsAbbr = "min.";
                 timeUnitsPerUISecond = 1.0;
