@@ -34,7 +34,7 @@ namespace GravitySandboxUWP
         private double scaleFactor;         // use scaleFactor for x, use -scaleFactor for y - incorporates any zoom factor
         private double zoomFactor;          // zoom factor, 1.0 = 100%
         private Point simulationCenterTranslation;
-        private Point screenSimulationDimensions;    // screen width and height in simulation space
+        private SimPoint screenSimulationDimensions;    // screen width and height in simulation space
 
         private Canvas simCanvas;
 
@@ -46,7 +46,7 @@ namespace GravitySandboxUWP
         public SimSpace simSpace;
 
         private List<Ellipse> circles;
-        private List<Point> trailsPositions;        // Positions of trails dots in simulation space
+        private List<SimPoint> trailsPositions;        // Positions of trails dots in simulation space
 
         private CoreDispatcher dispatcher;
 
@@ -70,7 +70,7 @@ namespace GravitySandboxUWP
         {
             this.simSpace = space;
             this.circles = new List<Ellipse>();
-            this.trailsPositions = new List<Point>();
+            this.trailsPositions = new List<SimPoint>();
             this.rand = new Random();
             this.simCanvas = simulationCanvas;
             this.zoomFactor = 1.0;
@@ -90,12 +90,12 @@ namespace GravitySandboxUWP
         }
 
         private const double dotSize = 2.0;
-        private Point previousTrailPosition;
+        private SimPoint previousTrailPosition;
 
-        public void PlotTrailDot(Point position)
+        public void PlotTrailDot(SimPoint position)
         {
-            // Always plot the first point
-            // Don't plot subsequent points iff they're repeats of the previous point
+            // Always plot the first dot
+            // Don't plot subsequent dots iff they're in the same position as the previous dot
             if ((trailsPositions.Count == 0) || !position.Equals(previousTrailPosition))
             {
                 previousTrailPosition = position;
@@ -205,7 +205,7 @@ namespace GravitySandboxUWP
 
             scaleFactor = minDimension / simBoxDimensions;
             simulationCenterTranslation = new Point(screenWidth / 2, screenHeight / 2);
-            screenSimulationDimensions = new Point(screenWidth / scaleFactor, screenHeight / scaleFactor);
+            screenSimulationDimensions = new SimPoint(screenWidth / scaleFactor, screenHeight / scaleFactor);
 
             scaleFactor = scaleFactor * zoomFactor;
         }
@@ -231,7 +231,7 @@ namespace GravitySandboxUWP
         }
 
 
-        public TranslateTransform CircleTransform(Point position, double size)
+        public TranslateTransform CircleTransform(SimPoint position, double size)
         {
             TranslateTransform t = new TranslateTransform();
             double circleCenterTranslation = -size / 2.0;
@@ -243,7 +243,7 @@ namespace GravitySandboxUWP
         }
 
         // Returns starting position for a body in simulation space coordinates
-        public Point GetStartingPosition(GravitySim.BodyStartPosition startPos)
+        public SimPoint GetStartingPosition(GravitySim.BodyStartPosition startPos)
         {
             const double stagePosition = 0.5; // For the "stage" positions - proportion of the way from the center of the stage to the edge
                                               //    in all directions
@@ -257,62 +257,62 @@ namespace GravitySandboxUWP
             switch (startPos)
             {
                 case GravitySim.BodyStartPosition.StageLeft:
-                    return new Point(-stageXY, 0.0);
+                    return new SimPoint(-stageXY, 0.0);
                 case GravitySim.BodyStartPosition.StageRight:
-                    return new Point(stageXY, 0.0);
+                    return new SimPoint(stageXY, 0.0);
                 case GravitySim.BodyStartPosition.StageTop:
-                    return new Point(0.0, stageXY);
+                    return new SimPoint(0.0, stageXY);
                 case GravitySim.BodyStartPosition.StageBottom:
-                    return new Point(0.0, -stageXY);
+                    return new SimPoint(0.0, -stageXY);
 
                 case GravitySim.BodyStartPosition.StageTopLeft:
-                    return new Point(-stageXY, stageXY);
+                    return new SimPoint(-stageXY, stageXY);
                 case GravitySim.BodyStartPosition.StageTopRight:
-                    return new Point(stageXY, stageXY);
+                    return new SimPoint(stageXY, stageXY);
                 case GravitySim.BodyStartPosition.StageBottomLeft:
-                    return new Point(-stageXY, -stageXY);
+                    return new SimPoint(-stageXY, -stageXY);
                 case GravitySim.BodyStartPosition.StageBottomRight:
-                    return new Point(stageXY, -stageXY);
+                    return new SimPoint(stageXY, -stageXY);
 
                 case GravitySim.BodyStartPosition.ScreenLeft:
-                    return new Point(-screenMaxX, 0.0);
+                    return new SimPoint(-screenMaxX, 0.0);
                 case GravitySim.BodyStartPosition.ScreenRight:
-                    return new Point(screenMaxX, 0.0);
+                    return new SimPoint(screenMaxX, 0.0);
                 case GravitySim.BodyStartPosition.ScreenTop:
-                    return new Point(0.0, screenMaxY);
+                    return new SimPoint(0.0, screenMaxY);
                 case GravitySim.BodyStartPosition.ScreenBottom:
-                    return new Point(0.0, -screenMaxY);
+                    return new SimPoint(0.0, -screenMaxY);
 
                 case GravitySim.BodyStartPosition.CenterOfTheUniverse:
-                    return new Point(0.0, 0.0);
+                    return new SimPoint(0.0, 0.0);
 
                 case GravitySim.BodyStartPosition.RandomStagePosition:
-                    return new Point(rand.Next((int)-simBoxMaxXY, (int)simBoxMaxXY),
+                    return new SimPoint(rand.Next((int)-simBoxMaxXY, (int)simBoxMaxXY),
                                       rand.Next((int)-simBoxMaxXY, (int)simBoxMaxXY));
                 case GravitySim.BodyStartPosition.RandomScreenPosition:
-                    return new Point(rand.Next((int)-screenMaxX, (int)screenMaxX),
+                    return new SimPoint(rand.Next((int)-screenMaxX, (int)screenMaxX),
                                       rand.Next((int)-screenMaxY, (int)screenMaxY));
 
                 // This approach gives us higher density toward the center of the circle
                 case GravitySim.BodyStartPosition.RandomDenseCenterCircularCluster:
                     double length = rand.NextDouble() * simBoxMaxXY * 0.9;
                     double angle = rand.NextDouble() * Math.PI * 2.0; // radians
-                    return new Point(length * Math.Cos(angle), length * Math.Sin(angle));
+                    return new SimPoint(length * Math.Cos(angle), length * Math.Sin(angle));
                 
                 // This approach gives us uniform density throughout the circle
                 case GravitySim.BodyStartPosition.RandomUniformDensityCircularCluster:
-                    Point newBodyPosition;
+                    SimPoint newBodyPosition;
                     double limitXY = 0.9 * simBoxMaxXY;
                     do
                     {
-                        newBodyPosition = new Point(rand.Next((int)-limitXY, (int)limitXY),
+                        newBodyPosition = new SimPoint(rand.Next((int)-limitXY, (int)limitXY),
                                       rand.Next((int)-limitXY, (int)limitXY));
                     }
                     while (MainPage.Hypotenuse(newBodyPosition) > limitXY);
                     return (newBodyPosition);
 
                 default:
-                    return new Point(0.0, 0.0);
+                    return new SimPoint(0.0, 0.0);
             }
         }
     }

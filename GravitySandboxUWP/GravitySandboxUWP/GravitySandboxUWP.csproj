@@ -123,6 +123,7 @@
     <Compile Include="BuiltInScenarios.cs" />
     <Compile Include="CalculationSettings.cs" />
     <Compile Include="DumpData.cs" />
+    <Compile Include="SimPoint.cs" />
     <Compile Include="SimSpace.cs" />
     <Compile Include="Body.cs" />
     <Compile Include="GravitySim.cs" />

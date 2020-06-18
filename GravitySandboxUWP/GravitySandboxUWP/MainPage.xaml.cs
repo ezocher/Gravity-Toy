@@ -172,7 +172,7 @@ namespace GravitySandboxUWP
 
             var ignore = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
-                var velocity = new Point(body.Velocity.X * sim.simSpace.VelocityConnversionFactor,
+                var velocity = new SimPoint(body.Velocity.X * sim.simSpace.VelocityConnversionFactor,
                     body.Velocity.Y * sim.simSpace.VelocityConnversionFactor);
                 velocityTextBlock.Text = "velocity: " + FormatPointToString(velocity) + 
                     String.Format(", v = {0:N1} {1}", Hypotenuse(velocity), sim.simSpace.VelocityUnitsAbbr);
@@ -197,14 +197,14 @@ namespace GravitySandboxUWP
             messageTextBlock.Text += threeSpaces + message;
         }
 
-        static string FormatPointToString(Point p)
+        static string FormatPointToString(SimPoint p)
         {
             return String.Format("x = {0:N1}, y = {1:N1}", p.X, p.Y);
         }
 
-        public static double Hypotenuse(Point point)
+        public static double Hypotenuse(SimPoint simPoint)
         {
-            return Math.Sqrt((point.X * point.X) + (point.Y * point.Y));
+            return Math.Sqrt((simPoint.X * simPoint.X) + (simPoint.Y * simPoint.Y));
         }
 
         private void BackgroundGrid_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -380,15 +380,15 @@ namespace GravitySandboxUWP
         {
             TranslateTransform t = new TranslateTransform();
 
-            Body a = new Body(new Point(0, 0), sim.simSpace);
+            Body a = new Body(new SimPoint(0, 0), sim.simSpace);
             t = sim.renderer.CircleTransform(a);
-            Body b = new Body(new Point(-500, 0), sim.simSpace);
+            Body b = new Body(new SimPoint(-500, 0), sim.simSpace);
             t = sim.renderer.CircleTransform(b);
-            Body c = new Body(new Point(500, 0), sim.simSpace);
+            Body c = new Body(new SimPoint(500, 0), sim.simSpace);
             t = sim.renderer.CircleTransform(c);
-            Body d = new Body(new Point(0, 500), sim.simSpace);
+            Body d = new Body(new SimPoint(0, 500), sim.simSpace);
             t = sim.renderer.CircleTransform(d);
-            Body e = new Body(new Point(0, -500), sim.simSpace);
+            Body e = new Body(new SimPoint(0, -500), sim.simSpace);
             t = sim.renderer.CircleTransform(e);
         }
 

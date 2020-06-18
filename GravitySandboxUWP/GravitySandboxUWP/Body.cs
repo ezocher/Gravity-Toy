@@ -17,16 +17,16 @@ namespace GravitySandboxUWP
 
         public double Size { get; private set; }
 
-        Point position;
-        public Point Position
+        SimPoint position;
+        public SimPoint Position
         {
             get { return position; }
             private set { position = value; }
         }
 
-        private Point defaultStartingVelocity = new Point(0.0, 0.0);
-        private Point velocity;
-        public Point Velocity
+        private SimPoint defaultStartingVelocity = new SimPoint(0.0, 0.0);
+        private SimPoint velocity;
+        public SimPoint Velocity
         {
             get { return velocity; }
             private set { velocity = value; }
@@ -44,7 +44,7 @@ namespace GravitySandboxUWP
         private SimSpace simSpace;
 
         #region Constructors
-        public Body(Point bodyStartingPosition, SimSpace space)
+        public Body(SimPoint bodyStartingPosition, SimSpace space)
         {
             Mass = defaultValue;
             Size = defaultValue;
@@ -54,7 +54,7 @@ namespace GravitySandboxUWP
             simSpace = space;
         }
 
-        public Body(double bodyMass, double bodySize, Point bodyStartingPosition, SimSpace space)
+        public Body(double bodyMass, double bodySize, SimPoint bodyStartingPosition, SimSpace space)
         {
             Mass = bodyMass;
             Size = bodySize;
@@ -64,7 +64,7 @@ namespace GravitySandboxUWP
             simSpace = space;
         }
 
-        public Body(double bodyMass, double bodySize, Point bodyStartingPosition, Point bodyStartingVelocity, SimSpace space)
+        public Body(double bodyMass, double bodySize, SimPoint bodyStartingPosition, SimPoint bodyStartingVelocity, SimSpace space)
         {
             Mass = bodyMass;
             Size = bodySize;
@@ -74,7 +74,7 @@ namespace GravitySandboxUWP
             simSpace = space;
         }
 
-        public Body(double bodyMass, double bodySize, Point bodyStartingPosition, Point bodyStartingVelocity,
+        public Body(double bodyMass, double bodySize, SimPoint bodyStartingPosition, SimPoint bodyStartingVelocity,
             bool isGravitySource, SimSpace space)
         {
             Mass = bodyMass;
@@ -88,7 +88,7 @@ namespace GravitySandboxUWP
 
         #region 2D Physics
 
-        public Point BodyToBodyAccelerate(Body otherBody)
+        public SimPoint BodyToBodyAccelerate(Body otherBody)
         {
             double rX = otherBody.position.X - position.X;
             double rY = otherBody.position.Y - position.Y;
@@ -100,10 +100,10 @@ namespace GravitySandboxUWP
             // F = m1 * a, g = G * m1 * m2 / rSquared, m1's cancel out so a = G * m2 / rSquared
             double a = simSpace.BigG * otherBody.Mass / rSquared;
 
-            return (new Point(a * rX / r, a * rY / r));
+            return (new SimPoint(a * rX / r, a * rY / r));
         }
 
-        public void Move(Point accel, double deltaT)
+        public void Move(SimPoint accel, double deltaT)
         {
             if ( !((accel.X == 0.0) && (accel.Y == 0.0)) )
             {

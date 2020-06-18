@@ -38,9 +38,9 @@ namespace GravitySandboxUWP
         private double accelerationLimit;
         public static double minimumSeparationSquared;
         public static string currentScenarioName;
-        private Point[] accelerations;
-        private Point[] positions;          // Used for checkSim only
-        private Point[] velocities;         // Used for checkSim only
+        private SimPoint[] accelerations;
+        private SimPoint[] positions;          // Used for checkSim only
+        private SimPoint[] velocities;         // Used for checkSim only
 
         private double speedFactor;          // simulation speed factor, 1.0 = 100% of original scenario speed
 
@@ -93,22 +93,22 @@ namespace GravitySandboxUWP
             renderer.Add(size, color, bodies.Last());
         }
 
-        public void AddBody(double mass, double size, int color, BodyStartPosition startPosition, Point startVelocity)
+        public void AddBody(double mass, double size, int color, BodyStartPosition startPosition, SimPoint startVelocity)
         {
             bodies.Add(new Body(mass, size, renderer.GetStartingPosition(startPosition), startVelocity, simSpace));
             renderer.Add(size, color, bodies.Last());
         }
 
-        public void AddBody(double mass, double size, int color, BodyStartPosition startPosition, Point startVelocity,
+        public void AddBody(double mass, double size, int color, BodyStartPosition startPosition, SimPoint startVelocity,
             bool isGravitySource)
         {
             bodies.Add(new Body(mass, size, renderer.GetStartingPosition(startPosition), startVelocity, isGravitySource, simSpace));
             renderer.Add(size, color, bodies.Last());
         }
 
-        public void AddBodyActual(double mass, bool isGravitySource, double size, int color, Point startPosition, Point startVelocity)
+        public void AddBodyActual(double mass, bool isGravitySource, double size, int color, SimPoint startPosition, SimPoint startVelocity)
         {
-            var velocity = new Point(startVelocity.X / simSpace.VelocityConnversionFactor, startVelocity.Y / simSpace.VelocityConnversionFactor);
+            var velocity = new SimPoint(startVelocity.X / simSpace.VelocityConnversionFactor, startVelocity.Y / simSpace.VelocityConnversionFactor);
             bodies.Add(new Body(mass, size, startPosition, velocity, isGravitySource, simSpace));
             renderer.Add(size, color, bodies.Last());
         }
@@ -178,21 +178,21 @@ namespace GravitySandboxUWP
             }
 
             if (accelerations == null)
-                accelerations = new Point[bodies.Count()];
+                accelerations = new SimPoint[bodies.Count()];
 
             if (checkSim)
             {
                 if (positions == null)
-                    positions = new Point[bodies.Count()];
+                    positions = new SimPoint[bodies.Count()];
                 if (velocities == null)
-                    velocities = new Point[bodies.Count()];
+                    velocities = new SimPoint[bodies.Count()];
 
             }
 
             double timeIntervalPerCycle = scaledTimeInterval / (double)simCalcSettings.CalculationCyclesPerFrame;
 
-            List<Point> otherPositions = new List<Point>();
-            List<Point> otherAccelerations = new List<Point>();
+            List<SimPoint> otherPositions = new List<SimPoint>();
+            List<SimPoint> otherAccelerations = new List<SimPoint>();
 
             if (checkSim)
             {
@@ -214,8 +214,8 @@ namespace GravitySandboxUWP
                     DumpData.prePositions.Add(bodies[monitoredBody].Position);
                     DumpData.preVelocities.Add(bodies[monitoredBody].Velocity);
 
-                    otherPositions = new List<Point>();
-                    otherAccelerations = new List<Point>();
+                    otherPositions = new List<SimPoint>();
+                    otherAccelerations = new List<SimPoint>();
                 }
 
                 // Calculate NBody acceleration
@@ -227,7 +227,7 @@ namespace GravitySandboxUWP
                     for (int j = 0; j < bodies.Count(); j++)
                         if ((i != j) && bodies[j].IsGravitySource)
                         {
-                            Point accel = bodies[i].BodyToBodyAccelerate(bodies[j]);
+                            SimPoint accel = bodies[i].BodyToBodyAccelerate(bodies[j]);
                             accelerations[i].X = accelerations[i].X + accel.X;
                             accelerations[i].Y += accel.Y;
 
@@ -239,7 +239,7 @@ namespace GravitySandboxUWP
                         }
                 }
 
-                if (checkSim) Validate5BodyCross(accelerations, "Accelerations Before Limit and Rounding");
+                //if (checkSim) Validate5BodyCross(accelerations, "Accelerations Before Limit and Rounding");
 
 
                 if (DumpData.collectingData)
@@ -262,7 +262,7 @@ namespace GravitySandboxUWP
                 if (DumpData.collectingData)
                     DumpData.afterRoundingAccelerations.Add(accelerations[monitoredBody]);
 
-                if (checkSim) Validate5BodyCross(accelerations, "Accelerations After Limit and Rounding");
+                //if (checkSim) Validate5BodyCross(accelerations, "Accelerations After Limit and Rounding");
 
                 // Update positons and velocities
                 for (int i = 0; i < bodies.Count(); i++)
@@ -352,7 +352,7 @@ namespace GravitySandboxUWP
             return elapsedTicks;
         }
 
-        public void EnforceAccelerationLimit(Point[] accelerations, double limit)
+        public void EnforceAccelerationLimit(SimPoint[] accelerations, double limit)
         {
             for (int i = 0; i < accelerations.Length; i++)
             {
@@ -371,7 +371,7 @@ namespace GravitySandboxUWP
 
         // Validates accelerations and positions match where they should
         // Validates values that should always be zero
-        private void Validate5BodyCross(Point[] points, string when)
+        private void Validate5BodyCross(SimPoint[] points, string when)
         {
             if (!FourWayMatch(points[0].X, -points[1].Y, -points[2].X, points[3].Y))
                 Debugger.Break();
@@ -386,7 +386,6 @@ namespace GravitySandboxUWP
             bool result = ((a == b) && (b == c) && (c == d));
             if (!result)
             {
-                Debugger.Break();
                 bool test;
                 test = (a == b);
                 test = (b == c);
@@ -424,7 +423,7 @@ namespace GravitySandboxUWP
         }
 
 
-        //private static bool CheckMirrorAndZeroY(Point a, Point b)
+        //private static bool CheckMirrorAndZeroY(SimPoint a, SimPoint b)
         //{
         //    if ((a.Y != 0.0) || (b.Y != 0.0) || (a.X != -b.X))
         //        return false;
@@ -432,7 +431,7 @@ namespace GravitySandboxUWP
         //        return true;
         //}
 
-        //private static bool CheckMirrorAndZeroX(Point a, Point b)
+        //private static bool CheckMirrorAndZeroX(SimPoint a, SimPoint b)
         //{
         //    if ((a.X != 0.0) || (b.X != 0.0) || (a.Y != -b.Y))
         //        return false;
@@ -440,7 +439,7 @@ namespace GravitySandboxUWP
         //        return true;
         //}
 
-        //private static bool CrossCheckXY(Point a, Point b)
+        //private static bool CrossCheckXY(SimPoint a, SimPoint b)
         //{
         //    if ((a.X != b.Y) || (a.Y != b.X))
         //        return false;
@@ -450,7 +449,7 @@ namespace GravitySandboxUWP
 
         #endregion
 
-        private void RoundAccelerations(Point[] accelerations, int roundingDigits)
+        private void RoundAccelerations(SimPoint[] accelerations, int roundingDigits)
         {
             for (int i = 0; i < accelerations.Length; i++)
             {
@@ -482,8 +481,8 @@ namespace GravitySandboxUWP
                 accelerations[i].Y = 0.0;
         **/
 
-        // Treats a point as a vector and calculates its magnitude
-        public static double Magnitude(Point v)
+        // Treats a SimPoint as a vector and calculates its magnitude
+        public static double Magnitude(SimPoint v)
         {
             return (Math.Sqrt((v.X * v.X) + (v.Y * v.Y)));
         }

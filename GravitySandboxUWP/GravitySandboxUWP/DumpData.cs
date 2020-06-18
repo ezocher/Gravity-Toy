@@ -20,15 +20,15 @@ namespace GravitySandboxUWP
 
         public static List<double> times;
         public static List<double> timeIntervals;
-        public static List<Point> prePositions;
-        public static List<Point> preVelocities;
-        public static List<List<Point>> otherBodyPositions;
-        public static List<List<Point>> otherBodyAccelerations;
-        public static List<Point> totalAccelerations;
-        public static List<Point> afterAccLimitAccelerations; 
-        public static List<Point> afterRoundingAccelerations;
-        public static List<Point> postPositions;
-        public static List<Point> postVelocities;
+        public static List<SimPoint> prePositions;
+        public static List<SimPoint> preVelocities;
+        public static List<List<SimPoint>> otherBodyPositions;
+        public static List<List<SimPoint>> otherBodyAccelerations;
+        public static List<SimPoint> totalAccelerations;
+        public static List<SimPoint> afterAccLimitAccelerations; 
+        public static List<SimPoint> afterRoundingAccelerations;
+        public static List<SimPoint> postPositions;
+        public static List<SimPoint> postVelocities;
 
         // Start by logging everything about the monitored body
         public static void BeginAccumulatingData(GravitySim sim)
@@ -45,15 +45,15 @@ namespace GravitySandboxUWP
         {
             times = new List<double>();
             timeIntervals = new List<double>();
-            prePositions = new List<Point>();
-            preVelocities = new List<Point>();
-            otherBodyPositions = new List<List<Point>>();
-            otherBodyAccelerations = new List<List<Point>>();
-            totalAccelerations = new List<Point>();
-            afterAccLimitAccelerations = new List<Point>();
-            afterRoundingAccelerations = new List<Point>();
-            postPositions = new List<Point>();
-            postVelocities = new List<Point>();
+            prePositions = new List<SimPoint>();
+            preVelocities = new List<SimPoint>();
+            otherBodyPositions = new List<List<SimPoint>>();
+            otherBodyAccelerations = new List<List<SimPoint>>();
+            totalAccelerations = new List<SimPoint>();
+            afterAccLimitAccelerations = new List<SimPoint>();
+            afterRoundingAccelerations = new List<SimPoint>();
+            postPositions = new List<SimPoint>();
+            postVelocities = new List<SimPoint>();
         }
 
         
@@ -104,10 +104,10 @@ namespace GravitySandboxUWP
                     for (int i = 0; i < times.Count; i++)
                     {
                         writer.Write(recordFieldsFormatPart1, i + 1, times[i], timeIntervals[i], prePositions[i].X, prePositions[i].Y, preVelocities[i].X, preVelocities[i].Y);
-                        foreach (Point point in otherBodyPositions[i])
-                            writer.Write(recordFieldsFormatPart2, point.X, point.Y);
-                        foreach (Point point in otherBodyAccelerations[i])
-                            writer.Write(recordFieldsFormatPart3, point.X, point.Y);
+                        foreach (SimPoint simPoint in otherBodyPositions[i])
+                            writer.Write(recordFieldsFormatPart2, simPoint.X, simPoint.Y);
+                        foreach (SimPoint simPoint in otherBodyAccelerations[i])
+                            writer.Write(recordFieldsFormatPart3, simPoint.X, simPoint.Y);
                         writer.WriteLine(recordFieldsFormatPart4, totalAccelerations[i].X, totalAccelerations[i].Y, afterAccLimitAccelerations[i].X, afterAccLimitAccelerations[i].Y, 
                           afterRoundingAccelerations[i].X, afterRoundingAccelerations[i].Y, postPositions[i].X, postPositions[i].Y, postVelocities[i].X, postVelocities[i].Y);
                     }
