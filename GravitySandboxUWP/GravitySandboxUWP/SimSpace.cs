@@ -178,6 +178,8 @@ namespace GravitySandboxUWP
                 smallestBodySizePx = simBoxHeightAndWidth * SmallestBodySizeAsPortionOfStartingScreenSize;
             }
             else if (space == DefinedSpace.LEOSpace)
+            // Near earth orbit scenarios
+            //  Kilometers - Minutes - Kilograms - Kilometers/Minute
             {
                 massUnitsAbbr = "kg";
 
