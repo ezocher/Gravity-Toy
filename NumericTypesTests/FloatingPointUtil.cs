@@ -14,8 +14,18 @@ public class FloatingPointUtil
     // Specific example:
     //  This limit allows any quantity at or above 1/10 of a millimeter to be added to 42,000 km (geosync orbit radius)
     //
-    // locReference is for finding problematic calculations in source (without allocating strings)
-    public static bool CheckAdditionPrecision(double a, double b, int locReference)
+    // Performance: This check takes about 40 times as long as the addition it's checking on (see perf results at end of this class)
+    //
+    // See below for original version with calculation steps spelled out
+    public static bool CheckAdditionPrecision(double a, double b)
+    {
+        return ((int)Math.Round(Math.Abs(Math.Log10(Math.Abs(a)) - Math.Log10(Math.Abs(b))), MidpointRounding.AwayFromZero) > MaxAllowedMagnitudeDifferenceDouble);
+    }
+
+    // Original more understandable version of CheckAdditionPrecision()
+    //
+    // This is about 15% slower than the final optimized version above (see perf results at end of this class)
+    public static bool CheckAdditionPrecisionOriginal(double a, double b)
     {
         int magnitudeDifference = AdditionMagnitudeDifference(a, b);
         return (magnitudeDifference > MaxAllowedMagnitudeDifferenceDouble);
@@ -34,4 +44,17 @@ public class FloatingPointUtil
 
         return (int)Math.Round(Math.Abs(magnitudeA - magnitudeB), MidpointRounding.AwayFromZero);
     }
+
+    /* Run of FloatingPointUtilPerformanceTests.cs:
+     
+        Performance Test of CheckAdditionPrecision() - running 100,000,000 iterations
+        Times in ms:
+           Empty loop: 225
+           Random number generation: 3,700, net: 3,475
+           Addition:                   387, net:   162
+           CAP Original():           8,074, net: 7,849
+           CheckAdditionPrecision(): 6,842, net: 6,617
+        CheckAdditionPrecision() takes 40.00 times longer than addition
+        CheckAdditionPrecision() runs in 84.30% time of original version
+    */
 }
