@@ -19,7 +19,7 @@ public class FloatingPointUtil
     // See below for original version with calculation steps spelled out
     public static bool CheckAdditionPrecision(double a, double b)
     {
-        return ((int)Math.Round(Math.Abs(Math.Log10(Math.Abs(a)) - Math.Log10(Math.Abs(b))), MidpointRounding.AwayFromZero) > MaxAllowedMagnitudeDifferenceDouble);
+        return ((a == 0.0) || (b == 0.0)) ? false : ((int)Math.Round(Math.Abs(Math.Log10(Math.Abs(a)) - Math.Log10(Math.Abs(b))), MidpointRounding.AwayFromZero) > MaxAllowedMagnitudeDifferenceDouble);
     }
 
     // Original more understandable version of CheckAdditionPrecision()
@@ -27,6 +27,7 @@ public class FloatingPointUtil
     // This is about 15% slower than the final optimized version above (see perf results at end of this class)
     public static bool CheckAdditionPrecisionOriginal(double a, double b)
     {
+        if ((a == 0.0) || (b == 0.0)) return false;
         int magnitudeDifference = AdditionMagnitudeDifference(a, b);
         return (magnitudeDifference > MaxAllowedMagnitudeDifferenceDouble);
     }

@@ -17,9 +17,9 @@ namespace NumericTypesTests
             double small = oneMillimeterDelta;
             for (int i = 0; i < 10; i++)
             {
-                Console.WriteLine("large ({0:G}) + small ({1:G}) = {2:G17} - sig digits in calc: {3}, log10()s: {4:G}, {5:G}, logs difference: {6}",
+                Console.WriteLine("large ({0:G}) + small ({1:G}) = {2:G17} - sig digits in calc: {3}, log10()s: {4:G}, {5:G}, logs difference: {6} ({7})",
                     large, small, large + small, DetectAdditionPrecisionIssue(large, small), Math.Log10(Math.Abs(large)), Math.Log10(Math.Abs(small)),
-                    FloatingPointUtil.AdditionMagnitudeDifference(large, small));
+                    FloatingPointUtil.AdditionMagnitudeDifference(large, small), FloatingPointUtil.CheckAdditionPrecision(large, small));
                 small *= 0.1;
             }
 
