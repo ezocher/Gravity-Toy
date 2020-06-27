@@ -8,7 +8,7 @@ namespace GravitySandboxUWP
 {
     // Settings for calculations in the physics engine
     //
-    //  Set by every scenario to adapt to its scale andto suit its accuracy requirements
+    //  Set by every scenario to adapt to its scale and to suit its accuracy requirements
 
     class CalculationSettings
     {
@@ -19,10 +19,14 @@ namespace GravitySandboxUWP
         readonly bool useParallelCalculations;
         public bool UseParallelCalculations { get { return useParallelCalculations; } }
 
-        public CalculationSettings(int calculationCyclesPerFrame, bool useParallelCalculations)
+        readonly bool checkAllAdditionPrecision;
+        public bool CheckAllAdditionPrecision {  get { return checkAllAdditionPrecision; } }
+
+        public CalculationSettings(int calculationCyclesPerFrame, bool useParallelCalculations, bool checkAllAdditionPrecision)
         {
             this.calculationCyclesPerFrame = calculationCyclesPerFrame;
             this.useParallelCalculations = useParallelCalculations;
+            this.checkAllAdditionPrecision = checkAllAdditionPrecision;
         }
 
         // Returns default settings
@@ -30,6 +34,7 @@ namespace GravitySandboxUWP
         {
             this.calculationCyclesPerFrame = 1;
             this.useParallelCalculations = false;
+            this.checkAllAdditionPrecision = false;
         }
     }
 }

@@ -355,22 +355,31 @@ namespace GravitySandboxUWP
         {
             sim.ZoomMinus();
             ViewSizeChanged();
+            UpdateZoomAndSpeedDisplay();
         }
 
         private void zoomPlusButton_Click(object sender, RoutedEventArgs e)
         {
             sim.ZoomPlus();
             ViewSizeChanged();
+            UpdateZoomAndSpeedDisplay();
         }
 
         private void timeSlowerButton_Click(object sender, RoutedEventArgs e)
         {
             sim.RunSlower();
+            UpdateZoomAndSpeedDisplay();
         }
 
         private void timeFasterButton_Click(object sender, RoutedEventArgs e)
         {
             sim.RunFaster();
+            UpdateZoomAndSpeedDisplay();
+        }
+
+        private void UpdateZoomAndSpeedDisplay()
+        {
+            sim.SetMessage(String.Format("{0} - Zoom: {1:N0}%, Speed: {2:N0}%", GravitySim.currentScenarioName, sim.GetZoomFactor() * 100.0, sim.GetSpeedFactor() * 100.0));
         }
         #endregion
 

@@ -27,9 +27,10 @@ namespace GravitySandboxUWP
         // Spaces:
         //      Toy Space
         //      Earth Orbit Space
+        //      Earth Moon System Space
         //      Solar System Space
         //      Star System Space (Binaries and trinaries)
-        //      Globular Cluster Space
+        //      Star Cluster Space
         //      Faux Galaxy Space (for "colliding galaxies with central black holes")
         //      Galaxy Space
 
@@ -73,11 +74,9 @@ namespace GravitySandboxUWP
         #region Spacecraft
 
         // ========== ISS ==========
-        // From https://spotthestation.nasa.gov/tracking_map.cfm on 5/25/2020 at 00:30:00 GMT
-        public const double ISS_OrbitRadiusKm = 6782.6;
-        //public const double ISS_OrbitRadiusKm = 420.0 + EarthRadiusKm;
-        public const double ISS_OrbitVelocityKmH = 27599.4;     // 7666.5 m/s
-        //public const double ISS_OrbitVelocityKmH = 27583.0;
+        // Averages across one orbit from https://spotthestation.nasa.gov/tracking_map.cfm on 6/19/2020 at 22:25:00 GMT
+        public const double ISS_OrbitRadiusKm = 424.72 + EarthRadiusKm;
+        public const double ISS_OrbitVelocityKmH = 27570.2;
 
         // Other spacecraft
         public const double StarlinkOrbitRadiusKm = 550.0 + EarthRadiusKm;
@@ -185,7 +184,7 @@ namespace GravitySandboxUWP
 
                 distanceUnitsAbbr = "km";
                 simBoxHeightAndWidth = 4.0 * EarthRadiusKm;
-                distanceOffset = 0; // EarthRadiusKm;
+                distanceOffset = EarthRadiusKm;
 
                 timeUnitsAbbr = "min.";
                 timeUnitsPerUISecond = 1.0;

@@ -16,6 +16,7 @@ using Windows.UI.Core;
 using Windows.UI;
 using System.Diagnostics;
 using Windows.UI.Notifications;
+using Windows.Devices.Bluetooth.Background;
 
 namespace GravitySandboxUWP
 {
@@ -136,6 +137,11 @@ namespace GravitySandboxUWP
         public void ZoomOut()
         {
             zoomFactor *= 1.0 / zoomIncrement;
+        }
+
+        public double GetZoomFactor()
+        {
+            return zoomFactor;
         }
 
         public void TransformChanged(List<Body> bodies)

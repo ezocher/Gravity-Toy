@@ -27,7 +27,7 @@ namespace GravitySandboxUWP
             sim.ClearSim();
 
             sim.SetSimSpace(new SimSpace(SimSpace.DefinedSpace.ToySpace));
-            sim.SetCalculationSettings(new CalculationSettings(10, false));
+            sim.SetCalculationSettings(new CalculationSettings(10, false, false));
 
             if (diagonals)
             {
@@ -46,12 +46,11 @@ namespace GravitySandboxUWP
             sim.AddBody(baseMass, baseSize, 9, GravitySim.BodyStartPosition.CenterOfTheUniverse);
             sim.SetMonitoredBody(1);   // center = 4
             sim.SetMonitoredValues();
-            sim.SetCheckSim(true);
+            sim.SetCheckSim(!diagonals); // Sim checking is only implemented for the Cross version
 
             sim.SetSimRounding(8);
             sim.SetAccelerationLimits(true, toySpaceScenariosDefaultAccelerationLimit, toySpaceScenariosDeaultMinimumSeparation);
         }
-
 
         public static void LoadFourBodiesScenario(GravitySim sim)
         {
@@ -82,7 +81,7 @@ namespace GravitySandboxUWP
             sim.ClearSim();
 
             sim.SetSimSpace(new SimSpace(SimSpace.DefinedSpace.ToySpace));
-            sim.SetCalculationSettings(new CalculationSettings(10, false));
+            sim.SetCalculationSettings(new CalculationSettings(10, false, false));
 
             sim.AddBody(baseMass, baseSize, 3, GravitySim.BodyStartPosition.StageLeft);
             sim.AddBody(baseMass, baseSize, 2, GravitySim.BodyStartPosition.StageTop);
@@ -110,8 +109,8 @@ namespace GravitySandboxUWP
             sim.ClearSim();
 
             sim.SetSimSpace(new SimSpace(SimSpace.DefinedSpace.ToySpace));
-            sim.SetCalculationSettings(new CalculationSettings(10, false));       // To produce braided pattern of trails change calcsPerFrame to 1
-                                                                                    // calcsPerFrame = 10000 is good for one body orbiting
+            sim.SetCalculationSettings(new CalculationSettings(10, false, false));       // To produce braided pattern of trails change calcsPerFrame to 1
+                                                          // calcsPerFrame = 10000 is good for one body orbiting
             
             // sim.AddBody(baseMass, 2.0, 1, GravitySim.bodyStartPosition.stageLeft, new SimPoint(0.0, 50.5), false);
             //sim.AddBody(baseMass, 2.0, 2, GravitySim.bodyStartPosition.stageLeft, new SimPoint(0.0, 40.0), false);
@@ -177,34 +176,35 @@ namespace GravitySandboxUWP
 
             sim.ClearSim();
             sim.SetSimSpace(new SimSpace(SimSpace.DefinedSpace.LEOSpace));      // LEO Space -> Km, minutes, Kg, Km/h
-            sim.SetCalculationSettings(new CalculationSettings(10, false));
+            sim.SetCalculationSettings(new CalculationSettings(200, false, true));
+            sim.SetSimRounding(10);
 
             // === EARTH ===
             sim.AddBodyActual(SimSpace.EarthMassKg, true, SimSpace.EarthRadiusKm * 2.0, 3, new SimPoint(0.0, 0.0), new SimPoint(0.0, 0.0));
 
-            // === ISS ===
-            sim.AddBodyActual(0.0, false, sim.simSpace.SmallestBodySizePx * 20.0, 1,
-                new SimPoint(-SimSpace.ISS_OrbitRadiusKm, 0.0), new SimPoint(0.0, SimSpace.ISS_OrbitVelocityKmH));
+            //// === ISS ===
+            //sim.AddBodyActual(0.0, false, sim.simSpace.SmallestBodySizePx * 5, 1,
+            //    new SimPoint(-SimSpace.ISS_OrbitRadiusKm, 0.0), new SimPoint(0.0, SimSpace.ISS_OrbitVelocityKmH));
 
-            // Satellites - Starlink times 4, GPS, Geosynchronous
-            sim.AddBodyActual(0.0, false, sim.simSpace.SmallestBodySizePx, (int)SimRenderer.ColorNumber.BodyColorWhite,
-                new SimPoint(0.0, SimSpace.StarlinkOrbitRadiusKm), new SimPoint(SimSpace.StarlinkOrbitVelocityKmH, 0.0));
-            sim.AddBodyActual(0.0, false, sim.simSpace.SmallestBodySizePx, (int)SimRenderer.ColorNumber.BodyColorWhite,
-                new SimPoint(-SimSpace.StarlinkOrbitRadiusKm, 0.0), new SimPoint(0.0, SimSpace.StarlinkOrbitVelocityKmH));
-            sim.AddBodyActual(0.0, false, sim.simSpace.SmallestBodySizePx, (int)SimRenderer.ColorNumber.BodyColorWhite,
-                new SimPoint(0.0, -SimSpace.StarlinkOrbitRadiusKm), new SimPoint(-SimSpace.StarlinkOrbitVelocityKmH, 0.0));
-            sim.AddBodyActual(0.0, false, sim.simSpace.SmallestBodySizePx, (int)SimRenderer.ColorNumber.BodyColorWhite,
-                new SimPoint(SimSpace.StarlinkOrbitRadiusKm, 0.0), new SimPoint(0.0, -SimSpace.StarlinkOrbitVelocityKmH));
+            //// Satellites - Starlink times 4, GPS, Geosynchronous
+            //sim.AddBodyActual(0.0, false, sim.simSpace.SmallestBodySizePx, (int)SimRenderer.ColorNumber.BodyColorWhite,
+            //    new SimPoint(0.0, SimSpace.StarlinkOrbitRadiusKm), new SimPoint(SimSpace.StarlinkOrbitVelocityKmH, 0.0));
+            //sim.AddBodyActual(0.0, false, sim.simSpace.SmallestBodySizePx, (int)SimRenderer.ColorNumber.BodyColorWhite,
+            //    new SimPoint(-SimSpace.StarlinkOrbitRadiusKm, 0.0), new SimPoint(0.0, SimSpace.StarlinkOrbitVelocityKmH));
+            //sim.AddBodyActual(0.0, false, sim.simSpace.SmallestBodySizePx, (int)SimRenderer.ColorNumber.BodyColorWhite,
+            //    new SimPoint(0.0, -SimSpace.StarlinkOrbitRadiusKm), new SimPoint(-SimSpace.StarlinkOrbitVelocityKmH, 0.0));
+            //sim.AddBodyActual(0.0, false, sim.simSpace.SmallestBodySizePx, (int)SimRenderer.ColorNumber.BodyColorWhite,
+            //    new SimPoint(SimSpace.StarlinkOrbitRadiusKm, 0.0), new SimPoint(0.0, -SimSpace.StarlinkOrbitVelocityKmH));
 
             // GPS
             sim.AddBodyActual(0.0, false, sim.simSpace.SmallestBodySizePx * 10.0, 4,
                 new SimPoint(-SimSpace.GPS_OrbitRadiusKm, 0.0), new SimPoint(0.0, SimSpace.GPS_OrbitVelocityKmH));
 
-            // 
+            // Geosynchronus orbit
             sim.AddBodyActual(0.0, false, sim.simSpace.SmallestBodySizePx * 10.0, 5,
                 new SimPoint(-SimSpace.GeosynchronousOrbitRadiusKm, 0.0), new SimPoint(0.0, SimSpace.GeosynchronousOrbitVelocityKmH));
 
-            sim.SetMonitoredBody(7);        // 1 = ISS, 7 = Geo
+            sim.SetMonitoredBody(1);
             sim.SetMonitoredValues();
             sim.SetAccelerationLimits(false, 0.0, 0.0);
         }
