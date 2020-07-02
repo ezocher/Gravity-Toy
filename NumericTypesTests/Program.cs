@@ -10,6 +10,9 @@ namespace NumericTypesTests
         {
             const long Million = 1000000;
 
+            GoldenRatioNumericIssueDemo.RunPsiCalculations(30);
+            return;
+            Console.WriteLine("\n---------------\n");
             FloatingPointNotAssociative.Demonstration();
             Console.WriteLine("\n---------------\n");
             FloatingPointAdditionPrecision.Investigations();
