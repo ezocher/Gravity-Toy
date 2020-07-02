@@ -32,6 +32,27 @@ public class FloatingPointUtil
         return (magnitudeDifference > MaxAllowedMagnitudeDifferenceDouble);
     }
 
+    private const int DoubleMantissaBinaryDigits = 53;
+    private const int BinaryBase = 2;
+    private static readonly double DoubleMachinePrecision = Math.Pow(BinaryBase, -(DoubleMantissaBinaryDigits - 1));
+    private const int DecimalBase = 10;
+    public static readonly double MinAllowedRatioDouble = DoubleMachinePrecision * Math.Pow(DecimalBase, MinimumDigitsPrecision);
+
+    // Returns true when the number of digits actually used in a calculation falls below MinimumDigitsPrecision
+    public static bool CheckAdditionPrecisionV3(double a, double b)
+    {
+        if ((a == 0.0) || (b == 0.0)) return false;
+
+        double larger, smaller;
+
+        if (Math.Abs(a) > Math.Abs(b))
+        { larger = a; smaller = b; }
+        else
+        { larger = b; smaller = a; }
+
+        return (smaller / larger < MinAllowedRatioDouble);
+    }
+
     // Calculates the difference in magnitude for two operands to be added (or subtracted)
     // As the difference gets near the number of significant digits in the representation we have fewer and fewer bits
     //  being used, losing precision

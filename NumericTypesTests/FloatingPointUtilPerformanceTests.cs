@@ -9,7 +9,7 @@ public class FloatingPointUtilPerformanceTests
     {
         Stopwatch stopwatch = new Stopwatch();
 
-        long loopTime, randomGenerationTime, additionTime, checkPrecisionTimeOriginal, checkPrecisionTimeOptimized;
+        long loopTime, randomGenerationTime, additionTime, checkPrecisionTimeOriginal, checkPrecisionTimeOptimized, checkPrecisionTimeV3;
 
         stopwatch.Start();
         for (long i = 0; i < iterations;)
@@ -53,6 +53,14 @@ public class FloatingPointUtilPerformanceTests
         }
         checkPrecisionTimeOptimized = stopwatch.ElapsedMilliseconds;
 
+        stopwatch.Reset(); stopwatch.Start();
+        for (long i = 0; i < iterations; i++)
+        {
+            result = FloatingPointUtil.CheckAdditionPrecisionV3(randomA[i], randomB[i]);
+        }
+        checkPrecisionTimeV3 = stopwatch.ElapsedMilliseconds;
+
+
         Console.WriteLine("Performance Test of CheckAdditionPrecision() - running {0:N0} iterations", iterations);
         Console.WriteLine("Times in ms:");
         Console.WriteLine("   Empty loop: {0:N0}", loopTime);
@@ -60,6 +68,7 @@ public class FloatingPointUtilPerformanceTests
         Console.WriteLine("   Addition: {0:N0}, net: {1:N0}", additionTime, additionTime - loopTime);
         Console.WriteLine("   CAP Original():           {0:N0}, net: {1:N0}", checkPrecisionTimeOriginal, checkPrecisionTimeOriginal - loopTime);
         Console.WriteLine("   CheckAdditionPrecision(): {0:N0}, net: {1:N0}", checkPrecisionTimeOptimized, checkPrecisionTimeOptimized - loopTime);
+        Console.WriteLine("   CAP V3():                 {0:N0}, net: {1:N0}", checkPrecisionTimeV3, checkPrecisionTimeV3 - loopTime);
         Console.WriteLine("CheckAdditionPrecision() takes {0:N2} times longer than addition", (checkPrecisionTimeOptimized - loopTime) / (additionTime - loopTime));
         Console.WriteLine("CheckAdditionPrecision() runs in {0:N2}% time of original version",
           ((float)(checkPrecisionTimeOptimized - loopTime) / (float)(checkPrecisionTimeOriginal - loopTime)) * 100.0f);

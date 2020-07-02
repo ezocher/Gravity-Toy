@@ -81,5 +81,23 @@ namespace NumericTypesTests
             }
             return (significantDigits);
         }
+
+        private const int DoubleMantissaBinaryDigits = 53;
+        private const int BinaryBase = 2;
+        private static readonly double doubleMachinePrecision = Math.Pow(BinaryBase, -(DoubleMantissaBinaryDigits - 1));
+
+        public static bool AdditionPrecisionCheck(double a, double b, double significantDigits)
+        {
+            double larger, smaller, ratio;
+
+            if (Math.Abs(a) > Math.Abs(b))
+                { larger = a; smaller = b; }
+            else
+                { larger = b; smaller = a; }
+
+            ratio = smaller / larger;
+
+            return (ratio > doubleMachinePrecision * significantDigits);
+        }
     }
 }
