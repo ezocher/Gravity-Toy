@@ -45,7 +45,7 @@ namespace GravitySandboxUWP
         private static int currentBodyNumber = 0;
 
         // Limit total number of debug messages about precision issues
-        private const int DebugMessageCountLimit = 500;
+        private const int DebugMessageCountLimit = 10_000;
         private static int debugMessageCount = 0;
 
         public static void ResetBodyCount()
@@ -172,6 +172,8 @@ namespace GravitySandboxUWP
         {
             if (debugMessageCount++ < DebugMessageCountLimit)
                 Debug.WriteLine("Body #{4} {3}: a = {0:G17}, b = {1:G17}, mag diff = {2}", a, b, FloatingPointUtil.AdditionMagnitudeDifference(a, b), whichCalculation, bodyNumber);
+            if (debugMessageCount == DebugMessageCountLimit)
+                Debug.WriteLine(">>> Reached limit of {0:N0} precision warning messages. No more will be displayed.", DebugMessageCountLimit);
         }
         #endregion
     }
