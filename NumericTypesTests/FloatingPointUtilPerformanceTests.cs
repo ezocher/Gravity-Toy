@@ -9,7 +9,7 @@ public class FloatingPointUtilPerformanceTests
     {
         Stopwatch stopwatch = new Stopwatch();
 
-        long loopTime, randomGenerationTime, additionTime, checkPrecisionTimeOriginal, checkPrecisionTimeOptimized, checkPrecisionTimeV3;
+        long loopTime, randomGenerationTime, additionTime, checkPrecisionTimeV1, checkPrecisionTimeV2, checkPrecisionTimeV3;
 
         stopwatch.Start();
         for (long i = 0; i < iterations;)
@@ -41,17 +41,17 @@ public class FloatingPointUtilPerformanceTests
         stopwatch.Reset(); stopwatch.Start();
         for (long i = 0; i < iterations; i++)
         {
-            result = FloatingPointUtil.CheckAdditionPrecisionOriginal(randomA[i], randomB[i]);
+            result = FloatingPointUtil.CheckAdditionPrecisionV1(randomA[i], randomB[i]);
         }
-        checkPrecisionTimeOriginal = stopwatch.ElapsedMilliseconds;
+        checkPrecisionTimeV1 = stopwatch.ElapsedMilliseconds;
 
 
         stopwatch.Reset(); stopwatch.Start();
         for (long i = 0; i < iterations; i++)
         {
-            result = FloatingPointUtil.CheckAdditionPrecision(randomA[i], randomB[i]);
+            result = FloatingPointUtil.CheckAdditionPrecisionV2(randomA[i], randomB[i]);
         }
-        checkPrecisionTimeOptimized = stopwatch.ElapsedMilliseconds;
+        checkPrecisionTimeV2 = stopwatch.ElapsedMilliseconds;
 
         stopwatch.Reset(); stopwatch.Start();
         for (long i = 0; i < iterations; i++)
@@ -66,24 +66,25 @@ public class FloatingPointUtilPerformanceTests
         Console.WriteLine("   Empty loop: {0:N0}", loopTime);
         Console.WriteLine("   Random number generation: {0:N0}, net: {1:N0}", randomGenerationTime, randomGenerationTime - loopTime);
         Console.WriteLine("   Addition: {0:N0}, net: {1:N0}", additionTime, additionTime - loopTime);
-        Console.WriteLine("   CAP Original():           {0:N0}, net: {1:N0}", checkPrecisionTimeOriginal, checkPrecisionTimeOriginal - loopTime);
-        Console.WriteLine("   CheckAdditionPrecision(): {0:N0}, net: {1:N0}", checkPrecisionTimeOptimized, checkPrecisionTimeOptimized - loopTime);
-        Console.WriteLine("   CAP V3():                 {0:N0}, net: {1:N0}", checkPrecisionTimeV3, checkPrecisionTimeV3 - loopTime);
-        Console.WriteLine("CheckAdditionPrecision() takes {0:N2} times longer than addition", (checkPrecisionTimeOptimized - loopTime) / (additionTime - loopTime));
-        Console.WriteLine("CheckAdditionPrecision() runs in {0:N2}% time of original version",
-          ((float)(checkPrecisionTimeOptimized - loopTime) / (float)(checkPrecisionTimeOriginal - loopTime)) * 100.0f);
+        Console.WriteLine("   CAP V1():   {0:N0}, net: {1:N0}", checkPrecisionTimeV1, checkPrecisionTimeV1 - loopTime);
+        Console.WriteLine("   CAP V2():   {0:N0}, net: {1:N0}", checkPrecisionTimeV2, checkPrecisionTimeV2 - loopTime);
+        Console.WriteLine("   CAP V3():   {0:N0}, net: {1:N0}", checkPrecisionTimeV3, checkPrecisionTimeV3 - loopTime);
+        Console.WriteLine("CheckAdditionPrecisionV3() takes {0:N2} times longer than addition", (checkPrecisionTimeV3 - loopTime) / (additionTime - loopTime));
+        Console.WriteLine("CheckAdditionPrecisionV3() runs in {0:N2}% time of original version",
+          ((float)(checkPrecisionTimeV3 - loopTime) / (float)(checkPrecisionTimeV1 - loopTime)) * 100.0f);
 
     }
     /*
         Performance Test of CheckAdditionPrecision() - running 100,000,000 iterations
         Times in ms:
-           Empty loop: 225
-           Random number generation: 3,700, net: 3,475
-           Addition:                   387, net:   162
-           CAP Original():           8,074, net: 7,849
-           CheckAdditionPrecision(): 6,842, net: 6,617
-        CheckAdditionPrecision() takes 40.00 times longer than addition
-        CheckAdditionPrecision() runs in 84.30% time of original version
-     */
+           Empty loop: 224
+           Random number generation: 3,830, net: 3,606
+           Addition: 389, net: 165
+           CAP V1():   9,735, net: 9,511
+           CAP V2():   7,382, net: 7,158
+           CAP V3():   3,435, net: 3,211
+        CheckAdditionPrecisionV3() takes 19.00 times longer than addition
+        CheckAdditionPrecisionV3() runs in 33.76% time of original version
+    */
 
 }

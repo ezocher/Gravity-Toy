@@ -9,57 +9,51 @@ namespace NumericTypesTests
         public static void Investigations()
         {
             double geosyncOrbitR = 42000.0;     // Real example, approximate geosynchronous orbit in km
-            double oneMillimeterDelta = 1.0 / 1000.0 / 1000.0;      // One mm in kms
+            double oneMillimeter = 1.0 / 1000.0 / 1000.0;      // One mm in kilometers
 
-
-            Console.WriteLine("=========== double ==========");
+            Console.WriteLine("=========== Geosync Orbit plus 1/3 millimeter (and smaller) in kilometers ==========");
+            Console.WriteLine("   Objective is to have fractions of a millimeter correctly accumulate over many additions\n");
             double large = geosyncOrbitR;
-            double small = oneMillimeterDelta;
-            for (int i = 0; i < 10; i++)
+            double small = oneMillimeter / 3.0;
+            Console.WriteLine("large: {0}, log10(large): {1:G5}\n", large, Math.Log10(Math.Abs(large)));
+
+            for (int i = 0; i < 200; i++)
             {
-                Console.WriteLine("large ({0:G}) + small ({1:G}) = {2:G17} - sig digits in calc: {3}, log10()s: {4:G}, {5:G}, logs difference: {6} ({7})",
-                    large, small, large + small, DetectAdditionPrecisionIssue(large, small), Math.Log10(Math.Abs(large)), Math.Log10(Math.Abs(small)),
-                    FloatingPointUtil.AdditionMagnitudeDifference(large, small), FloatingPointUtil.CheckAdditionPrecision(large, small));
+                Console.WriteLine("large + small ({0,22:G17}) = {1,22:G17} - sig digits in calc: {2}, log10(small): {3,7:G5}, logs difference: {4,6:G5} ({5}) (CAP V2: {6}, V3: {7})",
+                    small, large + small, DecimalAdditionPrecision(large, small), Math.Log10(Math.Abs(small)), 
+                    Math.Log10(Math.Abs(large)) - Math.Log10(Math.Abs(small)), FloatingPointUtil.AdditionMagnitudeDifference(large, small), 
+                    FloatingPointUtil.CheckAdditionPrecisionV2(large, small), FloatingPointUtil.CheckAdditionPrecisionV3(large, small));
+                if (large + small == large) break;
                 small *= 0.1;
             }
-
-            /* OUTPUT:
-                =========== double ==========
-                large(42000) + small(1E-06) = 42000.000001 - sig digits in calc: 6, log10()s: 4.623249290397901, -6, logs difference: 11
-                large(42000) + small(1E-07) = 42000.000000100001 - sig digits in calc: 5, log10()s: 4.623249290397901, -7, logs difference: 12
-                large(42000) + small(1E-08) = 42000.000000009997 - sig digits in calc: 4, log10()s: 4.623249290397901, -8, logs difference: 13
-                large(42000) + small(1E-09) = 42000.000000000997 - sig digits in calc: 3, log10()s: 4.623249290397901, -9, logs difference: 14
-                large(42000) + small(1.0000000000000002E-10) = 42000.000000000102 - sig digits in calc: 2, log10()s: 4.623249290397901, -10, logs difference: 15
-                large(42000) + small(1.0000000000000003E-11) = 42000.000000000007 - sig digits in calc: 1, log10()s: 4.623249290397901, -11, logs difference: 16
-                large(42000) + small(1.0000000000000004E-12) = 42000 - sig digits in calc: 0, log10()s: 4.623249290397901, -12, logs difference: 17
-                large(42000) + small(1.0000000000000004E-13) = 42000 - sig digits in calc: 0, log10()s: 4.623249290397901, -13, logs difference: 18
-                large(42000) + small(1.0000000000000005E-14) = 42000 - sig digits in calc: 0, log10()s: 4.623249290397901, -14, logs difference: 19
-                large(42000) + small(1.0000000000000005E-15) = 42000 - sig digits in calc: 0, log10()s: 4.623249290397901, -15, logs difference: 20
-             */
-
-            //Console.WriteLine("\n\n=========== decimal ==========");
-            //decimal dpos = -42157.0m;
-            //decimal dsmall = 0.1m;
-            //for (int i = 0; i < 30; i++)
-            //{
-            //    Console.WriteLine("pos ({0:G}) + small ({1:E}) = {2:G} - significant digits in calculation: {3}", dpos, dsmall, dpos + dsmall, DetectAdditionPrecisionIssue(dpos, dsmall));
-            //    dsmall *= 0.1m;
-            //}
         }
-     
+
+        /*
+            =========== Geosync Orbit plus 1/3 millimeter (and smaller) in kilometers ==========
+               Objective is to have fractions of a millimeter correctly accumulate over many additions
+
+            large: 42000, log10(large): 4.6232
+
+            large + small ( 3.333333333333333E-07) =     42000.000000333333 - sig digits in calc: 5, log10(small): -6.4771, logs difference:   11.1 (11) (CAP V2: False, V3: False)
+            large + small (3.3333333333333334E-08) =     42000.000000033331 - sig digits in calc: 4, log10(small): -7.4771, logs difference:   12.1 (12) (CAP V2: False, V3: False)
+            large + small (3.3333333333333334E-09) =     42000.000000003332 - sig digits in calc: 3, log10(small): -8.4771, logs difference:   13.1 (13) (CAP V2: True, V3: True)
+            large + small (3.3333333333333337E-10) =     42000.000000000335 - sig digits in calc: 2, log10(small): -9.4771, logs difference:   14.1 (14) (CAP V2: True, V3: True)
+            large + small (3.3333333333333341E-11) =     42000.000000000036 - sig digits in calc: 1, log10(small): -10.477, logs difference:   15.1 (15) (CAP V2: True, V3: True)
+            large + small (3.3333333333333343E-12) =                  42000 - sig digits in calc: 0, log10(small): -11.477, logs difference:   16.1 (16) (CAP V2: True, V3: True)
+        */
+
+
         // Replaced these original looping versions with the Log-based version in FloatingPointUtil.cs
-        static int DetectAdditionPrecisionIssue(double a, double b)
+        //
+        // This was V0 of what became FloatingPointUtil.CheckAdditionPrecision()
+        static int DecimalAdditionPrecision(double a, double b)
         {
             double larger, smaller;
 
             if (Math.Abs(a) > Math.Abs(b))
-            {
-                larger = a; smaller = b;
-            }
+                { larger = a; smaller = b; }
             else
-            {
-                larger = b; smaller = a;
-            }
+                { larger = b; smaller = a; }
 
             int significantDigits = 0;
             while ((larger + smaller) != larger)
@@ -70,34 +64,56 @@ namespace NumericTypesTests
             return (significantDigits);
         }
 
-        static int DetectAdditionPrecisionIssue(decimal larger, decimal smaller)
+        // Created to run in the debugger to study details of constants
+        public static void CheckConstants()
         {
-            int significantDigits = 0;
+            const int DoubleSignificantDigits = 17;
+            const int MinimumDigitsPrecision = 4;
+            const int MaxAllowedMagnitudeDifferenceDouble = DoubleSignificantDigits - MinimumDigitsPrecision;
 
-            while ((larger + smaller) != larger)
+            const int DoubleMantissaBinaryDigits = 53;
+            const int BinaryBase = 2;
+            double DoubleMachinePrecision = Math.Pow(BinaryBase, -(DoubleMantissaBinaryDigits - 1));
+            const int DecimalBase = 10;
+            double MinAllowedRatioDouble = DoubleMachinePrecision * Math.Pow(DecimalBase, MinimumDigitsPrecision);
+
+            double larger = 42000.0, smaller = 1.0e-6;
+            for (int i = 0; i < 15; i++)
             {
-                smaller *= 0.1m;
-                significantDigits++;
+                double ratio = smaller / larger;
+                bool check = ratio < MinAllowedRatioDouble;
+
+                smaller *= 0.1;
             }
-            return (significantDigits);
         }
 
-        private const int DoubleMantissaBinaryDigits = 53;
-        private const int BinaryBase = 2;
-        private static readonly double doubleMachinePrecision = Math.Pow(BinaryBase, -(DoubleMantissaBinaryDigits - 1));
-
-        public static bool AdditionPrecisionCheck(double a, double b, double significantDigits)
+        public static void CAP_SpecificExample()
         {
-            double larger, smaller, ratio;
+            // Run and display calculation described by this comment from CheckAdditionPrecision():
+                // Specific example:
+                //  This limit allows any quantity around or above 1/100 of a millimeter to be repeatedly added to 42,000 km (geosync orbit radius)
+                //  without losing too much accuracy. E.g. 1/300 of a mm added 10,000 times should about equal 1/30 of a meter
 
-            if (Math.Abs(a) > Math.Abs(b))
-                { larger = a; smaller = b; }
-            else
-                { larger = b; smaller = a; }
+            double geosyncOrbitR = 42000.0;     // Real example, approximate geosynchronous orbit in km
+            double oneMillimeter = 1.0 / 1000.0 / 1000.0;      // One mm in kilometers
 
-            ratio = smaller / larger;
+            double smallDelta = oneMillimeter / 300.0;
+            int numAdditions = 10000;
 
-            return (ratio > doubleMachinePrecision * significantDigits);
+            Console.WriteLine("Large value = {0:N0}, small value = {1:G17}, addition iterations = {2:N0}", geosyncOrbitR, smallDelta, numAdditions);
+            Console.WriteLine("CheckAdditionPrecision({0:N0}, {1}) = {2}", geosyncOrbitR, smallDelta, FloatingPointUtil.CheckAdditionPrecision(geosyncOrbitR, smallDelta));
+
+            for (int i = 0; i < numAdditions; i++)
+                geosyncOrbitR += smallDelta;
+
+            Console.WriteLine("Result = {0:G17}", geosyncOrbitR);
         }
+        /* Output:
+            Large value = 42,000, small value = 3.333333333333333E-09, addition iterations = 10,000
+            CheckAdditionPrecision(42,000, 3.333333333333333E-09) = False
+            Result = 42000.000033323886
+         */
+
+
     }
 }

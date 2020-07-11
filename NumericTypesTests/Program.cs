@@ -10,13 +10,15 @@ namespace NumericTypesTests
         {
             const long Million = 1000000;
 
+            FloatingPointAdditionPrecision.CAP_SpecificExample();
+
             // GoldenRatioNumericIssueDemo.RunPsiCalculations(30);
-            Console.WriteLine("\n---------------\n");
-            FloatingPointNotAssociative.Demonstration();
+            //Console.WriteLine("\n---------------\n");
+            //FloatingPointNotAssociative.Demonstration();
             Console.WriteLine("\n---------------\n");
             FloatingPointAdditionPrecision.Investigations();
             Console.WriteLine("\n---------------\n");
-            FloatingPointUtilPerformanceTests.RunTest(100 * Million);
+            //FloatingPointUtilPerformanceTests.RunTest(100 * Million);
         }
     }
 }
