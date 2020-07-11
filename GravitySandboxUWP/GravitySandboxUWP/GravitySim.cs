@@ -226,6 +226,11 @@ namespace GravitySandboxUWP
                             if ((i != j) && bodies[j].IsGravitySource)
                             {
                                 SimPoint accel = bodies[i].BodyToBodyAccelerate(bodies[j]);
+                                if (simRounding > 0)
+                                {
+                                    accel.X += Math.Round(accel.X, simRounding, MidpointRounding.AwayFromZero);
+                                    accel.Y += Math.Round(accel.Y, simRounding, MidpointRounding.AwayFromZero);
+                                }
                                 if (FloatingPointUtil.CheckAdditionPrecision(accelerations[i].X, accel.X))
                                     Body.DisplayPrecisionIssue(accelerations[i].X, accel.X, "Accumulating Accel.X", i);
                                 accelerations[i].X += accel.X;
@@ -234,6 +239,23 @@ namespace GravitySandboxUWP
                                 accelerations[i].Y += accel.Y;
                             }
                     }
+                }
+                else if (simRounding > 0)
+                {
+                    for (int i = 0; i < bodies.Count(); i++)
+                    {
+                        accelerations[i].X = 0.0;
+                        accelerations[i].Y = 0.0;
+
+                        for (int j = 0; j < bodies.Count(); j++)
+                            if ((i != j) && bodies[j].IsGravitySource)
+                            {
+                                SimPoint accel = bodies[i].BodyToBodyAccelerate(bodies[j]);
+                                accelerations[i].X += Math.Round(accel.X, simRounding, MidpointRounding.AwayFromZero);
+                                accelerations[i].Y += Math.Round(accel.Y, simRounding, MidpointRounding.AwayFromZero);
+                            }
+                    }
+
                 }
                 else
                 {
@@ -455,8 +477,8 @@ namespace GravitySandboxUWP
         {
             for (int i = 0; i < accelerations.Length; i++)
             {
-                accelerations[i].X = Math.Round(accelerations[i].X, roundingDigits);
-                accelerations[i].Y = Math.Round(accelerations[i].Y, roundingDigits);
+                accelerations[i].X = Math.Round(accelerations[i].X, roundingDigits, MidpointRounding.AwayFromZero);
+                accelerations[i].Y = Math.Round(accelerations[i].Y, roundingDigits, MidpointRounding.AwayFromZero);
             }
         }
 

@@ -27,7 +27,9 @@ namespace GravitySandboxUWP
             sim.ClearSim();
 
             sim.SetSimSpace(new SimSpace(SimSpace.DefinedSpace.ToySpace));
+            sim.SetAccelerationLimits(true, toySpaceScenariosDefaultAccelerationLimit, toySpaceScenariosDeaultMinimumSeparation);
             sim.SetCalculationSettings(new CalculationSettings(10, false, false));
+            sim.SetSimRounding(0);
 
             if (diagonals)
             {
@@ -48,9 +50,6 @@ namespace GravitySandboxUWP
             sim.SetMonitoredValues();
             sim.SetCheckSim(false);
             //sim.SetCheckSim(!diagonals); // Sim checking is only implemented for the Cross version
-
-            sim.SetSimRounding(0);  // 8 is good
-            sim.SetAccelerationLimits(true, toySpaceScenariosDefaultAccelerationLimit, toySpaceScenariosDeaultMinimumSeparation);
         }
 
         public static void LoadFourBodiesScenario(GravitySim sim)
@@ -82,7 +81,12 @@ namespace GravitySandboxUWP
             sim.ClearSim();
 
             sim.SetSimSpace(new SimSpace(SimSpace.DefinedSpace.ToySpace));
-            sim.SetCalculationSettings(new CalculationSettings(10, false, false));
+            sim.SetAccelerationLimits(true, toySpaceScenariosDefaultAccelerationLimit, toySpaceScenariosDeaultMinimumSeparation);
+            sim.SetCalculationSettings(new CalculationSettings(10, false, true)); 
+            sim.SetSimRounding(8);      // 0 -> Symmetry breaks down at ~75 sec.
+                                // 8 -> Works well
+
+            sim.SetCheckSim(false);
 
             sim.AddBody(baseMass, baseSize, 3, GravitySim.BodyStartPosition.StageLeft);
             sim.AddBody(baseMass, baseSize, 2, GravitySim.BodyStartPosition.StageTop);
@@ -93,12 +97,9 @@ namespace GravitySandboxUWP
             sim.AddBody(baseMass, baseSize, 6, GravitySim.BodyStartPosition.StageBottomRight);
             sim.AddBody(baseMass, baseSize, 8, GravitySim.BodyStartPosition.StageBottomLeft);
             sim.AddBody(baseMass, baseSize, 9, GravitySim.BodyStartPosition.CenterOfTheUniverse);
+
             sim.SetMonitoredBody(8);   // center = 8
             sim.SetMonitoredValues();
-            // sim.SetCheckSim(true);
-
-            sim.SetSimRounding(8);
-            sim.SetAccelerationLimits(true, toySpaceScenariosDefaultAccelerationLimit, toySpaceScenariosDeaultMinimumSeparation);
         }
 
         public static void LoadOrbitingBodiesScenario(GravitySim sim)
