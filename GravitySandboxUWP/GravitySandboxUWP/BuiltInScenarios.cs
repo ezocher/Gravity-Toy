@@ -44,11 +44,12 @@ namespace GravitySandboxUWP
                 sim.AddBody(baseMass, baseSize, 7, GravitySim.BodyStartPosition.StageBottom);
             }
             sim.AddBody(baseMass, baseSize, 9, GravitySim.BodyStartPosition.CenterOfTheUniverse);
-            sim.SetMonitoredBody(1);   // center = 4
+            sim.SetMonitoredBody(4);   // center = 4
             sim.SetMonitoredValues();
-            sim.SetCheckSim(!diagonals); // Sim checking is only implemented for the Cross version
+            sim.SetCheckSim(false);
+            //sim.SetCheckSim(!diagonals); // Sim checking is only implemented for the Cross version
 
-            sim.SetSimRounding(8);
+            sim.SetSimRounding(0);  // 8 is good
             sim.SetAccelerationLimits(true, toySpaceScenariosDefaultAccelerationLimit, toySpaceScenariosDeaultMinimumSeparation);
         }
 
@@ -96,7 +97,7 @@ namespace GravitySandboxUWP
             sim.SetMonitoredValues();
             // sim.SetCheckSim(true);
 
-            //sim.SetSimRounding(2);
+            sim.SetSimRounding(8);
             sim.SetAccelerationLimits(true, toySpaceScenariosDefaultAccelerationLimit, toySpaceScenariosDeaultMinimumSeparation);
         }
 

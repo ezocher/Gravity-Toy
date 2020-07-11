@@ -122,7 +122,6 @@
     </Compile>
     <Compile Include="BuiltInScenarios.cs" />
     <Compile Include="CalculationSettings.cs" />
-    <Compile Include="DumpData.cs" />
     <Compile Include="FloatingPointUtil.cs" />
     <Compile Include="SimPoint.cs" />
     <Compile Include="SimSpace.cs" />

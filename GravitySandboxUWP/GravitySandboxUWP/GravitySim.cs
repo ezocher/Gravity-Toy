@@ -214,17 +214,6 @@ namespace GravitySandboxUWP
 
             for (int calcCycle = 0; calcCycle < simCalcSettings.CalculationCyclesPerFrame; calcCycle++)
             {
-                if (DumpData.collectingData)
-                {
-                    DumpData.times.Add(simElapsedTime);
-                    DumpData.timeIntervals.Add(timeIntervalPerCycle);
-                    DumpData.prePositions.Add(bodies[monitoredBody].Position);
-                    DumpData.preVelocities.Add(bodies[monitoredBody].Velocity);
-
-                    otherPositions = new List<SimPoint>();
-                    otherAccelerations = new List<SimPoint>();
-                }
-
                 // Calculate NBody acceleration
                 if (simCalcSettings.CheckAllAdditionPrecision)
                 {
@@ -243,12 +232,6 @@ namespace GravitySandboxUWP
                                 if (FloatingPointUtil.CheckAdditionPrecision(accelerations[i].Y, accel.Y))
                                     Body.DisplayPrecisionIssue(accelerations[i].Y, accel.Y, "Accumulating Accel.Y", i);
                                 accelerations[i].Y += accel.Y;
-
-                                if ((i == monitoredBody) && (DumpData.collectingData))
-                                {
-                                    otherPositions.Add(bodies[j].Position);
-                                    otherAccelerations.Add(accel);
-                                }
                             }
                     }
                 }
@@ -265,38 +248,17 @@ namespace GravitySandboxUWP
                                 SimPoint accel = bodies[i].BodyToBodyAccelerate(bodies[j]);
                                 accelerations[i].X += accel.X;
                                 accelerations[i].Y += accel.Y;
-
-                                if ((i == monitoredBody) && (DumpData.collectingData))
-                                {
-                                    otherPositions.Add(bodies[j].Position);
-                                    otherAccelerations.Add(accel);
-                                }
                             }
                     }
                 }
 
                 //if (checkSim) Validate5BodyCross(accelerations, "Accelerations Before Limit and Rounding");
 
-
-                if (DumpData.collectingData)
-                {
-                    DumpData.otherBodyPositions.Add(otherPositions);
-                    DumpData.otherBodyAccelerations.Add(otherAccelerations);
-
-                    DumpData.totalAccelerations.Add(accelerations[monitoredBody]);
-                }
-
                 if (accelerationLimitOn)
                     EnforceAccelerationLimit(accelerations, accelerationLimit);
 
-                if (DumpData.collectingData)
-                    DumpData.afterAccLimitAccelerations.Add(accelerations[monitoredBody]);
-
                 if (simRounding > 0)
                     RoundAccelerations(accelerations, simRounding);
-
-                if (DumpData.collectingData)
-                    DumpData.afterRoundingAccelerations.Add(accelerations[monitoredBody]);
 
                 if (checkSim) Validate5BodyCross(accelerations, "Accelerations After Limit and Rounding");
 
@@ -325,12 +287,6 @@ namespace GravitySandboxUWP
                     }
                     Validate5BodyCross(positions, "Positions After Update");
                     Validate5BodyCross(velocities, "Velocities After Update");
-                }
-
-                if (DumpData.collectingData)
-                {
-                    DumpData.postPositions.Add(bodies[monitoredBody].Position);
-                    DumpData.postVelocities.Add(bodies[monitoredBody].Velocity);
                 }
 
                 simElapsedTime += timeIntervalPerCycle;

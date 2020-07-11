@@ -12,29 +12,26 @@ namespace GravitySandboxUWP
 
     class CalculationSettings
     {
-        readonly int calculationCyclesPerFrame;
-        public int CalculationCyclesPerFrame { get { return calculationCyclesPerFrame; } }
+        public int CalculationCyclesPerFrame { get; private set; }
 
         // Figure out how to slice the parallel work dynamically by looking at size of problem and available threads
-        readonly bool useParallelCalculations;
-        public bool UseParallelCalculations { get { return useParallelCalculations; } }
+        public bool UseParallelCalculations { get; private set; }
 
-        readonly bool checkAllAdditionPrecision;
-        public bool CheckAllAdditionPrecision {  get { return checkAllAdditionPrecision; } }
+        public bool CheckAllAdditionPrecision { get; private set; }
 
         public CalculationSettings(int calculationCyclesPerFrame, bool useParallelCalculations, bool checkAllAdditionPrecision)
         {
-            this.calculationCyclesPerFrame = calculationCyclesPerFrame;
-            this.useParallelCalculations = useParallelCalculations;
-            this.checkAllAdditionPrecision = checkAllAdditionPrecision;
+            CalculationCyclesPerFrame = calculationCyclesPerFrame;
+            UseParallelCalculations = useParallelCalculations;
+            CheckAllAdditionPrecision = checkAllAdditionPrecision;
         }
 
-        // Returns default settings
+        // Use default settings
         public CalculationSettings()
         {
-            this.calculationCyclesPerFrame = 1;
-            this.useParallelCalculations = false;
-            this.checkAllAdditionPrecision = false;
+            CalculationCyclesPerFrame = 1;
+            UseParallelCalculations = false;
+            CheckAllAdditionPrecision = false;
         }
     }
 }

@@ -316,21 +316,9 @@ namespace GravitySandboxUWP
             {
                 // Pause button clicked
                 frameTimer.Cancel();
-
-                if (DumpData.collectingData)
-                {
-                    DumpData.collectingData = false;
-                    DumpData.DumpAccumulatedData(sim);
-                }
             }
             else
             {
-                if (DumpData.loggingOn)
-                {
-                    DumpData.collectingData = true;
-                    DumpData.BeginAccumulatingData(sim);
-                }
-
                 // Run button clicked
                 frameTimer = ThreadPoolTimer.CreatePeriodicTimer(RunSimFrame, new TimeSpan(0, 0, 0, 0, 1000 / (int)FrameRate));
             }
@@ -340,12 +328,6 @@ namespace GravitySandboxUWP
         private void enableTrailsCheckBox_Click(object sender, RoutedEventArgs e)
         {
             trailsEnabled = !trailsEnabled;
-
-            DumpData.loggingOn = trailsEnabled;
-            if (DumpData.loggingOn)
-                AppendMessageText(">> Logging enabled, Run starts recording, then Pause to dump");
-            else
-                SetMessageText("Running " + GravitySim.currentScenarioName);
         }
         #endregion
 
