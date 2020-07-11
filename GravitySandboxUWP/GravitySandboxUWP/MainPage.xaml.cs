@@ -172,14 +172,14 @@ namespace GravitySandboxUWP
 
             var ignore = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
-                var velocity = new Point(body.Velocity.X * sim.simSpace.VelocityConnversionFactor,
+                var velocity = new SimPoint(body.Velocity.X * sim.simSpace.VelocityConnversionFactor,
                     body.Velocity.Y * sim.simSpace.VelocityConnversionFactor);
                 velocityTextBlock.Text = "velocity: " + FormatPointToString(velocity) + 
-                    String.Format(", v = {0:F3} {1}", Hypotenuse(velocity), sim.simSpace.VelocityUnitsAbbr);
+                    String.Format(", v = {0:N1} {1}", Hypotenuse(velocity), sim.simSpace.VelocityUnitsAbbr);
                 positionTextBlock.Text = "position: " + FormatPointToString(body.Position) +
-                    String.Format(", r = {0:F3} {1}", Hypotenuse(body.Position) - sim.simSpace.DistanceOffset,
+                    String.Format(", r = {0:N1} {1}", Hypotenuse(body.Position) - sim.simSpace.DistanceOffset,
                     sim.simSpace.DistanceUnitsAbbr);
-                timeTextBlock.Text = String.Format("time: {0:F3} {1}", simElapsedTime, sim.simSpace.TimeUnitsAbbr);
+                timeTextBlock.Text = String.Format("time: {0:N1} {1}", simElapsedTime, sim.simSpace.TimeUnitsAbbr);
             });
         }
 
@@ -197,14 +197,14 @@ namespace GravitySandboxUWP
             messageTextBlock.Text += threeSpaces + message;
         }
 
-        static string FormatPointToString(Point p)
+        static string FormatPointToString(SimPoint p)
         {
-            return String.Format("x = {0:F3}, y = {1:F3}", p.X, p.Y);
+            return String.Format("x = {0:N1}, y = {1:N1}", p.X, p.Y);
         }
 
-        public static double Hypotenuse(Point point)
+        public static double Hypotenuse(SimPoint simPoint)
         {
-            return Math.Sqrt((point.X * point.X) + (point.Y * point.Y));
+            return Math.Sqrt((simPoint.X * simPoint.X) + (simPoint.Y * simPoint.Y));
         }
 
         private void BackgroundGrid_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -265,14 +265,16 @@ namespace GravitySandboxUWP
         private void Button_Click_Scenario2(object sender, RoutedEventArgs e)
         {
             ScenarioChanging();
-            BuiltInScenarios.LoadXRandomBodies(sim, 300, SimRenderer.ColorScheme.AllColors);
+            //BuiltInScenarios.LoadXRandomBodies(sim, 300, SimRenderer.ColorScheme.AllColors);
+            BuiltInScenarios.LoadFiveBodiesScenario(sim, false);
         }
 
         private void Button_Click_Scenario3(object sender, RoutedEventArgs e)
         {
             ScenarioChanging();
             //BuiltInScenarios.LoadXBodiesCircularCluster(sim, 500, 6.0, SimRenderer.ColorScheme.PastelColors, GravitySim.BodyStartPosition.RandomUniformDensityCircularCluster);
-            BuiltInScenarios.LoadOrbitingBodiesScenario(sim);
+            //BuiltInScenarios.LoadOrbitingBodiesScenario(sim);
+            BuiltInScenarios.LoadFiveBodiesScenario(sim, true);
         }
 
         private void Button_Click_Scenario4(object sender, RoutedEventArgs e)
@@ -299,6 +301,12 @@ namespace GravitySandboxUWP
                 runPauseButton.Content = "Pause";
             stepButton.IsEnabled = setToRun;      // Step is available when Run is available
         }
+
+        // Try logging calculation details to a text file and then analyze in Excel.
+        //  
+        // Use Show trails to turn logging on and off. 
+        //
+        // Accumulate values in memory from a Run click to a Pause click and then dump them to a text file.
 
         private void runPauseButton_Click(object sender, RoutedEventArgs e)
         {
@@ -329,22 +337,31 @@ namespace GravitySandboxUWP
         {
             sim.ZoomMinus();
             ViewSizeChanged();
+            UpdateZoomAndSpeedDisplay();
         }
 
         private void zoomPlusButton_Click(object sender, RoutedEventArgs e)
         {
             sim.ZoomPlus();
             ViewSizeChanged();
+            UpdateZoomAndSpeedDisplay();
         }
 
         private void timeSlowerButton_Click(object sender, RoutedEventArgs e)
         {
             sim.RunSlower();
+            UpdateZoomAndSpeedDisplay();
         }
 
         private void timeFasterButton_Click(object sender, RoutedEventArgs e)
         {
             sim.RunFaster();
+            UpdateZoomAndSpeedDisplay();
+        }
+
+        private void UpdateZoomAndSpeedDisplay()
+        {
+            sim.SetMessage(String.Format("{0} - Zoom: {1:N0}%, Speed: {2:N0}%", GravitySim.currentScenarioName, sim.GetZoomFactor() * 100.0, sim.GetSpeedFactor() * 100.0));
         }
         #endregion
 
@@ -354,15 +371,15 @@ namespace GravitySandboxUWP
         {
             TranslateTransform t = new TranslateTransform();
 
-            Body a = new Body(new Point(0, 0), sim.simSpace);
+            Body a = new Body(new SimPoint(0, 0), sim.simSpace);
             t = sim.renderer.CircleTransform(a);
-            Body b = new Body(new Point(-500, 0), sim.simSpace);
+            Body b = new Body(new SimPoint(-500, 0), sim.simSpace);
             t = sim.renderer.CircleTransform(b);
-            Body c = new Body(new Point(500, 0), sim.simSpace);
+            Body c = new Body(new SimPoint(500, 0), sim.simSpace);
             t = sim.renderer.CircleTransform(c);
-            Body d = new Body(new Point(0, 500), sim.simSpace);
+            Body d = new Body(new SimPoint(0, 500), sim.simSpace);
             t = sim.renderer.CircleTransform(d);
-            Body e = new Body(new Point(0, -500), sim.simSpace);
+            Body e = new Body(new SimPoint(0, -500), sim.simSpace);
             t = sim.renderer.CircleTransform(e);
         }
 

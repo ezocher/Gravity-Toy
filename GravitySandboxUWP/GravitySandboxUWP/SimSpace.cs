@@ -27,9 +27,10 @@ namespace GravitySandboxUWP
         // Spaces:
         //      Toy Space
         //      Earth Orbit Space
+        //      Earth Moon System Space
         //      Solar System Space
         //      Star System Space (Binaries and trinaries)
-        //      Globular Cluster Space
+        //      Star Cluster Space
         //      Faux Galaxy Space (for "colliding galaxies with central black holes")
         //      Galaxy Space
 
@@ -73,17 +74,19 @@ namespace GravitySandboxUWP
         #region Spacecraft
 
         // ========== ISS ==========
-        // From https://spotthestation.nasa.gov/tracking_map.cfm on 5/25/2020 at 00:30:00 GMT
-        public const double ISS_OrbitRadiusKm = 420.0 + EarthRadiusKm;
-        public const double ISS_OrbitVelocityKmH = 27583.0;
+        // Averages across one orbit from https://spotthestation.nasa.gov/tracking_map.cfm on 6/19/2020 at 22:25:00 GMT
+        public const double ISS_OrbitRadiusKm = 424.72 + EarthRadiusKm;
+        public const double ISS_OrbitVelocityKmH = 27570.2;
 
+        // Other spacecraft
         public const double StarlinkOrbitRadiusKm = 550.0 + EarthRadiusKm;
         public const double StarlinkOrbitVelocityKmH = 27320.0;
 
         public const double GPS_OrbitRadiusKm = 20180.0 + EarthRadiusKm;
         public const double GPS_OrbitVelocityKmH = 13949.0;
 
-        public const double GeosynchronousOrbitRadiusKm = 35786.0 + EarthRadiusKm;
+        public const double GeosynchronousOrbitRadiusKm = 42164.2;
+        //public const double GeosynchronousOrbitRadiusKm = 35786.0 + EarthRadiusKm;
         public const double GeosynchronousOrbitVelocityKmH = 11070.0;
 
 
@@ -174,8 +177,9 @@ namespace GravitySandboxUWP
                 smallestBodySizePx = simBoxHeightAndWidth * SmallestBodySizeAsPortionOfStartingScreenSize;
             }
             else if (space == DefinedSpace.LEOSpace)
+            // Near earth orbit scenarios
+            //  Kilometers - Minutes - Kilograms - Kilometers/Minute
             {
-                bigG = 1.0;
                 massUnitsAbbr = "kg";
 
                 distanceUnitsAbbr = "km";

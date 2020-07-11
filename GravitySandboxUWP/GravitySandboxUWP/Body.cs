@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Windows.Foundation;
+using System.Diagnostics;
 
 namespace GravitySandboxUWP
 {
@@ -17,16 +13,16 @@ namespace GravitySandboxUWP
 
         public double Size { get; private set; }
 
-        Point position;
-        public Point Position
+        SimPoint position;
+        public SimPoint Position
         {
             get { return position; }
             private set { position = value; }
         }
 
-        private Point defaultStartingVelocity = new Point(0.0, 0.0);
-        private Point velocity;
-        public Point Velocity
+        private SimPoint defaultStartingVelocity = new SimPoint(0.0, 0.0);
+        private SimPoint velocity;
+        public SimPoint Velocity
         {
             get { return velocity; }
             private set { velocity = value; }
@@ -43,8 +39,24 @@ namespace GravitySandboxUWP
 
         private SimSpace simSpace;
 
+        // To identify a Body during debugging. Automatically numbered in the order they're created when a scenario
+        //   gets initialized
+        private int bodyNumber;
+        private static int currentBodyNumber = 0;
+
+        // Limit total number of debug messages about precision issues
+        private const int DebugMessageCountLimit = 10_000;
+        private static int debugMessageCount = 0;
+
+        public static void ResetBodyCount()
+        {
+            currentBodyNumber = 0;
+            debugMessageCount = 0;
+        }
+
+
         #region Constructors
-        public Body(Point bodyStartingPosition, SimSpace space)
+        public Body(SimPoint bodyStartingPosition, SimSpace space)
         {
             Mass = defaultValue;
             Size = defaultValue;
@@ -52,9 +64,10 @@ namespace GravitySandboxUWP
             Velocity = defaultStartingVelocity;
             IsGravitySource = defaultGravitySource;
             simSpace = space;
+            bodyNumber = currentBodyNumber++;
         }
 
-        public Body(double bodyMass, double bodySize, Point bodyStartingPosition, SimSpace space)
+        public Body(double bodyMass, double bodySize, SimPoint bodyStartingPosition, SimSpace space)
         {
             Mass = bodyMass;
             Size = bodySize;
@@ -62,9 +75,10 @@ namespace GravitySandboxUWP
             Velocity = defaultStartingVelocity;
             IsGravitySource = defaultGravitySource;
             simSpace = space;
+            bodyNumber = currentBodyNumber++;
         }
 
-        public Body(double bodyMass, double bodySize, Point bodyStartingPosition, Point bodyStartingVelocity, SimSpace space)
+        public Body(double bodyMass, double bodySize, SimPoint bodyStartingPosition, SimPoint bodyStartingVelocity, SimSpace space)
         {
             Mass = bodyMass;
             Size = bodySize;
@@ -72,9 +86,10 @@ namespace GravitySandboxUWP
             Velocity = bodyStartingVelocity;
             IsGravitySource = defaultGravitySource;
             simSpace = space;
+            bodyNumber = currentBodyNumber++;
         }
 
-        public Body(double bodyMass, double bodySize, Point bodyStartingPosition, Point bodyStartingVelocity,
+        public Body(double bodyMass, double bodySize, SimPoint bodyStartingPosition, SimPoint bodyStartingVelocity,
             bool isGravitySource, SimSpace space)
         {
             Mass = bodyMass;
@@ -83,12 +98,13 @@ namespace GravitySandboxUWP
             Velocity = bodyStartingVelocity;
             IsGravitySource = isGravitySource;
             simSpace = space;
+            bodyNumber = currentBodyNumber++;
         }
         #endregion
 
         #region 2D Physics
 
-        public Point BodyToBodyAccelerate(Body otherBody)
+        public SimPoint BodyToBodyAccelerate(Body otherBody)
         {
             double rX = otherBody.position.X - position.X;
             double rY = otherBody.position.Y - position.Y;
@@ -100,12 +116,12 @@ namespace GravitySandboxUWP
             // F = m1 * a, g = G * m1 * m2 / rSquared, m1's cancel out so a = G * m2 / rSquared
             double a = simSpace.BigG * otherBody.Mass / rSquared;
 
-            return (new Point(a * rX / r, a * rY / r));
+            return (new SimPoint(a * rX / r, a * rY / r));
         }
 
-        public void Move(Point accel, double deltaT)
+        public void Move(SimPoint accel, double deltaT)
         {
-            if ( !((accel.X == 0.0) && (accel.Y == 0.0)) )
+            if (!((accel.X == 0.0) && (accel.Y == 0.0)))
             {
                 // Apply linear acceleration during the time interval
 
@@ -119,6 +135,46 @@ namespace GravitySandboxUWP
             }
         }
 
+        public void MoveWithPrecisionCheck(SimPoint accel, double deltaT)
+        {
+            if (!((accel.X == 0.0) && (accel.Y == 0.0)))
+            {
+                // Apply linear acceleration during the time interval
+
+                double deltaVX = accel.X * deltaT;
+                if (FloatingPointUtil.CheckAdditionPrecision(velocity.X, deltaVX))
+                    DisplayPrecisionIssue(velocity.X, deltaVX, "Adding DeltaV to VX", bodyNumber);
+                double newVelocityX = velocity.X + deltaVX;
+
+                double deltaPX = (velocity.X + newVelocityX) / 2 * deltaT;
+                if (FloatingPointUtil.CheckAdditionPrecision(position.X, deltaPX))
+                    DisplayPrecisionIssue(position.X, deltaPX, "Adding to Position.X", bodyNumber);
+                position.X += deltaPX;
+
+                velocity.X = newVelocityX;
+
+
+                double deltaVY = accel.Y * deltaT;
+                if (FloatingPointUtil.CheckAdditionPrecision(velocity.Y, deltaVY))
+                    DisplayPrecisionIssue(velocity.Y, deltaVY, "Adding DeltaV to VY", bodyNumber);
+                double newVelocityY = velocity.Y + deltaVY;
+
+                double deltaPY = (velocity.Y + newVelocityY) / 2 * deltaT;
+                if (FloatingPointUtil.CheckAdditionPrecision(position.Y, deltaPY))
+                    DisplayPrecisionIssue(position.Y, deltaPY, "Adding to Position.Y", bodyNumber);
+                position.Y += deltaPY;
+
+                velocity.Y = newVelocityY;
+            }
+        }
+
+        public static void DisplayPrecisionIssue(double a, double b, string whichCalculation, int bodyNumber)
+        {
+            if (debugMessageCount++ < DebugMessageCountLimit)
+                Debug.WriteLine("Body #{4} {3}: a = {0:G17}, b = {1:G17}, mag diff = {2}", a, b, FloatingPointUtil.AdditionMagnitudeDifference(a, b), whichCalculation, bodyNumber);
+            if (debugMessageCount == DebugMessageCountLimit)
+                Debug.WriteLine(">>> Reached limit of {0:N0} precision warning messages. No more will be displayed.", DebugMessageCountLimit);
+        }
         #endregion
     }
 }

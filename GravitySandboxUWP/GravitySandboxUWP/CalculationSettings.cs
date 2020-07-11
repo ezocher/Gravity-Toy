@@ -8,28 +8,30 @@ namespace GravitySandboxUWP
 {
     // Settings for calculations in the physics engine
     //
-    //  Set by every scenario to adapt to its scale andto suit its accuracy requirements
+    //  Set by every scenario to adapt to its scale and to suit its accuracy requirements
 
     class CalculationSettings
     {
-        readonly int calculationCyclesPerFrame;
-        public int CalculationCyclesPerFrame { get { return calculationCyclesPerFrame; } }
+        public int CalculationCyclesPerFrame { get; private set; }
 
         // Figure out how to slice the parallel work dynamically by looking at size of problem and available threads
-        readonly bool useParallelCalculations;
-        public bool UseParallelCalculations { get { return useParallelCalculations; } }
+        public bool UseParallelCalculations { get; private set; }
 
-        public CalculationSettings(int calculationCyclesPerFrame, bool useParallelCalculations)
+        public bool CheckAllAdditionPrecision { get; private set; }
+
+        public CalculationSettings(int calculationCyclesPerFrame, bool useParallelCalculations, bool checkAllAdditionPrecision)
         {
-            this.calculationCyclesPerFrame = calculationCyclesPerFrame;
-            this.useParallelCalculations = useParallelCalculations;
+            CalculationCyclesPerFrame = calculationCyclesPerFrame;
+            UseParallelCalculations = useParallelCalculations;
+            CheckAllAdditionPrecision = checkAllAdditionPrecision;
         }
 
-        // Returns default settings
+        // Use default settings
         public CalculationSettings()
         {
-            this.calculationCyclesPerFrame = 1;
-            this.useParallelCalculations = false;
+            CalculationCyclesPerFrame = 1;
+            UseParallelCalculations = false;
+            CheckAllAdditionPrecision = false;
         }
     }
 }
