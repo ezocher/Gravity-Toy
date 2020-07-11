@@ -18,7 +18,7 @@ namespace NumericTypesTests
             Console.WriteLine("\n---------------\n");
             FloatingPointAdditionPrecision.Investigations();
             Console.WriteLine("\n---------------\n");
-            //FloatingPointUtilPerformanceTests.RunTest(100 * Million);
+            FloatingPointUtilPerformanceTests.RunTest(100 * Million);
         }
     }
 }

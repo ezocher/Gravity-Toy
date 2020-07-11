@@ -41,7 +41,7 @@ public class FloatingPointUtil
         else
         { larger = b; smaller = a; }
 
-        return (smaller / larger < MinAllowedRatioDouble);
+        return (Math.Abs(smaller / larger) < MinAllowedRatioDouble);
     }
 
     // Returns true when the number of digits actually used in a calculation falls below MinimumDigitsPrecision
@@ -82,16 +82,16 @@ public class FloatingPointUtil
     }
 
     /* Run of FloatingPointUtilPerformanceTests.cs:
-     
+
         Performance Test of CheckAdditionPrecision() - running 100,000,000 iterations
         Times in ms:
-           Empty loop: 224
-           Random number generation: 3,830, net: 3,606
-           Addition: 389, net: 165
-           CAP V1():   9,735, net: 9,511
-           CAP V2():   7,382, net: 7,158
-           CAP V3():   3,435, net: 3,211
-        CheckAdditionPrecisionV3() takes 19.00 times longer than addition
-        CheckAdditionPrecisionV3() runs in 33.76% time of original version
-    */
+           Empty loop: 227
+           Random number generation: 3,935, net: 3,708
+           Addition: 392, net: 165
+           CAP V1():   9,179, net: 8,952
+           CAP V2():   7,251, net: 7,024
+           CAP V3():   3,816, net: 3,589
+        CheckAdditionPrecisionV3() takes 21.00 times longer than addition
+        CheckAdditionPrecisionV3() runs in 40.09% time of original version
+     */
 }
