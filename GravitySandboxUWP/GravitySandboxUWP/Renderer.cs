@@ -20,7 +20,7 @@ using Windows.Devices.Bluetooth.Background;
 
 namespace GravitySandboxUWP
 {
-    class SimRenderer
+    class Renderer
     {
 
         // The simulation box is a square with it's own coordinate space
@@ -33,7 +33,10 @@ namespace GravitySandboxUWP
 
         private Point screenDimensions;     // screen dimensions in rendering space
         private double scaleFactor;         // use scaleFactor for x, use -scaleFactor for y - incorporates any zoom factor
-        private double zoomFactor;          // zoom factor, 1.0 = 100%
+
+        // zoom factor, 1.0 = 100%
+        public double ZoomFactor { get; private set; }
+
         private Point simulationCenterTranslation;
         private SimPoint screenSimulationDimensions;    // screen width and height in simulation space
 
@@ -44,7 +47,7 @@ namespace GravitySandboxUWP
         // Mapping point in simulation space to rendering space:
         //  simPt * scaleFactor + simulationCenterTranslation + circleCenterTranslation -> renderingOffset
 
-        public SimSpace simSpace;
+        public SimulationSpace simSpace;
 
         private List<Ellipse> circles;
         private List<SimPoint> trailsPositions;        // Positions of trails dots in simulation space
@@ -67,14 +70,14 @@ namespace GravitySandboxUWP
 
         public enum ColorScheme { PastelColors, GrayColors, AllColors};
 
-        public SimRenderer(SimSpace space, Canvas simulationCanvas, CoreDispatcher dispatcher, MainPage mainPage)
+        public Renderer(SimulationSpace space, Canvas simulationCanvas, CoreDispatcher dispatcher, MainPage mainPage)
         {
             this.simSpace = space;
             this.circles = new List<Ellipse>();
             this.trailsPositions = new List<SimPoint>();
             this.rand = new Random();
             this.simCanvas = simulationCanvas;
-            this.zoomFactor = 1.0;
+            this.ZoomFactor = 1.0;
             this.dispatcher = dispatcher;
             this.mainPage = mainPage;
             trailsBrush = new SolidColorBrush(Colors.Yellow);
@@ -123,26 +126,15 @@ namespace GravitySandboxUWP
             simCanvas.Children.Clear();
             circles.Clear();
             trailsPositions.Clear();
-            scaleFactor = scaleFactor / zoomFactor;
-            zoomFactor = 1.0;
+            scaleFactor = scaleFactor / ZoomFactor;
+            ZoomFactor = 1.0;
         }
 
         private const double zoomIncrement = 1.25992105;    // Cube root of 2 -> three zooms doubles or halves view
 
-        public void ZoomIn()
-        {
-            zoomFactor *= zoomIncrement;
-        }
+        public void ZoomIn() { ZoomFactor *= zoomIncrement; }
 
-        public void ZoomOut()
-        {
-            zoomFactor *= 1.0 / zoomIncrement;
-        }
-
-        public double GetZoomFactor()
-        {
-            return zoomFactor;
-        }
+        public void ZoomOut() { ZoomFactor *= 1.0 / zoomIncrement; }
 
         public void TransformChanged(List<Body> bodies)
         {
@@ -213,7 +205,7 @@ namespace GravitySandboxUWP
             simulationCenterTranslation = new Point(screenWidth / 2, screenHeight / 2);
             screenSimulationDimensions = new SimPoint(screenWidth / scaleFactor, screenHeight / scaleFactor);
 
-            scaleFactor = scaleFactor * zoomFactor;
+            scaleFactor = scaleFactor * ZoomFactor;
         }
 
 

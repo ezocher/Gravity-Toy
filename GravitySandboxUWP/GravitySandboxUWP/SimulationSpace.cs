@@ -13,9 +13,9 @@ namespace GravitySandboxUWP
      * Screen space is always in UWP XAML units and seconds
      * 
      */
-    public class SimSpace
+    public class SimulationSpace
     {
-        public enum DefinedSpace { NullSpace, ToySpace, LEOSpace   // , SolarSystemSpace
+        public enum Space { Null, Toy, LEO   // , SolarSystem
                 };
 
         // Null space has no distance units and is 100 x 100 in extent
@@ -140,9 +140,9 @@ namespace GravitySandboxUWP
 
 
         #region Constructor
-        public SimSpace(DefinedSpace space)
+        public SimulationSpace(Space space)
         {
-            if (space == DefinedSpace.ToySpace)
+            if (space == Space.Toy)
             {
                 bigG = 1.0;
                 massUnitsAbbr = "simass";
@@ -159,7 +159,7 @@ namespace GravitySandboxUWP
 
                 smallestBodySizePx = simBoxHeightAndWidth * SmallestBodySizeAsPortionOfStartingScreenSize;
             }
-            else if (space == DefinedSpace.NullSpace)
+            else if (space == Space.Null)
             {
                 bigG = 1.0;
                 massUnitsAbbr = "";
@@ -176,7 +176,7 @@ namespace GravitySandboxUWP
 
                 smallestBodySizePx = simBoxHeightAndWidth * SmallestBodySizeAsPortionOfStartingScreenSize;
             }
-            else if (space == DefinedSpace.LEOSpace)
+            else if (space == Space.LEO)
             // Near earth orbit scenarios
             //  Kilometers - Minutes - Kilograms - Kilometers/Minute
             {

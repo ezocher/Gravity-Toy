@@ -5,7 +5,7 @@ namespace GravitySandboxUWP
 {
     public class Body
     {
-        // Mass, size, position, and velocity are in the units defined by the SimSpace used by the scenario
+        // Mass, size, position, and velocity are in the units defined by the SimulationSpace used by the scenario
 
         private const double defaultValue = 1.0;
 
@@ -37,7 +37,7 @@ namespace GravitySandboxUWP
         private const bool defaultGravitySource = true;
         public bool IsGravitySource { get; private set; }
 
-        private SimSpace simSpace;
+        private SimulationSpace simSpace;
 
         // To identify a Body during debugging. Automatically numbered in the order they're created when a scenario
         //   gets initialized
@@ -56,7 +56,7 @@ namespace GravitySandboxUWP
 
 
         #region Constructors
-        public Body(SimPoint bodyStartingPosition, SimSpace space)
+        public Body(SimPoint bodyStartingPosition, SimulationSpace space)
         {
             Mass = defaultValue;
             Size = defaultValue;
@@ -67,7 +67,7 @@ namespace GravitySandboxUWP
             bodyNumber = currentBodyNumber++;
         }
 
-        public Body(double bodyMass, double bodySize, SimPoint bodyStartingPosition, SimSpace space)
+        public Body(double bodyMass, double bodySize, SimPoint bodyStartingPosition, SimulationSpace space)
         {
             Mass = bodyMass;
             Size = bodySize;
@@ -78,7 +78,7 @@ namespace GravitySandboxUWP
             bodyNumber = currentBodyNumber++;
         }
 
-        public Body(double bodyMass, double bodySize, SimPoint bodyStartingPosition, SimPoint bodyStartingVelocity, SimSpace space)
+        public Body(double bodyMass, double bodySize, SimPoint bodyStartingPosition, SimPoint bodyStartingVelocity, SimulationSpace space)
         {
             Mass = bodyMass;
             Size = bodySize;
@@ -90,7 +90,7 @@ namespace GravitySandboxUWP
         }
 
         public Body(double bodyMass, double bodySize, SimPoint bodyStartingPosition, SimPoint bodyStartingVelocity,
-            bool isGravitySource, SimSpace space)
+            bool isGravitySource, SimulationSpace space)
         {
             Mass = bodyMass;
             Size = bodySize;

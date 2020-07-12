@@ -288,7 +288,7 @@ namespace GravitySandboxUWP
 
 
         #region Run/Pause and Step Buttons
-        private void stepButton_Click(object sender, RoutedEventArgs e)
+        private void StepButton_Click(object sender, RoutedEventArgs e)
         {
             sim.Step(StepInterval, simRunning);
         }
@@ -308,7 +308,7 @@ namespace GravitySandboxUWP
         //
         // Accumulate values in memory from a Run click to a Pause click and then dump them to a text file.
 
-        private void runPauseButton_Click(object sender, RoutedEventArgs e)
+        private void RunPauseButton_Click(object sender, RoutedEventArgs e)
         {
             SetRunPauseButton(simRunning);
 
@@ -325,7 +325,7 @@ namespace GravitySandboxUWP
             simRunning = !simRunning;
         }
 
-        private void enableTrailsCheckBox_Click(object sender, RoutedEventArgs e)
+        private void EnableTrailsCheckBox_Click(object sender, RoutedEventArgs e)
         {
             trailsEnabled = !trailsEnabled;
         }
@@ -333,27 +333,27 @@ namespace GravitySandboxUWP
 
 
        #region Zoom and Faster/Slower Buttons
-        private void zoomMinusButton_Click(object sender, RoutedEventArgs e)
+        private void ZoomMinusButton_Click(object sender, RoutedEventArgs e)
         {
             sim.ZoomMinus();
             ViewSizeChanged();
             UpdateZoomAndSpeedDisplay();
         }
 
-        private void zoomPlusButton_Click(object sender, RoutedEventArgs e)
+        private void ZoomPlusButton_Click(object sender, RoutedEventArgs e)
         {
             sim.ZoomPlus();
             ViewSizeChanged();
             UpdateZoomAndSpeedDisplay();
         }
 
-        private void timeSlowerButton_Click(object sender, RoutedEventArgs e)
+        private void TimeSlowerButton_Click(object sender, RoutedEventArgs e)
         {
             sim.RunSlower();
             UpdateZoomAndSpeedDisplay();
         }
 
-        private void timeFasterButton_Click(object sender, RoutedEventArgs e)
+        private void TimeFasterButton_Click(object sender, RoutedEventArgs e)
         {
             sim.RunFaster();
             UpdateZoomAndSpeedDisplay();
@@ -361,13 +361,13 @@ namespace GravitySandboxUWP
 
         private void UpdateZoomAndSpeedDisplay()
         {
-            sim.SetMessage(String.Format("{0} - Zoom: {1:N0}%, Speed: {2:N0}%", GravitySim.currentScenarioName, sim.GetZoomFactor() * 100.0, sim.GetSpeedFactor() * 100.0));
+            sim.SetMessage(String.Format("{0} - Zoom: {1:N0}%, Speed: {2:N0}%", sim.ScenarioName, sim.GetZoomFactor() * 100.0, sim.SpeedFactor * 100.0));
         }
         #endregion
 
 
         #region Tests
-        private void testCoordinateMapping()
+        private void TestCoordinateMapping()
         {
             TranslateTransform t = new TranslateTransform();
 

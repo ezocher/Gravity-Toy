@@ -124,14 +124,14 @@
     <Compile Include="CalculationSettings.cs" />
     <Compile Include="FloatingPointUtil.cs" />
     <Compile Include="SimPoint.cs" />
-    <Compile Include="SimSpace.cs" />
+    <Compile Include="SimulationSpace.cs" />
     <Compile Include="Body.cs" />
     <Compile Include="GravitySim.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SimRenderer.cs" />
+    <Compile Include="Renderer.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">

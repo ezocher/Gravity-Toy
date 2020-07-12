@@ -11,7 +11,7 @@ using Windows.UI.Xaml.Shapes;
 
 namespace GravitySandboxUWP
 {
-    // The simulation owns the bodies in the simulation space and holds references to their graphics incarnations (which are animated by the SimRender class)
+    // The simulation owns the bodies in the simulation space and holds references to their graphics incarnations (which are animated by the Renderer class)
     class GravitySim
     {
         
@@ -24,9 +24,9 @@ namespace GravitySandboxUWP
             RandomDenseCenterCircularCluster, RandomUniformDensityCircularCluster
         };
 
-        public SimSpace simSpace;
+        public SimulationSpace simSpace;
         public CalculationSettings simCalcSettings;
-        public SimRenderer renderer;
+        public Renderer renderer;
         private List<Body> bodies;
         private Canvas simCanvas;
         public MainPage simPage;
@@ -37,20 +37,21 @@ namespace GravitySandboxUWP
         private bool accelerationLimitOn;
         private double accelerationLimit;
         public static double minimumSeparationSquared;
-        public static string currentScenarioName;
+        public string ScenarioName { get; set; }
         private SimPoint[] accelerations;
         private SimPoint[] positions;          // Used for checkSim only
         private SimPoint[] velocities;         // Used for checkSim only
 
-        private double speedFactor;          // simulation speed factor, 1.0 = 100% of original scenario speed
+        // simulation speed factor, 1.0 = 100% of original scenario speed
+        public double SpeedFactor { get; private set; }
 
         public GravitySim(Canvas simulationCanvas, MainPage simulationPage, CoreDispatcher dispatcher)
         {
             bodies = new List<Body>();
             simCanvas = simulationCanvas;
             simPage = simulationPage;
-            simSpace = new SimSpace(SimSpace.DefinedSpace.NullSpace);
-            renderer = new SimRenderer(simSpace, simCanvas, dispatcher, simPage);
+            simSpace = new SimulationSpace(SimulationSpace.Space.Null);
+            renderer = new Renderer(simSpace, simCanvas, dispatcher, simPage);
             // accelerations default to null, they're newed when they're needed
             simCalcSettings = new CalculationSettings();
             simElapsedTime = 0.0;
@@ -58,7 +59,7 @@ namespace GravitySandboxUWP
             simRounding = 0;
             accelerationLimitOn = false;
             minimumSeparationSquared = 1.0;
-            speedFactor = 1.0;
+            SpeedFactor = 1.0;
         }
 
         public void ClearSim()
@@ -67,7 +68,7 @@ namespace GravitySandboxUWP
             Body.ResetBodyCount();
             // simCanvas never changes
             // simPage never changes
-            SetSimSpace(new SimSpace(SimSpace.DefinedSpace.NullSpace));
+            SetSimSpace(new SimulationSpace(SimulationSpace.Space.Null));
             renderer.ClearSim();
             accelerations = null;
             simCalcSettings = new CalculationSettings();
@@ -76,10 +77,10 @@ namespace GravitySandboxUWP
             simRounding = 0;
             accelerationLimitOn = false;
             minimumSeparationSquared = 1.0;
-            speedFactor = 1.0;
+            SpeedFactor = 1.0;
         }
 
-        public void SetSimSpace(SimSpace space)
+        public void SetSimSpace(SimulationSpace space)
         {
             this.simSpace = space;
             renderer.simSpace = space;
@@ -136,36 +137,20 @@ namespace GravitySandboxUWP
             minimumSeparationSquared = minimumSeparation * minimumSeparation;
         }
 
-
         // The scale, origin, or layout changed so we need to re-transform all of the rendered bodies
-        public void TransformChanged()
-        {
-            renderer.TransformChanged(bodies);
-        }
+        public void TransformChanged() => renderer.TransformChanged(bodies);
 
         public void ZoomPlus() => renderer.ZoomIn();
 
         public void ZoomMinus() => renderer.ZoomOut();
 
-        public double GetZoomFactor() => renderer.GetZoomFactor();
+        public double GetZoomFactor() => renderer.ZoomFactor;
 
         private const double speedIncrement = 1.25992105;    // Cube root of 2 -> three steps doubles or halves simulation speed
 
-        public void RunFaster()
-        {
-            speedFactor *= speedIncrement;
-        }
+        public void RunFaster() { SpeedFactor *= speedIncrement; }
 
-        public void RunSlower()
-        {
-            speedFactor *= 1.0 / speedIncrement;
-        }
-
-        public double GetSpeedFactor()
-        {
-            return speedFactor;
-        }
-
+        public void RunSlower() { SpeedFactor *= 1.0 / speedIncrement; }
 
         //  simRunning - true if sim is auto-running
         //               false if sim is single stepping
@@ -175,7 +160,7 @@ namespace GravitySandboxUWP
             long perfIntervalTicks = 0L;
             bool simStepping = !simRunning;
 
-            double scaledTimeInterval = timeInterval * speedFactor;
+            double scaledTimeInterval = timeInterval * SpeedFactor;
             SetTimeForTrailMark(simElapsedTime);
 
             if (simStepping)
@@ -522,9 +507,6 @@ namespace GravitySandboxUWP
             renderer.SetMonitoredColor(monitoredBody);
         }
 
-        public void SetMessage(string message)
-        {
-            simPage.SetMessageText(message);
-        }
+        public void SetMessage(string message) => simPage.SetMessageText(message);
     }
 }

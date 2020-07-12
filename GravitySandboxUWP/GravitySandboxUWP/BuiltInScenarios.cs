@@ -26,7 +26,7 @@ namespace GravitySandboxUWP
 
             sim.ClearSim();
 
-            sim.SetSimSpace(new SimSpace(SimSpace.DefinedSpace.ToySpace));
+            sim.SetSimSpace(new SimulationSpace(SimulationSpace.Space.Toy));
             sim.SetAccelerationLimits(true, toySpaceScenariosDefaultAccelerationLimit, toySpaceScenariosDeaultMinimumSeparation);
             sim.SetCalculationSettings(new CalculationSettings(10, false, false));
             sim.SetSimRounding(0);
@@ -59,7 +59,7 @@ namespace GravitySandboxUWP
             SetScenarioName(sim, "4 Bodies Scenario");
 
             sim.ClearSim();
-            sim.SetSimSpace(new SimSpace(SimSpace.DefinedSpace.ToySpace));
+            sim.SetSimSpace(new SimulationSpace(SimulationSpace.Space.Toy));
             sim.AddBody(baseMass, 4.0, 3, GravitySim.BodyStartPosition.StageLeft);
             sim.AddBody(baseMass, 4.0, 2, GravitySim.BodyStartPosition.StageTop);
             sim.AddBody(baseMass, 4.0, 1, GravitySim.BodyStartPosition.StageRight);
@@ -80,9 +80,9 @@ namespace GravitySandboxUWP
 
             sim.ClearSim();
 
-            sim.SetSimSpace(new SimSpace(SimSpace.DefinedSpace.ToySpace));
+            sim.SetSimSpace(new SimulationSpace(SimulationSpace.Space.Toy));
             sim.SetAccelerationLimits(true, toySpaceScenariosDefaultAccelerationLimit, toySpaceScenariosDeaultMinimumSeparation);
-            sim.SetCalculationSettings(new CalculationSettings(10, false, true)); 
+            sim.SetCalculationSettings(new CalculationSettings(10, false, false));
             sim.SetSimRounding(8);      // 0 -> Symmetry breaks down at ~75 sec.
                                 // 8 -> Works well
 
@@ -110,7 +110,7 @@ namespace GravitySandboxUWP
 
             sim.ClearSim();
 
-            sim.SetSimSpace(new SimSpace(SimSpace.DefinedSpace.ToySpace));
+            sim.SetSimSpace(new SimulationSpace(SimulationSpace.Space.Toy));
             sim.SetCalculationSettings(new CalculationSettings(10, false, false));       // To produce braided pattern of trails change calcsPerFrame to 1
                                                           // calcsPerFrame = 10000 is good for one body orbiting
             
@@ -126,7 +126,7 @@ namespace GravitySandboxUWP
             sim.SetAccelerationLimits(false, 0.0, 0.0);
         }
 
-        public static void LoadXRandomBodies(GravitySim sim, int numBodies, SimRenderer.ColorScheme colorScheme)
+        public static void LoadXRandomBodies(GravitySim sim, int numBodies, Renderer.ColorScheme colorScheme)
         {
             const double baseMass = 100000.0;
 
@@ -135,7 +135,7 @@ namespace GravitySandboxUWP
             Random rand = new Random();
 
             sim.ClearSim();
-            sim.SetSimSpace(new SimSpace(SimSpace.DefinedSpace.ToySpace));
+            sim.SetSimSpace(new SimulationSpace(SimulationSpace.Space.Toy));
 
             for (int i = 0; i < numBodies; i++)
             {
@@ -150,7 +150,7 @@ namespace GravitySandboxUWP
 
         // Use GravitySim.BodyStartPosition.RandomDenseCenterCircularCluster OR GravitySim.BodyStartPosition.RandomUniformDensityCircularCluster
         // sizeFactor 1.0 = tiny, sizeFactor 5.0 = "normal"
-        public static void LoadXBodiesCircularCluster(GravitySim sim, int numBodies, double sizeFactor, SimRenderer.ColorScheme colorScheme, GravitySim.BodyStartPosition bodyStartPosition)
+        public static void LoadXBodiesCircularCluster(GravitySim sim, int numBodies, double sizeFactor, Renderer.ColorScheme colorScheme, GravitySim.BodyStartPosition bodyStartPosition)
         {
             const double baseMass = 100000.0;
 
@@ -159,7 +159,7 @@ namespace GravitySandboxUWP
             Random rand = new Random();
 
             sim.ClearSim();
-            sim.SetSimSpace(new SimSpace(SimSpace.DefinedSpace.ToySpace));
+            sim.SetSimSpace(new SimulationSpace(SimulationSpace.Space.Toy));
 
             for (int i = 0; i < numBodies; i++)
             {
@@ -177,34 +177,34 @@ namespace GravitySandboxUWP
             SetScenarioName(sim, "Low Earth Orbit (ISS + 4 Starlink satellites) Scenario");
 
             sim.ClearSim();
-            sim.SetSimSpace(new SimSpace(SimSpace.DefinedSpace.LEOSpace));      // LEO Space -> Km, minutes, Kg, Km/h
+            sim.SetSimSpace(new SimulationSpace(SimulationSpace.Space.LEO));      // LEO Space -> Km, minutes, Kg, Km/h
             sim.SetCalculationSettings(new CalculationSettings(200, false, true));
             sim.SetSimRounding(10);
 
             // === EARTH ===
-            sim.AddBodyActual(SimSpace.EarthMassKg, true, SimSpace.EarthRadiusKm * 2.0, 3, new SimPoint(0.0, 0.0), new SimPoint(0.0, 0.0));
+            sim.AddBodyActual(SimulationSpace.EarthMassKg, true, SimulationSpace.EarthRadiusKm * 2.0, 3, new SimPoint(0.0, 0.0), new SimPoint(0.0, 0.0));
 
             //// === ISS ===
             //sim.AddBodyActual(0.0, false, sim.simSpace.SmallestBodySizePx * 5, 1,
-            //    new SimPoint(-SimSpace.ISS_OrbitRadiusKm, 0.0), new SimPoint(0.0, SimSpace.ISS_OrbitVelocityKmH));
+            //    new SimPoint(-SimulationSpace.ISS_OrbitRadiusKm, 0.0), new SimPoint(0.0, SimulationSpace.ISS_OrbitVelocityKmH));
 
             //// Satellites - Starlink times 4, GPS, Geosynchronous
             //sim.AddBodyActual(0.0, false, sim.simSpace.SmallestBodySizePx, (int)SimRenderer.ColorNumber.BodyColorWhite,
-            //    new SimPoint(0.0, SimSpace.StarlinkOrbitRadiusKm), new SimPoint(SimSpace.StarlinkOrbitVelocityKmH, 0.0));
+            //    new SimPoint(0.0, SimulationSpace.StarlinkOrbitRadiusKm), new SimPoint(SimulationSpace.StarlinkOrbitVelocityKmH, 0.0));
             //sim.AddBodyActual(0.0, false, sim.simSpace.SmallestBodySizePx, (int)SimRenderer.ColorNumber.BodyColorWhite,
-            //    new SimPoint(-SimSpace.StarlinkOrbitRadiusKm, 0.0), new SimPoint(0.0, SimSpace.StarlinkOrbitVelocityKmH));
+            //    new SimPoint(-SimulationSpace.StarlinkOrbitRadiusKm, 0.0), new SimPoint(0.0, SimulationSpace.StarlinkOrbitVelocityKmH));
             //sim.AddBodyActual(0.0, false, sim.simSpace.SmallestBodySizePx, (int)SimRenderer.ColorNumber.BodyColorWhite,
-            //    new SimPoint(0.0, -SimSpace.StarlinkOrbitRadiusKm), new SimPoint(-SimSpace.StarlinkOrbitVelocityKmH, 0.0));
+            //    new SimPoint(0.0, -SimulationSpace.StarlinkOrbitRadiusKm), new SimPoint(-SimulationSpace.StarlinkOrbitVelocityKmH, 0.0));
             //sim.AddBodyActual(0.0, false, sim.simSpace.SmallestBodySizePx, (int)SimRenderer.ColorNumber.BodyColorWhite,
-            //    new SimPoint(SimSpace.StarlinkOrbitRadiusKm, 0.0), new SimPoint(0.0, -SimSpace.StarlinkOrbitVelocityKmH));
+            //    new SimPoint(SimulationSpace.StarlinkOrbitRadiusKm, 0.0), new SimPoint(0.0, -SimulationSpace.StarlinkOrbitVelocityKmH));
 
             // GPS
             sim.AddBodyActual(0.0, false, sim.simSpace.SmallestBodySizePx * 10.0, 4,
-                new SimPoint(-SimSpace.GPS_OrbitRadiusKm, 0.0), new SimPoint(0.0, SimSpace.GPS_OrbitVelocityKmH));
+                new SimPoint(-SimulationSpace.GPS_OrbitRadiusKm, 0.0), new SimPoint(0.0, SimulationSpace.GPS_OrbitVelocityKmH));
 
             // Geosynchronus orbit
             sim.AddBodyActual(0.0, false, sim.simSpace.SmallestBodySizePx * 10.0, 5,
-                new SimPoint(-SimSpace.GeosynchronousOrbitRadiusKm, 0.0), new SimPoint(0.0, SimSpace.GeosynchronousOrbitVelocityKmH));
+                new SimPoint(-SimulationSpace.GeosynchronousOrbitRadiusKm, 0.0), new SimPoint(0.0, SimulationSpace.GeosynchronousOrbitVelocityKmH));
 
             sim.SetMonitoredBody(1);
             sim.SetMonitoredValues();
@@ -215,19 +215,19 @@ namespace GravitySandboxUWP
         {
             Debug.WriteLine("Loaded " + name);
             sim.SetMessage("Running " + name);
-            GravitySim.currentScenarioName = name;
+            sim.ScenarioName = name;
         }
 
-        private static int RandomColor(SimRenderer.ColorScheme colorScheme, Random random)
+        private static int RandomColor(Renderer.ColorScheme colorScheme, Random random)
         {
             switch (colorScheme)
             {
-                case SimRenderer.ColorScheme.AllColors:
-                    return random.Next(SimRenderer.firstColorIndex, SimRenderer.lastColorIndex);    // Decided to exclude the darkest gray value from this, thus the missing "+1"
-                case SimRenderer.ColorScheme.GrayColors:
-                    return random.Next(SimRenderer.firstMonochromeColorIndex, SimRenderer.lastColorIndex + 1);
-                case SimRenderer.ColorScheme.PastelColors:
-                    return random.Next(SimRenderer.firstColorIndex, SimRenderer.lastPastelColorIndex + 1);
+                case Renderer.ColorScheme.AllColors:
+                    return random.Next(Renderer.firstColorIndex, Renderer.lastColorIndex);    // Decided to exclude the darkest gray value from this, thus the missing "+1"
+                case Renderer.ColorScheme.GrayColors:
+                    return random.Next(Renderer.firstMonochromeColorIndex, Renderer.lastColorIndex + 1);
+                case Renderer.ColorScheme.PastelColors:
+                    return random.Next(Renderer.firstColorIndex, Renderer.lastPastelColorIndex + 1);
             }
             return 1; // Added to make the compiler happy, not reachable
         }
