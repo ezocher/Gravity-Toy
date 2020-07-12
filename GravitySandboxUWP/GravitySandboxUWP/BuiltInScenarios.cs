@@ -9,7 +9,7 @@ using Windows.Foundation;
 
 namespace GravitySandboxUWP
 {
-    class BuiltInScenarios
+    static class BuiltInScenarios
     {
         private const double toySpaceScenariosDefaultAccelerationLimit = 10.0;
         private const double toySpaceScenariosDeaultMinimumSeparation = 10.0;
@@ -102,7 +102,7 @@ namespace GravitySandboxUWP
             sim.SetMonitoredValues();
         }
 
-        public static void LoadOrbitingBodiesScenario(GravitySim sim)
+        public static void LoadToyOrbitingBodiesScenario(GravitySim sim)
         {
             const double baseMass = 100000.0;
 
@@ -177,7 +177,7 @@ namespace GravitySandboxUWP
             SetScenarioName(sim, "Low Earth Orbit (ISS + 4 Starlink satellites) Scenario");
 
             sim.ClearSim();
-            sim.SetSimSpace(new SimulationSpace(SimulationSpace.Space.LEO));      // LEO Space -> Km, minutes, Kg, Km/h
+            sim.SetSimSpace(new SimulationSpace(SimulationSpace.Space.GEO));      // LEO or GEO Space -> Km, minutes, Kg, Km/h
             sim.SetCalculationSettings(new CalculationSettings(200, false, true));
             sim.SetSimRounding(10);
 
@@ -199,11 +199,11 @@ namespace GravitySandboxUWP
             //    new SimPoint(SimulationSpace.StarlinkOrbitRadiusKm, 0.0), new SimPoint(0.0, -SimulationSpace.StarlinkOrbitVelocityKmH));
 
             // GPS
-            sim.AddBodyActual(0.0, false, sim.simSpace.SmallestBodySizePx * 10.0, 4,
+            sim.AddBodyActual(0.0, false, sim.simSpace.SmallestBodySizePx * 5.0, 4,
                 new SimPoint(-SimulationSpace.GPS_OrbitRadiusKm, 0.0), new SimPoint(0.0, SimulationSpace.GPS_OrbitVelocityKmH));
 
             // Geosynchronus orbit
-            sim.AddBodyActual(0.0, false, sim.simSpace.SmallestBodySizePx * 10.0, 5,
+            sim.AddBodyActual(0.0, false, sim.simSpace.SmallestBodySizePx * 5.0, 5,
                 new SimPoint(-SimulationSpace.GeosynchronousOrbitRadiusKm, 0.0), new SimPoint(0.0, SimulationSpace.GeosynchronousOrbitVelocityKmH));
 
             sim.SetMonitoredBody(1);

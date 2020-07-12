@@ -13,6 +13,7 @@ namespace GravitySandboxUWP
 
         public double Size { get; private set; }
 
+        // Needs an explicit backing field so that position.X and position.Y can be assigned to
         SimPoint position;
         public SimPoint Position
         {
@@ -21,6 +22,7 @@ namespace GravitySandboxUWP
         }
 
         private SimPoint defaultStartingVelocity = new SimPoint(0.0, 0.0);
+        // Needs an explicit backing field so that velocity.X and velocity.Y can be assigned to
         private SimPoint velocity;
         public SimPoint Velocity
         {
