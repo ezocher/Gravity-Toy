@@ -17,7 +17,7 @@ namespace GravitySandboxUWP
         {
             int unitsIndex = (int)baseUnits;
 
-            while ((elapsedTime > cutoverPoint[unitsIndex]) && (unitsIndex < lastUnitsIndex))
+            while ((unitsIndex < lastUnitsIndex) && (elapsedTime > cutoverPoint[unitsIndex]))
             {
                 elapsedTime /= unitsPerUnit[unitsIndex++];
             }

@@ -108,11 +108,11 @@ namespace GravitySandboxUWP
             renderer.Add(size, color, bodies.Last());
         }
 
-        public void AddBodyActual(double mass, bool isGravitySource, double size, int color, SimPoint startPosition, SimPoint startVelocity)
+        public void AddBodyActual(double mass, bool isGravitySource, double diameter, int color, SimPoint startPosition, SimPoint startVelocity)
         {
             var velocity = new SimPoint(startVelocity.X / simSpace.VelocityConnversionFactor, startVelocity.Y / simSpace.VelocityConnversionFactor);
-            bodies.Add(new Body(mass, size, startPosition, velocity, isGravitySource, simSpace));
-            renderer.Add(size, color, bodies.Last());
+            bodies.Add(new Body(mass, diameter, startPosition, velocity, isGravitySource, simSpace));
+            renderer.Add(diameter, color, bodies.Last());
         }
 
         public void SetCheckSim(bool check)

@@ -54,7 +54,7 @@ namespace GravitySandboxUWP
 
         // ========== SPACE ==========
         public const double KmPerMeter = 1.0 / 1000.0;
-        public const double EarthRadiusKm = 6371.0;
+        public const double EarthRadiusKm = 6371.0;         // https://en.wikipedia.org/wiki/Earth_radius
         public const double LEO_OrbitMaxAltitudeKm = 2000.0;
 
 
@@ -89,9 +89,9 @@ namespace GravitySandboxUWP
         public const double GPS_OrbitRadiusKm = 20180.0 + EarthRadiusKm;
         public const double GPS_OrbitVelocityKmH = 13949.0;
 
-        public const double GeosynchronousOrbitRadiusKm = 42164.2;
-        //public const double GeosynchronousOrbitRadiusKm = 35786.0 + EarthRadiusKm;
-        public const double GeosynchronousOrbitVelocityKmH = 11070.0;
+        // public const double GeosynchronousOrbitRadiusKm = 42164.2;
+        public const double GeosynchronousOrbitRadiusKm = 35786.0 + EarthRadiusKm;
+        public const double GeosynchronousOrbitVelocityKmH = 11052.0;
 
 
         #endregion
@@ -178,7 +178,7 @@ namespace GravitySandboxUWP
                 if (space == Space.LEO)
                     SimBoxHeightAndWidth = 4.0 * EarthRadiusKm;
                 else // Space.GEO
-                    SimBoxHeightAndWidth = 10.0 * EarthRadiusKm;
+                    SimBoxHeightAndWidth = 2.5 * GeosynchronousOrbitRadiusKm;
                 DistanceOffset = EarthRadiusKm;
 
                 TimeUnits = TimeDisplay.BaseUnits.Minutes;
