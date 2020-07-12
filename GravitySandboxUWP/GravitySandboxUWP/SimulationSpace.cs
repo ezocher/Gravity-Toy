@@ -71,7 +71,7 @@ namespace GravitySandboxUWP
 
 
         // ========== SCREEN UNITS ==========
-        private const double SmallestBodySizeAsPortionOfStartingScreenSize = 0.005;      // = 1/2 of a %
+        private const double SmallestBodySizeAsPortionOfStartingScreenSize = (1.0 / 100.0) * 0.5;      // = 1/2 of a %
 
         #endregion
 
@@ -96,7 +96,6 @@ namespace GravitySandboxUWP
 
         #endregion
 
-
         #region Properties and Fields
 
         // ========== GRAVITY and MASS ==========
@@ -113,7 +112,7 @@ namespace GravitySandboxUWP
 
 
         // ========== TIME ==========
-        public string TimeUnitsAbbr { get; private set; }
+        public TimeDisplay.BaseUnits TimeUnits { get; private set; }
 
         public double TimeUnitsPerUISecond { get; private set; }
 
@@ -144,7 +143,7 @@ namespace GravitySandboxUWP
                 SimBoxHeightAndWidth = 1000.0;
                 DistanceOffset = 0.0;
 
-                TimeUnitsAbbr = "sec.";
+                TimeUnits = TimeDisplay.BaseUnits.Seconds;
                 TimeUnitsPerUISecond = 1.0;
 
                 VelocityUnitsAbbr = "simunits/sec.";
@@ -161,7 +160,7 @@ namespace GravitySandboxUWP
                 SimBoxHeightAndWidth = 100.0;
                 DistanceOffset = 0.0;
 
-                TimeUnitsAbbr = "sec.";
+                TimeUnits = TimeDisplay.BaseUnits.Seconds;
                 TimeUnitsPerUISecond = 1.0;
 
                 VelocityUnitsAbbr = "";
@@ -182,8 +181,7 @@ namespace GravitySandboxUWP
                     SimBoxHeightAndWidth = 10.0 * EarthRadiusKm;
                 DistanceOffset = EarthRadiusKm;
 
-                TimeUnitsAbbr = "min.";
-                TimeUnitsPerUISecond = 1.0;
+                TimeUnits = TimeDisplay.BaseUnits.Minutes;
 
                 VelocityUnitsAbbr = "km/h";
                 // Internal velocities are in km/min., multiply by this to get km/h

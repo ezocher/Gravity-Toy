@@ -179,7 +179,7 @@ namespace GravitySandboxUWP
                 positionTextBlock.Text = "position: " + FormatPointToString(body.Position) +
                     String.Format(", r = {0:N1} {1}", Hypotenuse(body.Position) - sim.simSpace.DistanceOffset,
                     sim.simSpace.DistanceUnitsAbbr);
-                timeTextBlock.Text = String.Format("time: {0:N1} {1}", simElapsedTime, sim.simSpace.TimeUnitsAbbr);
+                timeTextBlock.Text = $"time: {TimeDisplay.FormatElapsedTime(simElapsedTime, sim.simSpace.TimeUnits)}";
             });
         }
 
