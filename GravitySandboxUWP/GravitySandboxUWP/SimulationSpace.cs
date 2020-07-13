@@ -27,7 +27,6 @@ namespace GravitySandboxUWP
         // Original simulation space: toySpace
         // Dimensions   Mass   Time    Velocity
 
-
         // Spaces:
         //      Toy Space
         //      Earth Orbit Space
@@ -43,56 +42,16 @@ namespace GravitySandboxUWP
         // ========== GRAVITY and MASS ==========
         public const double BigG_M3PerKgSec2 = 6.6743E-11; // m^3/kg*sec^2
 
-        public const double EarthSurfaceAccelerationMPerSec2 = 9.80665; // m/sec^2
-
-        public const double EarthMassKg = 5.97220E+24;
-
-        // Mass example ratios:
-        //   Sol is 1047.57 Jupiter masses and 333,000 Earth masses
-        //   Sagittarius A* is 2.6 ± 0.2 million Solar masses
-
-
-        // ========== SPACE ==========
+        // ========== DISTANCE ==========
         public const double KmPerMeter = 1.0 / 1000.0;
-        public const double EarthRadiusKm = 6371.0;         // https://en.wikipedia.org/wiki/Earth_radius
-        public const double LEO_OrbitMaxAltitudeKm = 2000.0;
-
 
         // ========== TIME ==========
         public const double MinutesPerHour = 60.0;
         public const double SecondsPerMinute = 60.0;
         public const double SecondsPerHour = SecondsPerMinute * MinutesPerHour;
 
-
-        // ========== VELOCITY ==========
-
-        // Calculated for circular orbit of 200 km it is 7.79 km/s  (28,000 km/h)
-        public const double EarthLEO200kmCircularVelocityKmH = 28000.0;
-
-
         // ========== SCREEN UNITS ==========
         private const double SmallestBodySizeAsPortionOfStartingScreenSize = (1.0 / 100.0) * 0.5;      // = 1/2 of a %
-
-        #endregion
-
-        #region Spacecraft
-
-        // ========== ISS ==========
-        // Averages across one orbit from https://spotthestation.nasa.gov/tracking_map.cfm on 6/19/2020 at 22:25:00 GMT
-        public const double ISS_OrbitRadiusKm = 424.72 + EarthRadiusKm;
-        //public const double ISS_OrbitVelocityKmH = 27570.2;
-
-        // Other spacecraft
-        public const double StarlinkOrbitRadiusKm = 550.0 + EarthRadiusKm;
-        //public const double StarlinkOrbitVelocityKmH = 27320.0;
-
-        public const double GPS_OrbitRadiusKm = 20180.0 + EarthRadiusKm;
-        //public const double GPS_OrbitVelocityKmH = 13949.0;
-
-        // public const double GeosynchronousOrbitRadiusKm = 42164.2;
-        public const double GeosynchronousOrbitRadiusKm = 35786.0 + EarthRadiusKm;
-        //public const double GeosynchronousOrbitVelocityKmH = 11052.0;
-
 
         #endregion
 
@@ -103,7 +62,7 @@ namespace GravitySandboxUWP
 
         public string MassUnitsAbbr { get; private set; }
 
-        // ========== SPACE ==========
+        // ========== DISTANCE ==========
         public string DistanceUnitsAbbr { get; private set; }
 
         public double SimBoxHeightAndWidth { get; private set; }
@@ -129,7 +88,6 @@ namespace GravitySandboxUWP
         public double SmallestBodySizePx { get; private set; }
 
         #endregion
-
 
         #region Constructor
         public SimulationSpace(Space space)
@@ -176,10 +134,10 @@ namespace GravitySandboxUWP
 
                 DistanceUnitsAbbr = "km";
                 if (space == Space.LEO)
-                    SimBoxHeightAndWidth = 4.0 * EarthRadiusKm;
+                    SimBoxHeightAndWidth = 4.0 * SolarSystem.EarthRadiusKm;
                 else // Space.GEO
-                    SimBoxHeightAndWidth = 2.5 * GeosynchronousOrbitRadiusKm;
-                DistanceOffset = EarthRadiusKm;
+                    SimBoxHeightAndWidth = 2.5 * SolarSystem.GeosynchronousOrbitRadiusKm;
+                DistanceOffset = SolarSystem.EarthRadiusKm;
 
                 TimeUnits = TimeDisplay.BaseUnits.Minutes;
 
