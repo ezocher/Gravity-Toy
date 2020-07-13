@@ -80,18 +80,18 @@ namespace GravitySandboxUWP
         // ========== ISS ==========
         // Averages across one orbit from https://spotthestation.nasa.gov/tracking_map.cfm on 6/19/2020 at 22:25:00 GMT
         public const double ISS_OrbitRadiusKm = 424.72 + EarthRadiusKm;
-        public const double ISS_OrbitVelocityKmH = 27570.2;
+        //public const double ISS_OrbitVelocityKmH = 27570.2;
 
         // Other spacecraft
         public const double StarlinkOrbitRadiusKm = 550.0 + EarthRadiusKm;
-        public const double StarlinkOrbitVelocityKmH = 27320.0;
+        //public const double StarlinkOrbitVelocityKmH = 27320.0;
 
         public const double GPS_OrbitRadiusKm = 20180.0 + EarthRadiusKm;
-        public const double GPS_OrbitVelocityKmH = 13949.0;
+        //public const double GPS_OrbitVelocityKmH = 13949.0;
 
         // public const double GeosynchronousOrbitRadiusKm = 42164.2;
         public const double GeosynchronousOrbitRadiusKm = 35786.0 + EarthRadiusKm;
-        public const double GeosynchronousOrbitVelocityKmH = 11052.0;
+        //public const double GeosynchronousOrbitVelocityKmH = 11052.0;
 
 
         #endregion
@@ -203,5 +203,11 @@ namespace GravitySandboxUWP
             }
         }
         #endregion
+
+        // https://www.physicsclassroom.com/class/circles/Lesson-4/Mathematics-of-Satellite-Motion#:~:text=The%20orbital%20speed%20can%20be,speed%20of%207676%20m%2Fs.
+        public double CircularOrbitVelocity(double centralMass, double orbitRadius)
+        {
+            return Math.Sqrt((BigG * centralMass) / orbitRadius) * VelocityConnversionFactor;
+        }
     }
 }
