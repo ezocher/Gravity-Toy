@@ -20,7 +20,8 @@ namespace NumericTypesTests
             //Console.WriteLine("\n---------------\n");
             //FloatingPointUtilPerformanceTests.RunTest(100 * Million);
 
-            ISSOrbitScenario.RunISSOrbits(new ISSOrbitScenario());
+            ISSOrbitScenario scenario = new ISSOrbitScenario();
+            scenario.RunISSOrbits();
         }
     }
 }

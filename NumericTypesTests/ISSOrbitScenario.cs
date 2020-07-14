@@ -1,6 +1,9 @@
-﻿using System;
+﻿using GravitySandboxUWP;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
 namespace NumericTypesTests
@@ -10,23 +13,15 @@ namespace NumericTypesTests
     {
         // From SimulationSpace.cs
         public const double BigG_M3PerKgSec2 = 6.6743E-11; // m^3/kg*sec^2
-        public const double EarthMassKg = 5.97220E+24;
         public const double KmPerMeter = 1.0 / 1000.0;
-        public const double EarthRadiusKm = 6371.0;         // https://en.wikipedia.org/wiki/Earth_radius
         public const double MinutesPerHour = 60.0;
         public const double SecondsPerMinute = 60.0;
         public const double SecondsPerHour = SecondsPerMinute * MinutesPerHour;
-
-        // Averages across one orbit from https://spotthestation.nasa.gov/tracking_map.cfm on 6/19/2020 at 22:25:00 GMT
-        public const double ISS_OrbitRadiusKm = 424.72 + EarthRadiusKm;
-        public const double ISS_OrbitVelocityKmH = 27570.2;
 
         public double BigG { get; private set; }
         public string MassUnitsAbbr { get; private set; }
 
         public string DistanceUnitsAbbr { get; private set; }
-
-        public double SimBoxHeightAndWidth { get; private set; }
 
         public TimeDisplay.BaseUnits TimeUnits { get; private set; }
 
@@ -40,13 +35,12 @@ namespace NumericTypesTests
 
         // From GravitySim.cs
         private double simElapsedTime;
-        private bool checkSim;
-        private int simRounding;
-        private bool accelerationLimitOn;
-        private double accelerationLimit;
+        //private bool checkSim;
+        //private int simRounding;
+        //private bool accelerationLimitOn;
+        //private double accelerationLimit;
         public static double minimumSeparationSquared;
 
-        private SimPoint acceleration;
         private SimPoint position;
         private SimPoint velocity;
 
@@ -78,9 +72,6 @@ namespace NumericTypesTests
             TimeUnitsPerUISecond = 1.0;
 
             simElapsedTime = 0.0;
-            checkSim = false;
-            simRounding = 0;
-            accelerationLimitOn = false;
             minimumSeparationSquared = 1.0;
             SpeedFactor = 1.0;
         }
@@ -91,200 +82,103 @@ namespace NumericTypesTests
 
         public void RunSlower() { SpeedFactor *= 1.0 / speedIncrement; }
 
-        public static void RunISSOrbits(ISSOrbitScenario scenario)
+        double startingVelocityMagnitude;
+        double startingOrbitRadius;
+
+        int calculationCyclesPerFrame;
+        bool checkAdditionPrecision;
+
+        const int originalCalculationCyclesPerFrame = 200;
+
+        public void RunISSOrbits()
         {
-            //SetScenarioName(sim, "Low Earth Orbit (ISS + 4 Starlink satellites) Scenario");
-
-            //sim.ClearSim();
-            //sim.SetSimSpace(new SimulationSpace(SimulationSpace.Space.GEO));      // LEO or GEO Space -> Km, minutes, Kg, Km/h
             //sim.SetCalculationSettings(new CalculationSettings(200, false, true));
-            //sim.SetSimRounding(0);      // Must remain at zero to have circular orbits
+            // calculationCyclesPerFrame = originalCalculationCyclesPerFrame;
+            calculationCyclesPerFrame = 1000;
+            checkAdditionPrecision = true;
 
-            //// === EARTH ===
-            //sim.AddBodyActual(SimulationSpace.EarthMassKg, true, SimulationSpace.EarthRadiusKm * 2.0, 3, new SimPoint(0.0, 0.0), new SimPoint(0.0, 0.0));
+            startingOrbitRadius = SolarSystem.ISS_OrbitRadiusKm;
+            startingVelocityMagnitude = CircularOrbitVelocity(SolarSystem.EarthMassKg, SolarSystem.ISS_OrbitRadiusKm);
 
-            ////// === ISS ===
-            //sim.AddBodyActual(0.0, false, sim.simSpace.SmallestBodySizePx * 2.5, 1,
-            //    new SimPoint(-SimulationSpace.ISS_OrbitRadiusKm, 0.0), new SimPoint(0.0, SimulationSpace.ISS_OrbitVelocityKmH));
+            position = new SimPoint(-startingOrbitRadius, 0.0);
+            velocity = new SimPoint(0.0, startingVelocityMagnitude / VelocityConnversionFactor);
 
-            //sim.SetAccelerationLimits(false, 0.0, 0.0);
+            Run(calculationCyclesPerFrame, false, 100);
+        }
 
+        public double CircularOrbitVelocity(double centralMass, double orbitRadius)
+        {
+            return Math.Sqrt((BigG * centralMass) / orbitRadius) * VelocityConnversionFactor;
         }
 
 
-
-
-        public static void Step(double timeInterval, bool simRunning)
+        public void Run(int calculationCyclesPerFrame, bool checkAdditionPrecision, long numberOfOrbits)
         {
-            Stopwatch perfStopwatch = new Stopwatch();
-            long perfIntervalTicks = 0L;
-            bool simStepping = !simRunning;
+            OrbitalPhysics orbitalPhysics = new OrbitalPhysics(BigG, SolarSystem.EarthMassKg);
+
+            double timeInterval = 1.0 / 60.0;
+            //Stopwatch perfStopwatch = new Stopwatch();
 
             double scaledTimeInterval = timeInterval * SpeedFactor;
-            SetTimeForTrailMark(simElapsedTime);
+            double timeIntervalPerCycle = scaledTimeInterval / (double)calculationCyclesPerFrame;
 
-            if (simStepping)
+            checkingForHalfOrbit = true;
+            long orbitsCompleted = 0;
+
+            // Use completed orbits to exit inner loop
+            for (long calcCycle = 0; true /* calcCycle < calculationCyclesPerFrame */; calcCycle++)
             {
-                Debug.WriteLine("Elapsed times for {0} bodies:", bodies.Count());
-                perfStopwatch.Start();
-            }
+                SimPoint acceleration = orbitalPhysics.Accelerate(position);
 
-            if (accelerations == null)
-                accelerations = new SimPoint[bodies.Count()];
-
-            if (checkSim)
-            {
-                if (positions == null)
-                    positions = new SimPoint[bodies.Count()];
-                if (velocities == null)
-                    velocities = new SimPoint[bodies.Count()];
-
-            }
-
-            double timeIntervalPerCycle = scaledTimeInterval / (double)simCalcSettings.CalculationCyclesPerFrame;
-
-            List<SimPoint> otherPositions = new List<SimPoint>();
-            List<SimPoint> otherAccelerations = new List<SimPoint>();
-
-            if (checkSim)
-            {
-                for (int i = 0; i < bodies.Count(); i++)
-                {
-                    positions[i] = bodies[i].Position;
-                    velocities[i] = bodies[i].Velocity;
-                }
-                Validate5BodyCross(positions, "Positions Before Update");
-                Validate5BodyCross(velocities, "Velocities Before Update");
-            }
-
-            for (int calcCycle = 0; calcCycle < simCalcSettings.CalculationCyclesPerFrame; calcCycle++)
-            {
-                // Calculate NBody acceleration
-                if (simCalcSettings.CheckAllAdditionPrecision)
-                {
-                    for (int i = 0; i < bodies.Count(); i++)
-                    {
-                        accelerations[i].X = 0.0;
-                        accelerations[i].Y = 0.0;
-
-                        for (int j = 0; j < bodies.Count(); j++)
-                            if ((i != j) && bodies[j].IsGravitySource)
-                            {
-                                SimPoint accel = bodies[i].BodyToBodyAccelerate(bodies[j]);
-                                if (simRounding > 0)
-                                {
-                                    accel.X += Math.Round(accel.X, simRounding, MidpointRounding.AwayFromZero);
-                                    accel.Y += Math.Round(accel.Y, simRounding, MidpointRounding.AwayFromZero);
-                                }
-                                if (FloatingPointUtil.CheckAdditionPrecision(accelerations[i].X, accel.X))
-                                    Body.DisplayPrecisionIssue(accelerations[i].X, accel.X, "Accumulating Accel.X", i);
-                                accelerations[i].X += accel.X;
-                                if (FloatingPointUtil.CheckAdditionPrecision(accelerations[i].Y, accel.Y))
-                                    Body.DisplayPrecisionIssue(accelerations[i].Y, accel.Y, "Accumulating Accel.Y", i);
-                                accelerations[i].Y += accel.Y;
-                            }
-                    }
-                }
-                else if (simRounding > 0)
-                {
-                    for (int i = 0; i < bodies.Count(); i++)
-                    {
-                        accelerations[i].X = 0.0;
-                        accelerations[i].Y = 0.0;
-
-                        for (int j = 0; j < bodies.Count(); j++)
-                            if ((i != j) && bodies[j].IsGravitySource)
-                            {
-                                SimPoint accel = bodies[i].BodyToBodyAccelerate(bodies[j]);
-                                accelerations[i].X += Math.Round(accel.X, simRounding, MidpointRounding.AwayFromZero);
-                                accelerations[i].Y += Math.Round(accel.Y, simRounding, MidpointRounding.AwayFromZero);
-                            }
-                    }
-
-                }
+                // Update positon and velocity
+                if (checkAdditionPrecision)
+                    orbitalPhysics.MoveWithPrecisionCheck(ref position, ref velocity, acceleration, timeIntervalPerCycle);
                 else
-                {
-                    for (int i = 0; i < bodies.Count(); i++)
-                    {
-                        accelerations[i].X = 0.0;
-                        accelerations[i].Y = 0.0;
-
-                        for (int j = 0; j < bodies.Count(); j++)
-                            if ((i != j) && bodies[j].IsGravitySource)
-                            {
-                                SimPoint accel = bodies[i].BodyToBodyAccelerate(bodies[j]);
-                                accelerations[i].X += accel.X;
-                                accelerations[i].Y += accel.Y;
-                            }
-                    }
-                }
-
-                //if (checkSim) Validate5BodyCross(accelerations, "Accelerations Before Limit and Rounding");
-
-                if (accelerationLimitOn)
-                    EnforceAccelerationLimit(accelerations, accelerationLimit);
-
-                if (simRounding > 0)
-                    RoundAccelerations(accelerations, simRounding);
-
-                if (checkSim) Validate5BodyCross(accelerations, "Accelerations After Limit and Rounding");
-
-                // Update positons and velocities
-                if (simCalcSettings.CheckAllAdditionPrecision)
-                {
-                    for (int i = 0; i < bodies.Count(); i++)
-                    {
-                        bodies[i].MoveWithPrecisionCheck(accelerations[i], timeIntervalPerCycle);
-                    }
-                }
-                else
-                {
-                    for (int i = 0; i < bodies.Count(); i++)
-                    {
-                        bodies[i].Move(accelerations[i], timeIntervalPerCycle);
-                    }
-                }
-
-                if (checkSim)
-                {
-                    for (int i = 0; i < bodies.Count(); i++)
-                    {
-                        positions[i] = bodies[i].Position;
-                        velocities[i] = bodies[i].Velocity;
-                    }
-                    Validate5BodyCross(positions, "Positions After Update");
-                    Validate5BodyCross(velocities, "Velocities After Update");
-                }
+                    orbitalPhysics.Move(ref position, ref velocity, acceleration, timeIntervalPerCycle);
 
                 simElapsedTime += timeIntervalPerCycle;
 
-                if ((MainPage.trailsEnabled) && TimeForTrailsMark(simElapsedTime))
-                    DrawTrails();
+                //if ((calcCycle % (60 * calculationCyclesPerFrame)) == 0)
+                //    Console.WriteLine("Time {0} in {1:N0} calc cycles. R = {2} km, V = {3} km/h",
+                //        TimeDisplay.FormatElapsedTime(simElapsedTime, TimeDisplay.BaseUnits.Minutes), calcCycle, position.Magnitude(),
+                //        (velocity * VelocityConnversionFactor).Magnitude());
+
+                //if ((calcCycle % (600 * calculationCyclesPerFrame)) == 0)
+                //    Debug.WriteLine(calcCycle);
+                if (CheckForCompletedOrbit(position.Y))
+                {
+                    orbitsCompleted++;
+                    if ((orbitsCompleted % 10) == 0)
+                        Console.WriteLine("Orbit {0} completed at time {1} in {2:N0} calc cycles. R = {3} km, V = {4} km/h",
+                            orbitsCompleted, TimeDisplay.FormatElapsedTime(simElapsedTime, TimeDisplay.BaseUnits.Minutes), calcCycle, position.Magnitude(), 
+                            (velocity * VelocityConnversionFactor).Magnitude());
+                    if (orbitsCompleted == numberOfOrbits)
+                    {
+                        break;
+                    }
+                }
             }
-            if (simStepping) perfIntervalTicks = DisplayPerfIntervalElapsed(perfStopwatch, perfIntervalTicks,
-                String.Format("Compute N-body accelerations, update positions & velocities ({0} iterations)", simCalcSettings.CalculationCyclesPerFrame));
-
-
-            // Update rendering
-            renderer.BodiesMoved(bodies);
-            simPage.UpdateMonitoredValues(bodies[monitoredBody], simElapsedTime);
-
-            if (simStepping) perfIntervalTicks = DisplayPerfIntervalElapsed(perfStopwatch, perfIntervalTicks, "Update transforms of XAML shapes & monitored values");
-
-            if (simStepping)
-            {
-                Debug.WriteLine("Total elapsed time = {0:F2} ms", (double)perfIntervalTicks / (double)(Stopwatch.Frequency / 1000L));
-                Debug.WriteLine("");
-            }
-
-            // stepRunning = false;
         }
 
-        // Treats a SimPoint as a vector and calculates its magnitude
-        public static double Magnitude(SimPoint v)
+        private static bool checkingForHalfOrbit = true;
+
+        /// <summary>
+        /// Returns true when we've just completed an orbit.
+        /// Assumes orbit starts at -orbitRadius, 0.0 and runs clockwise
+        /// </summary>
+        /// <param name="yCoordinate"></param>
+        /// <returns></returns>
+        public bool CheckForCompletedOrbit(double yCoordinate)
         {
-            return (Math.Sqrt((v.X * v.X) + (v.Y * v.Y)));
+            if (checkingForHalfOrbit ? yCoordinate <= 0.0 : yCoordinate >= 0.0)
+            {
+                // We just crossed zero, if we just found a half orbit return false, found a full orbit return true
+                // In all cases toggle checkingForHalfOrbit
+                checkingForHalfOrbit = !checkingForHalfOrbit;
+                return checkingForHalfOrbit;
+            }
+            else
+                return false;
         }
-
     }
 }

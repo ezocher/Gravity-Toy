@@ -32,8 +32,15 @@ namespace NumericTypesTests
             return ((X == other.X) && (Y == other.Y));
         }
 
+        public double Magnitude()
+        {
+            return (Math.Sqrt((X * X) + (Y * Y)));
+        }
+
         public static SimPoint operator +(SimPoint point1, SimPoint point2) =>
             new SimPoint(point1.X + point2.X, point1.Y + point2.Y);
 
+        public static SimPoint operator *(SimPoint point, double factor) =>
+            new SimPoint(point.X * factor, point.Y * factor);
     }
 }
