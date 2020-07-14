@@ -306,7 +306,7 @@ namespace GravitySandboxUWP
                         newBodyPosition = new SimPoint(rand.Next((int)-limitXY, (int)limitXY),
                                       rand.Next((int)-limitXY, (int)limitXY));
                     }
-                    while (MainPage.Hypotenuse(newBodyPosition) > limitXY);
+                    while (newBodyPosition.Magnitude() > limitXY);
                     return (newBodyPosition);
 
                 default:

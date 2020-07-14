@@ -365,7 +365,7 @@ namespace GravitySandboxUWP
         {
             for (int i = 0; i < accelerations.Length; i++)
             {
-                double m = Magnitude(accelerations[i]);
+                double m = accelerations[i].Magnitude();
                 if (m > limit)
                 {
                     double scale = limit / m;
@@ -489,12 +489,6 @@ namespace GravitySandboxUWP
             if ((absY > 0.0) && (absY < epsilon))
                 accelerations[i].Y = 0.0;
         **/
-
-        // Treats a SimPoint as a vector and calculates its magnitude
-        public static double Magnitude(SimPoint v)
-        {
-            return (Math.Sqrt((v.X * v.X) + (v.Y * v.Y)));
-        }
 
         public void SetMonitoredValues()
         {

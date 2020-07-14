@@ -175,9 +175,9 @@ namespace GravitySandboxUWP
                 var velocity = new SimPoint(body.Velocity.X * sim.simSpace.VelocityConnversionFactor,
                     body.Velocity.Y * sim.simSpace.VelocityConnversionFactor);
                 velocityTextBlock.Text = "velocity: " + FormatPointToString(velocity) + 
-                    String.Format(", v = {0:N1} {1}", Hypotenuse(velocity), sim.simSpace.VelocityUnitsAbbr);
+                    String.Format(", v = {0:N1} {1}", velocity.Magnitude(), sim.simSpace.VelocityUnitsAbbr);
                 positionTextBlock.Text = "position: " + FormatPointToString(body.Position) +
-                    String.Format(", r = {0:N1} {1}", Hypotenuse(body.Position) - sim.simSpace.DistanceOffset,
+                    String.Format(", r = {0:N1} {1}", body.Position.Magnitude() - sim.simSpace.DistanceOffset,
                     sim.simSpace.DistanceUnitsAbbr);
                 timeTextBlock.Text = $"time: {TimeDisplay.FormatElapsedTime(simElapsedTime, sim.simSpace.TimeUnits)}";
             });
@@ -200,11 +200,6 @@ namespace GravitySandboxUWP
         static string FormatPointToString(SimPoint p)
         {
             return String.Format("x = {0:N1}, y = {1:N1}", p.X, p.Y);
-        }
-
-        public static double Hypotenuse(SimPoint simPoint)
-        {
-            return Math.Sqrt((simPoint.X * simPoint.X) + (simPoint.Y * simPoint.Y));
         }
 
         private void BackgroundGrid_SizeChanged(object sender, SizeChangedEventArgs e)
