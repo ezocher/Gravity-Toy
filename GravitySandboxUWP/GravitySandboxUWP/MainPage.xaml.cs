@@ -172,8 +172,7 @@ namespace GravitySandboxUWP
 
             var ignore = Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
-                var velocity = new SimPoint(body.Velocity.X * sim.simSpace.VelocityConnversionFactor,
-                    body.Velocity.Y * sim.simSpace.VelocityConnversionFactor);
+                SimPoint velocity = body.Velocity * sim.simSpace.VelocityConnversionFactor;
                 velocityTextBlock.Text = "velocity: " + FormatPointToString(velocity) + 
                     String.Format(", v = {0:N1} {1}", velocity.Magnitude(), sim.simSpace.VelocityUnitsAbbr);
                 positionTextBlock.Text = "position: " + FormatPointToString(body.Position) +

@@ -39,5 +39,7 @@ namespace GravitySandboxUWP
         public static SimPoint operator +(SimPoint point1, SimPoint point2) =>
             new SimPoint(point1.X + point2.X, point1.Y + point2.Y);
 
+        public static SimPoint operator *(SimPoint point, double factor) =>
+            new SimPoint(point.X * factor, point.Y * factor);
     }
 }
