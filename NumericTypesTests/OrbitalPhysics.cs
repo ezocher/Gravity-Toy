@@ -23,19 +23,20 @@ namespace NumericTypesTests
             CentralBodyMass = centralBodyMass;
         }
 
-        public SimPoint Accelerate(SimPoint position)
+        public void Accelerate(SimPoint position, ref SimPoint acceleration)
         {
             double rX = -position.X;
             double rY = -position.Y;
 
             double rSquared = (rX * rX) + (rY * rY);
-            rSquared = Math.Max(rSquared, MinimumSeparationSquared); // enforce minimum value of r
+            // rSquared = Math.Max(rSquared, MinimumSeparationSquared); // enforce minimum value of r -- unnecessary with orbital scenarios
             double r = Math.Sqrt(rSquared);
 
             // F = m1 * a, g = G * m1 * m2 / rSquared, m1's cancel out so a = G * m2 / rSquared
             double a = BigG * CentralBodyMass / rSquared;
 
-            return (new SimPoint(a * rX / r, a * rY / r));
+            acceleration.X = a * rX / r;
+            acceleration.Y = a * rY / r;
         }
 
         public void Move(ref SimPoint position, ref SimPoint velocity, SimPoint acceleration, double deltaT)
