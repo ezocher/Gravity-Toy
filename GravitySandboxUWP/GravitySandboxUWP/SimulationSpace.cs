@@ -167,5 +167,21 @@ namespace GravitySandboxUWP
         {
             return Math.Sqrt((BigG * centralMass) / orbitRadius) * VelocityConnversionFactor;
         }
+
+        /// <summary>
+        /// Puts a body into a clockwise circular orbit
+        /// </summary>
+        /// <param name="startingPosition">Angle, measured in degrees, with 0 degrees at top of orbit</param>
+        /// <param name="orbitRadius"></param>
+        /// <param name="position"></param>
+        /// <param name="velocity"></param>
+        public void InitializeCircularOrbit(double startingPosition, double orbitRadius, double centralMass, out SimPoint position, out SimPoint velocity)
+        {
+            double startingPositionRadians = Math.PI * 2.0 * (startingPosition / 360.0);
+            position = new SimPoint(orbitRadius * Math.Sin(startingPositionRadians), orbitRadius * Math.Cos(startingPositionRadians));
+
+            double orbitVelocity = CircularOrbitVelocity(centralMass, orbitRadius);
+            velocity = new SimPoint(orbitVelocity * Math.Cos(startingPositionRadians), -orbitVelocity * Math.Sin(startingPositionRadians));
+        }
     }
 }

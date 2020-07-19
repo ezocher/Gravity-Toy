@@ -174,13 +174,15 @@ namespace GravitySandboxUWP
 
         public static void LoadLowEarthOrbit(GravitySim sim)
         {
+            // To make a braided spiral with ISS trails use calc setting of 2 and then speed up by 800%
+            //  4 and 1600% are also interesting
 
             SetScenarioName(sim, "Low Earth Orbit (ISS + 4 Starlink satellites) Scenario");
 
             sim.ClearSim();
             SimulationSpace simulationSpace = new SimulationSpace(SimulationSpace.Space.LEO);   // LEO or GEO Space -> Km, minutes, Kg, Km/h
             sim.SetSimSpace(simulationSpace);      
-            sim.SetCalculationSettings(new CalculationSettings(1000, false, true));
+            sim.SetCalculationSettings(new CalculationSettings(100, false, false));
             sim.SetSimRounding(0);      // Must remain at zero to have circular orbits
 
             // === EARTH ===
@@ -190,16 +192,21 @@ namespace GravitySandboxUWP
             sim.AddBodyActual(0.0, false, sim.simSpace.SmallestBodySizePx * 2.5, 1,
                 new SimPoint(-SolarSystem.ISS_OrbitRadiusKm, 0.0), new SimPoint(0.0, simulationSpace.CircularOrbitVelocity(SolarSystem.EarthMassKg, SolarSystem.ISS_OrbitRadiusKm)));
 
-            double starlinkOrbitVelocity = simulationSpace.CircularOrbitVelocity(SolarSystem.EarthMassKg, SolarSystem.StarlinkOrbitRadiusKm);
-            // Satellites - Starlink times 4, GPS, Geosynchronous
-            //sim.AddBodyActual(0.0, false, sim.simSpace.SmallestBodySizePx, (int)Renderer.ColorNumber.BodyColorWhite,
-            //    new SimPoint(0.0, SolarSystem.StarlinkOrbitRadiusKm), new SimPoint(starlinkOrbitVelocity, 0.0));
-            //sim.AddBodyActual(0.0, false, sim.simSpace.SmallestBodySizePx, (int)Renderer.ColorNumber.BodyColorWhite,
-            //    new SimPoint(-SolarSystem.StarlinkOrbitRadiusKm, 0.0), new SimPoint(0.0, starlinkOrbitVelocity));
-            //sim.AddBodyActual(0.0, false, sim.simSpace.SmallestBodySizePx, (int)Renderer.ColorNumber.BodyColorWhite,
-            //    new SimPoint(0.0, -SolarSystem.StarlinkOrbitRadiusKm), new SimPoint(-starlinkOrbitVelocity, 0.0));
-            //sim.AddBodyActual(0.0, false, sim.simSpace.SmallestBodySizePx, (int)Renderer.ColorNumber.BodyColorWhite,
-            //    new SimPoint(SolarSystem.StarlinkOrbitRadiusKm, 0.0), new SimPoint(0.0, -starlinkOrbitVelocity));
+            // Satellites - Starlink
+
+            // 12 Starlinks
+            //double[] startingAngles = { 30.0, 45.0, 60.0, 120.0, 135.0, 150.0, 210.0, 225.0, 240.0, 300.0, 315.0, 330.0 };
+            //foreach (double angle in startingAngles)
+
+            // 36 Starlinks
+            for (double angle = 0.0; angle < 360.0; angle += 10.0)
+            {
+                SimPoint position, velocity;
+                simulationSpace.InitializeCircularOrbit(angle, SolarSystem.StarlinkOrbitRadiusKm, SolarSystem.EarthMassKg,
+                    out position, out velocity);
+                sim.AddBodyActual(0.0, false, sim.simSpace.SmallestBodySizePx, (int)Renderer.ColorNumber.BodyColorMedGrey,
+                    position, velocity);
+            }
 
             // GPS
             //sim.AddBodyActual(0.0, false, sim.simSpace.SmallestBodySizePx * 5.0, 4,
