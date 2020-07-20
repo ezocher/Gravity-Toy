@@ -19,7 +19,8 @@ namespace GravitySandboxUWP
             Null, Toy,
             LEO, GEO, EarthMoon, SolarSystem,
             BinaryOrTrinarySystem,
-            StarCluster, MicroGalaxy
+            StarCluster, 
+            MicroGalaxy
                 };
 
         // Null space has no distance units and is 100 x 100 in extent
@@ -152,6 +153,25 @@ namespace GravitySandboxUWP
 
                 // Time base: 1 min / second real
                 TimeUnitsPerUISecond = 1.0;
+
+                SmallestBodySizePx = SimBoxHeightAndWidth * SmallestBodySizeAsPortionOfStartingScreenSize;
+            }
+            else if (space == Space.StarCluster)
+            {
+                MassUnitsAbbr = "M⊙︎";
+
+                DistanceUnitsAbbr = "ly";
+
+                SimBoxHeightAndWidth = 100.0;
+
+                TimeUnits = TimeDisplay.BaseUnits.Years;
+
+                VelocityUnitsAbbr = "km/h";
+
+                // VelocityConnversionFactor = KmPerLightyear / HoursPerYear;
+
+                // One year per 10 seconds = 6 years per minute
+                TimeUnitsPerUISecond = 0.1;
 
                 SmallestBodySizePx = SimBoxHeightAndWidth * SmallestBodySizeAsPortionOfStartingScreenSize;
             }
