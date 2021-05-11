@@ -267,15 +267,15 @@ namespace GravitySandboxUWP
         {
             ScenarioChanging();
             //BuiltInScenarios.LoadXBodiesCircularCluster(sim, 500, 6.0, SimRenderer.ColorScheme.PastelColors, GravitySim.BodyStartPosition.RandomUniformDensityCircularCluster);
-            //BuiltInScenarios.LoadOrbitingBodiesScenario(sim);
-            BuiltInScenarios.LoadFiveBodiesScenario(sim, true);
+            BuiltInScenarios.LoadToyOrbitingBodiesScenario(sim);
+            //BuiltInScenarios.LoadFiveBodiesScenario(sim, true);
         }
 
         private void Button_Click_Scenario4(object sender, RoutedEventArgs e)
         {
             ScenarioChanging();
-            BuiltInScenarios.LoadLowEarthOrbit(sim);
-            //BuiltInScenarios.LoadXBodiesCircularCluster(sim, 400, 2.0, SimRenderer.ColorScheme.GrayColors, GravitySim.BodyStartPosition.RandomDenseCenterCircularCluster);
+            //BuiltInScenarios.LoadLowEarthOrbit(sim);
+            BuiltInScenarios.LoadXBodiesCircularCluster(sim, 400, 2.0, Renderer.ColorScheme.GrayColors, GravitySim.BodyStartPosition.RandomDenseCenterCircularCluster);
             //BuiltInScenarios.LoadFourBodiesScenario(sim);
         }
         #endregion
