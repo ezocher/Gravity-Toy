@@ -47,7 +47,7 @@ public class FloatingPointUtil
     // Specific example:
     //  This limit allows any quantity at or above 1/10 of a millimeter to be added to 42,000 km (geosync orbit radius)
     //
-    // Performance: This check takes about 40 times as long as the addition it's checking on (see perf results at end of this class)
+    // Performance: This check takes about 20 times as long as the addition it's checking on (see perf results at end of this class)
     //
     // See below for original version with calculation steps spelled out
     public static bool CheckAdditionPrecisionV2(double a, double b)
@@ -57,7 +57,7 @@ public class FloatingPointUtil
 
     // Original more understandable version of CheckAdditionPrecisionV2()
     //
-    // This is about 15% slower than the final optimized version above (see perf results at end of this class)
+    // This is about 2x slower than the final optimized version above (see perf results at end of this file)
     public static bool CheckAdditionPrecisionV1(double a, double b)
     {
         if ((a == 0.0) || (b == 0.0)) return false;
